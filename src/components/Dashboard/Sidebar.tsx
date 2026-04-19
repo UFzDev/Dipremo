@@ -34,6 +34,12 @@ function Sidebar({ activeTab, setActiveTab, data, status, onConnect, onDisconnec
           Gráficas
         </div>
         <div 
+          className={`nav-item ${activeTab === 'history' ? 'active' : ''}`}
+          onClick={() => setActiveTab('history')}
+        >
+          Historial
+        </div>
+        <div 
           className={`nav-item ${activeTab === 'math' ? 'active' : ''}`}
           onClick={() => setActiveTab('math')}
         >
