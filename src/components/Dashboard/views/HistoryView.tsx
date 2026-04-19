@@ -32,11 +32,9 @@ function HistoryView({ history }: HistoryViewProps) {
     <section style={{ animation: 'fadeIn 0.3s ease-out' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <div>
-          <h2 style={{ margin: 0 }}>Registro de Auditoría de Energía</h2>
-          <p style={{ fontSize: '12px', color: '#64748b', marginTop: '0.2rem' }}>Monitoreo consolidado de salud mecánica (RMS)</p>
+          <h2 style={{ margin: 0 }}>Historial basado en RMS</h2>
         </div>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-           <span style={{ fontSize: '11px', color: '#94a3b8' }}>{history.length} hitos registrados</span>
            <input 
             type="text" 
             placeholder="Buscar en el historial..." 

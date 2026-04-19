@@ -14,7 +14,7 @@ type MathViewProps = {
 
 type SubTab = 'reading' | 'normalization' | 'rms';
 
-function MathView({ rawHistory, rmsHistory }: MathViewProps) {
+function MathView({ rawHistory }: MathViewProps) {
   const [activeSubTab, setActiveSubTab] = useState<SubTab>('reading');
 
   const renderAlgo = () => {
@@ -24,7 +24,7 @@ function MathView({ rawHistory, rmsHistory }: MathViewProps) {
       case 'normalization':
         return <NormalizationView history={rawHistory} />;
       case 'rms':
-        return <RMSView history={rmsHistory} />;
+        return <RMSView />;
       default:
         return <SensorReadingView />;
     }

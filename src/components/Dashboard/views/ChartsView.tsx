@@ -15,9 +15,6 @@ function ChartsView({ data, history }: ChartsViewProps) {
           <h2 style={{ fontSize: '1.2rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '-0.02em', color: '#1e293b', margin: 0 }}>
             Monitor Triaxial (Normalizado)
           </h2>
-          <span style={{ fontSize: '11px', background: '#f1f5f9', padding: '4px 10px', borderRadius: '20px', fontWeight: 600, color: '#64748b' }}>
-            Estado: {data ? 'LIVE' : 'WAITING'}
-          </span>
         </div>
       </header>
 

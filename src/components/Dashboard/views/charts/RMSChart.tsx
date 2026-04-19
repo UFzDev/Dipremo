@@ -74,10 +74,6 @@ function RMSChart({ history, height = 200 }: RMSChartProps) {
         <polyline points={axisPoints.y} fill="none" stroke="#10b981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.7" />
         <polyline points={axisPoints.x} fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
-      
-      <div style={{ marginTop: '0.5rem', textAlign: 'right', fontSize: '10px', color: '#94a3b8' }}>
-        Últimos {rmsData.length} puntos de energía calculados
-      </div>
     </div>
   );
 }

@@ -1,11 +1,4 @@
-import RMSChart from '../charts/RMSChart'
-import { type RMSData } from '../../../../lib/algorithms/RMSEngine'
-
-type RMSViewProps = {
-  history: RMSData[];
-};
-
-function RMSView({ history }: RMSViewProps) {
+function RMSView() {
   return (
     <section className="engineering-report" style={{ animation: 'fadeIn 0.5s ease-out', maxWidth: '1000px', margin: '0 auto', textAlign: 'left', color: '#1a202c', fontFamily: 'Inter, system-ui, sans-serif' }}>
       
@@ -18,9 +11,6 @@ function RMSView({ history }: RMSViewProps) {
           Implementación de Métrica de Energía y Potencia en Vibración Mecánica
         </p>
       </header>
-
-      {/* Monitor de Tendencia en Vivo */}
-      <RMSChart history={history} />
 
       {/* 1.- DEFINICIÓN Y FUNDAMENTO */}
       <div className="report-section mb-12" style={{ marginBottom: '3rem' }}>
