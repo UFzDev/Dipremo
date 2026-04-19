@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
-import { STATUS, type ESPData, type ConnectionStatus } from '../../lib/connection'
+import { useState, useEffect, useRef } from 'react'
+import { type ESPData, type ConnectionStatus } from '../../lib/connection'
 
-// Sub-componentes
+// ... (Sub-componentes)
 import Sidebar from './Sidebar'
 import OverviewView from './views/OverviewView'
 import ChartsView from './views/ChartsView'
@@ -21,48 +21,57 @@ export type Tab = 'overview' | 'charts' | 'history' | 'math' | 'raw';
 function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
   const [activeTab, setActiveTab] = useState<Tab>('overview');
   
-  // Inicialización inteligente desde localStorage
-  const [history, setHistory] = useState<ESPData[]>(() => {
+  // 1. Carga inicial de persistencia
+  const savedHistory = (() => {
     try {
       const saved = localStorage.getItem('DIPREMO_HISTORY');
       return saved ? JSON.parse(saved) : [];
     } catch {
       return [];
     }
-  });
+  })();
 
-  // Gestión del historial de datos y persistencia optimizada
+  const historyRef = useRef<ESPData[]>(savedHistory);
+
+  // 2. Estado de Interfaz (solo se actualiza periódicamente para fluidez)
+  const [displayHistory, setDisplayHistory] = useState<ESPData[]>(historyRef.current);
+
+  // Gestión de entrada de datos (Velocidad de Sensor)
   useEffect(() => {
     if (data) {
-      setHistory(prev => {
-        const newHistory = [data, ...prev];
-        const trimmedHistory = newHistory.slice(0, 5000); // Elevado a 5,000 muestras
-        
-        // Persistencia periódica (cada 100 muestras para no impactar rendimiento)
-        if (newHistory.length % 100 === 0) {
-          localStorage.setItem('DIPREMO_HISTORY', JSON.stringify(trimmedHistory));
-        }
-        
-        return trimmedHistory;
-      });
+      // Actualización silenciosa del búfer maestro
+      historyRef.current = [data, ...historyRef.current].slice(0, 5000);
     }
   }, [data]);
 
-  // Persistencia de seguridad al desconectar
+  // Motor de Actualización Visual (Throttle a 10Hz/100ms para estabilidad total)
   useEffect(() => {
-    if (status === STATUS.DISCONNECTED && history.length > 0) {
-      localStorage.setItem('DIPREMO_HISTORY', JSON.stringify(history));
-    }
-  }, [status, history]);
+    const timer = setInterval(() => {
+      setDisplayHistory(historyRef.current);
+    }, 100); // 10 actualizaciones por segundo son suficientes para auditoría estable
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // Persistencia de seguridad (Cada 5 segundos en lugar de cada muestra)
+  useEffect(() => {
+    const persistTimer = setInterval(() => {
+      if (historyRef.current.length > 0) {
+        localStorage.setItem('DIPREMO_HISTORY', JSON.stringify(historyRef.current));
+      }
+    }, 5000);
+
+    return () => clearInterval(persistTimer);
+  }, []);
 
   const renderContent = () => {
     switch (activeTab) {
       case 'overview':
         return <OverviewView />;
       case 'charts':
-        return <ChartsView />;
+        return <ChartsView data={data} />;
       case 'history':
-        return <HistoryView history={history} />;
+        return <HistoryView history={displayHistory} />;
       case 'math':
         return <MathView />;
       case 'raw':
@@ -77,7 +86,7 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
       <Sidebar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
-        data={data} 
+        data={displayHistory[0] || null} 
         status={status}
         onConnect={onConnect}
         onDisconnect={onDisconnect} 

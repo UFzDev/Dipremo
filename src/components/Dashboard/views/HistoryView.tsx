@@ -122,11 +122,6 @@ function HistoryView({ history }: HistoryViewProps) {
           </div>
         )}
       </div>
-
-      <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#94a3b8' }}>
-        <span>Deslice horizontalmente para ver todos los datos.</span>
-        <span>Buffer total: {filteredHistory.length} de 500 muestras.</span>
-      </div>
     </section>
   );
 }
