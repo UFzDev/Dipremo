@@ -1,8 +1,8 @@
 import { useState, useMemo } from 'react'
-import type { ESPData } from '../../../lib/connection'
+import { type RMSData } from '../../../lib/algorithms/RMSEngine'
 
 type HistoryViewProps = {
-  history: ESPData[];
+  history: RMSData[];
 };
 
 function HistoryView({ history }: HistoryViewProps) {
@@ -10,86 +10,89 @@ function HistoryView({ history }: HistoryViewProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const rowsPerPage = 15;
 
-  // Lógica de Filtrado
+  // Lógica de Filtrado de Auditoría (RMS)
   const filteredHistory = useMemo(() => {
     if (!searchQuery) return history;
     const q = searchQuery.toLowerCase();
     return history.filter(row => 
-      row.sample_id.toString().includes(q) ||
-      row.raw.x.toString().includes(q) ||
-      row.raw.y.toString().includes(q) ||
-      row.raw.z.toString().includes(q)
+      row.x?.toString().includes(q) || 
+      row.y?.toString().includes(q) || 
+      row.z?.toString().includes(q) ||
+      new Date(row.timestamp).toLocaleTimeString().toLowerCase().includes(q)
     );
   }, [history, searchQuery]);
 
-  // Lógica de Paginación basada en el historial filtrado
+  // Paginación
   const totalPages = Math.ceil(filteredHistory.length / rowsPerPage);
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = filteredHistory.slice(indexOfFirstRow, indexOfLastRow);
 
   return (
-    <section>
+    <section style={{ animation: 'fadeIn 0.3s ease-out' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <h2>Historial de Muestras</h2>
-        <input 
-          type="text" 
-          placeholder="Buscar por ID o Valor..." 
-          value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-            setCurrentPage(1); // Resetear a página 1 al buscar
-          }}
-          style={{ 
-            padding: '0.6rem 1rem', 
-            borderRadius: '0.5rem', 
-            border: '1px solid #e2e8f0', 
-            fontSize: '13px', 
-            width: '250px',
-            outline: 'none'
-          }}
-        />
+        <div>
+          <h2 style={{ margin: 0 }}>Registro de Auditoría de Energía</h2>
+          <p style={{ fontSize: '12px', color: '#64748b', marginTop: '0.2rem' }}>Monitoreo consolidado de salud mecánica (RMS)</p>
+        </div>
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+           <span style={{ fontSize: '11px', color: '#94a3b8' }}>{history.length} hitos registrados</span>
+           <input 
+            type="text" 
+            placeholder="Buscar en el historial..." 
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
+            style={{ padding: '0.6rem 1rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0', fontSize: '13px', width: '250px', outline: 'none' }}
+          />
+        </div>
       </div>
       
-      <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
+      <div className="card" style={{ padding: '0', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', minWidth: '900px' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', minWidth: '800px' }}>
             <thead>
-              <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0', textAlign: 'left' }}>
-                <th style={{ padding: '1rem' }}>ID</th>
-                <th style={{ padding: '1rem' }}>Eje X</th>
-                <th style={{ padding: '1rem' }}>Eje Y</th>
-                <th style={{ padding: '1rem' }}>Eje Z</th>
-                <th style={{ padding: '1rem' }}>Temp</th>
-                <th style={{ padding: '1rem' }}>RSSI</th>
-                <th style={{ padding: '1rem' }}>Delta</th>
-                <th style={{ padding: '1rem' }}>Rate</th>
-                <th style={{ padding: '1rem' }}>Uptime</th>
-                <th style={{ padding: '1rem' }}>I2C Err</th>
-                <th style={{ padding: '1rem' }}>Heap</th>
+              <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0', textAlign: 'left' }}>
+                <th style={{ padding: '1rem' }}>HORA DEL CÁLCULO</th>
+                <th style={{ padding: '1rem' }}>ENERGÍA X (RMS)</th>
+                <th style={{ padding: '1rem' }}>ENERGÍA Y (RMS)</th>
+                <th style={{ padding: '1rem' }}>ENERGÍA Z (RMS)</th>
+                <th style={{ padding: '1rem' }}>TEMPERATURA</th>
+                <th style={{ padding: '1rem' }}>SEÑAL (RSSI)</th>
+                <th style={{ padding: '1rem' }}>MÉTRICA HZ</th>
               </tr>
             </thead>
             <tbody>
               {currentRows.length > 0 ? (
                 currentRows.map((row, idx) => (
-                  <tr key={`${row.sample_id}-${idx}`} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '0.75rem 1rem', fontWeight: 700 }}>{row.sample_id}</td>
-                    <td style={{ padding: '0.75rem 1rem', color: '#3b82f6', fontWeight: 600 }}>{row.raw.x}</td>
-                    <td style={{ padding: '0.75rem 1rem', color: '#10b981', fontWeight: 600 }}>{row.raw.y}</td>
-                    <td style={{ padding: '0.75rem 1rem', color: '#f59e0b', fontWeight: 600 }}>{row.raw.z}</td>
-                    <td style={{ padding: '0.75rem 1rem' }}>{row.diag.temp_c.toFixed(1)}°C</td>
-                    <td style={{ padding: '0.75rem 1rem', color: '#8b5cf6' }}>{row.diag.rssi_dbm} dBm</td>
-                    <td style={{ padding: '0.75rem 1rem', color: '#64748b' }}>{row.delta_ms.toFixed(1)}ms</td>
-                    <td style={{ padding: '0.75rem 1rem' }}>{row.sample_rate_hz} Hz</td>
-                    <td style={{ padding: '0.75rem 1rem' }}>{(row.uptime_ms / 1000).toFixed(1)}s</td>
-                    <td style={{ padding: '0.75rem 1rem', color: row.diag.i2c_error_count > 0 ? '#ef4444' : 'inherit' }}>{row.diag.i2c_error_count}</td>
-                    <td style={{ padding: '0.75rem 1rem', fontSize: '10px' }}>{row.diag.free_heap.toLocaleString()}</td>
+                  <tr key={`${row.timestamp}-${idx}`} style={{ borderBottom: '1px solid #f1f5f9', background: idx % 2 === 0 ? 'transparent' : '#fafafa' }}>
+                    <td style={{ padding: '0.75rem 1rem', fontWeight: 700, fontFamily: 'monospace', color: '#64748b' }}>
+                      {new Date(row.timestamp).toLocaleTimeString()}
+                    </td>
+                    <td style={{ padding: '0.75rem 1rem', color: '#ef4444', fontWeight: 800 }}>{row.x?.toFixed(3)}</td>
+                    <td style={{ padding: '0.75rem 1rem', color: '#10b981', fontWeight: 800 }}>{row.y?.toFixed(3)}</td>
+                    <td style={{ padding: '0.75rem 1rem', color: '#3b82f6', fontWeight: 800 }}>{row.z?.toFixed(3)}</td>
+                    <td style={{ padding: '0.75rem 1rem', fontWeight: 600, color: '#475569' }}>
+                      {row.diag?.temp_c?.toFixed(1)}°C
+                    </td>
+                    <td style={{ padding: '0.75rem 1rem', color: '#8b5cf6' }}>
+                      {row.diag?.rssi_dbm} dBm
+                    </td>
+                    <td style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>
+                      {row.sample_rate_hz} Hz
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={11} style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8' }}>
-                    {searchQuery ? 'No se encontraron resultados.' : 'No hay datos registrados aún.'}
+                  <td colSpan={7} style={{ padding: '5rem', textAlign: 'center', color: '#94a3b8' }}>
+                    <div style={{ marginBottom: '1rem', fontSize: '32px' }}>📉</div>
+                    <div style={{ fontWeight: 700, color: '#475569', marginBottom: '0.5rem' }}>Historial en Proceso de Generación</div>
+                    <p style={{ fontSize: '13px', maxWidth: '400px', margin: '0 auto' }}>
+                      El sistema está consolidando las ráfagas de 100 muestras del sensor. El primer hito aparecerá en unos segundos.
+                    </p>
                   </td>
                 </tr>
               )}

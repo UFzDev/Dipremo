@@ -1,4 +1,10 @@
-function NormalizationView() {
+import { type ESPData } from '../../../../lib/connection'
+
+type NormalizationViewProps = {
+  history: ESPData[];
+};
+
+function NormalizationView({}: NormalizationViewProps) {
   return (
     <section className="engineering-report" style={{ animation: 'fadeIn 0.5s ease-out', maxWidth: '1000px', margin: '0 auto', textAlign: 'left', color: '#1a202c', fontFamily: 'Inter, system-ui, sans-serif' }}>
       

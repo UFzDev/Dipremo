@@ -3,13 +3,18 @@ import { useState } from 'react'
 // Sub-vistas (Algoritmos)
 import SensorReadingView from './algorithms/SensorReadingView'
 import NormalizationView from './algorithms/NormalizationView'
-import Algo3 from './algorithms/Algo3'
+import RMSView from './algorithms/RMSView'
+import { type ESPData } from '../../../lib/connection'
+import { type RMSData } from '../../../lib/algorithms/RMSEngine'
 
-type MathViewProps = {};
+type MathViewProps = {
+  rawHistory: ESPData[];
+  rmsHistory: RMSData[];
+};
 
-type SubTab = 'reading' | 'normalization' | 'algo3';
+type SubTab = 'reading' | 'normalization' | 'rms';
 
-function MathView({}: MathViewProps) {
+function MathView({ rawHistory, rmsHistory }: MathViewProps) {
   const [activeSubTab, setActiveSubTab] = useState<SubTab>('reading');
 
   const renderAlgo = () => {
@@ -17,9 +22,9 @@ function MathView({}: MathViewProps) {
       case 'reading':
         return <SensorReadingView />;
       case 'normalization':
-        return <NormalizationView />;
-      case 'algo3':
-        return <Algo3 />;
+        return <NormalizationView history={rawHistory} />;
+      case 'rms':
+        return <RMSView history={rmsHistory} />;
       default:
         return <SensorReadingView />;
     }
@@ -41,10 +46,10 @@ function MathView({}: MathViewProps) {
           Normalización
         </div>
         <div 
-          className={`tab-inner-item ${activeSubTab === 'algo3' ? 'active' : ''}`}
-          onClick={() => setActiveSubTab('algo3')}
+          className={`tab-inner-item ${activeSubTab === 'rms' ? 'active' : ''}`}
+          onClick={() => setActiveSubTab('rms')}
         >
-          Algoritmo 3
+          Análisis RMS
         </div>
       </div>
 

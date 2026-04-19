@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { type ESPData, type ConnectionStatus } from '../../lib/connection'
+import { RMSEngine, type RMSData } from '../../lib/algorithms/RMSEngine'
 
 // ... (Sub-componentes)
 import Sidebar from './Sidebar'
@@ -21,7 +22,7 @@ export type Tab = 'overview' | 'charts' | 'history' | 'math' | 'raw';
 function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
   const [activeTab, setActiveTab] = useState<Tab>('overview');
   
-  // 1. Carga inicial de persistencia
+  // 1. Carga inicial de persistencia (Historial RMS)
   const savedHistory = (() => {
     try {
       const saved = localStorage.getItem('DIPREMO_HISTORY');
@@ -31,16 +32,24 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
     }
   })();
 
-  const historyRef = useRef<ESPData[]>(savedHistory);
+  const historyRef = useRef<RMSData[]>(savedHistory);
+  const rawBufferRef = useRef<ESPData[]>([]);
 
   // 2. Estado de Interfaz (solo se actualiza periódicamente para fluidez)
-  const [displayHistory, setDisplayHistory] = useState<ESPData[]>(historyRef.current);
+  const [displayHistory, setDisplayHistory] = useState<RMSData[]>(historyRef.current);
+  const [displayRawHistory, setDisplayRawHistory] = useState<ESPData[]>([]);
 
   // Gestión de entrada de datos (Velocidad de Sensor)
   useEffect(() => {
     if (data) {
-      // Actualización silenciosa del búfer maestro
-      historyRef.current = [data, ...historyRef.current].slice(0, 5000);
+      // A. Buffer RAW (Volátil - Solo para Math/Normalization)
+      rawBufferRef.current = [data, ...rawBufferRef.current].slice(0, 200);
+
+      // B. Procesamiento RMS (Persistente - Para Auditoría/Tendencia)
+      const rmsResult = RMSEngine.addSample(data);
+      if (rmsResult) {
+        historyRef.current = [rmsResult, ...historyRef.current].slice(0, 5000);
+      }
     }
   }, [data]);
 
@@ -48,7 +57,8 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
   useEffect(() => {
     const timer = setInterval(() => {
       setDisplayHistory(historyRef.current);
-    }, 100); // 10 actualizaciones por segundo son suficientes para auditoría estable
+      setDisplayRawHistory(rawBufferRef.current);
+    }, 100); 
 
     return () => clearInterval(timer);
   }, []);
@@ -69,11 +79,11 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
       case 'overview':
         return <OverviewView />;
       case 'charts':
-        return <ChartsView data={data} />;
+        return <ChartsView data={data} history={displayHistory} />;
       case 'history':
         return <HistoryView history={displayHistory} />;
       case 'math':
-        return <MathView />;
+        return <MathView rawHistory={displayRawHistory} rmsHistory={displayHistory} />;
       case 'raw':
         return <RawView data={data} />;
       default:
@@ -86,7 +96,7 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
       <Sidebar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
-        data={displayHistory[0] || null} 
+        data={data} 
         status={status}
         onConnect={onConnect}
         onDisconnect={onDisconnect} 
