@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { ESPData } from '../../lib/connection'
+import type { ESPData, ConnectionStatus } from '../../lib/connection'
 
 // Sub-componentes
 import Sidebar from './Sidebar'
@@ -10,12 +10,15 @@ import RawView from './views/RawView'
 
 type DashboardProps = {
   data: ESPData | null;
+  status: ConnectionStatus;
+  onConnect: () => void;
   onDisconnect: () => void;
 };
 
 export type Tab = 'overview' | 'charts' | 'math' | 'raw';
 
-function Dashboard({ data, onDisconnect }: DashboardProps) {
+function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
+
   const [activeTab, setActiveTab] = useState<Tab>('overview');
 
   const renderContent = () => {
@@ -39,6 +42,8 @@ function Dashboard({ data, onDisconnect }: DashboardProps) {
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
         data={data} 
+        status={status}
+        onConnect={onConnect}
         onDisconnect={onDisconnect} 
       />
 

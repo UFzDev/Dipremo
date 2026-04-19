@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { connectToESP, type ESPData, type ConnectionStatus, STATUS } from './lib/connection'
-import Connection from './components/Connection/Connection'
 import Dashboard from './components/Dashboard/Dashboard'
 
 function App() {
@@ -20,15 +19,16 @@ function App() {
     setData(null)
   }
 
-  const handleSetup = () => {
-    setStatus(STATUS.CONNECTED)
-  }
-  
-  if (status === STATUS.CONNECTED) {
-    return <Dashboard data={data} onDisconnect={handleDisconnect} />
-  }
-
-  return <Connection status={status} onConnect={handleConnect} onSetup={handleSetup} />
+  // Siempre renderizamos el Dashboard para una experiencia directa
+  return (
+    <Dashboard 
+      data={data} 
+      status={status}
+      onConnect={handleConnect}
+      onDisconnect={handleDisconnect} 
+    />
+  )
 }
+
 
 export default App
