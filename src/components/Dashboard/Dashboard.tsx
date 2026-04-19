@@ -20,24 +20,40 @@ export type Tab = 'overview' | 'charts' | 'history' | 'math' | 'raw';
 
 function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
   const [activeTab, setActiveTab] = useState<Tab>('overview');
-  const [history, setHistory] = useState<ESPData[]>([]);
+  
+  // Inicialización inteligente desde localStorage
+  const [history, setHistory] = useState<ESPData[]>(() => {
+    try {
+      const saved = localStorage.getItem('DIPREMO_HISTORY');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
 
-  // Gestión del historial de datos
+  // Gestión del historial de datos y persistencia optimizada
   useEffect(() => {
     if (data) {
       setHistory(prev => {
         const newHistory = [data, ...prev];
-        return newHistory.slice(0, 2000); // Aumentado a 2000 muestras para mayor profundidad
+        const trimmedHistory = newHistory.slice(0, 5000); // Elevado a 5,000 muestras
+        
+        // Persistencia periódica (cada 100 muestras para no impactar rendimiento)
+        if (newHistory.length % 100 === 0) {
+          localStorage.setItem('DIPREMO_HISTORY', JSON.stringify(trimmedHistory));
+        }
+        
+        return trimmedHistory;
       });
     }
   }, [data]);
 
-  // Limpiar historial al desconectar
+  // Persistencia de seguridad al desconectar
   useEffect(() => {
-    if (status === STATUS.DISCONNECTED) {
-      setHistory([]);
+    if (status === STATUS.DISCONNECTED && history.length > 0) {
+      localStorage.setItem('DIPREMO_HISTORY', JSON.stringify(history));
     }
-  }, [status]);
+  }, [status, history]);
 
   const renderContent = () => {
     switch (activeTab) {
