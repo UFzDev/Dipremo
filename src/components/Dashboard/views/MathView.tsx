@@ -1,9 +1,13 @@
 import { useState } from 'react'
+
+// Sub-vistas (Algoritmos)
 import SensorReadingView from './algorithms/SensorReadingView'
+import NormalizationView from './algorithms/NormalizationView'
+import Algo3 from './algorithms/Algo3'
 
 type MathViewProps = {};
 
-type SubTab = 'reading' | 'algo2' | 'algo3';
+type SubTab = 'reading' | 'normalization' | 'algo3';
 
 function MathView({}: MathViewProps) {
   const [activeSubTab, setActiveSubTab] = useState<SubTab>('reading');
@@ -12,10 +16,10 @@ function MathView({}: MathViewProps) {
     switch (activeSubTab) {
       case 'reading':
         return <SensorReadingView />;
-      case 'algo2':
-        return <div className="card" style={{ padding: '3rem', color: 'var(--text-muted)' }}>Módulo Pendiente (Algoritmo 2)</div>;
+      case 'normalization':
+        return <NormalizationView />;
       case 'algo3':
-        return <div className="card" style={{ padding: '3rem', color: 'var(--text-muted)' }}>Módulo Pendiente (Algoritmo 3)</div>;
+        return <Algo3 />;
       default:
         return <SensorReadingView />;
     }
@@ -31,10 +35,10 @@ function MathView({}: MathViewProps) {
           Lectura del Sensor
         </div>
         <div 
-          className={`tab-inner-item ${activeSubTab === 'algo2' ? 'active' : ''}`}
-          onClick={() => setActiveSubTab('algo2')}
+          className={`tab-inner-item ${activeSubTab === 'normalization' ? 'active' : ''}`}
+          onClick={() => setActiveSubTab('normalization')}
         >
-          Algoritmo 2
+          Normalización
         </div>
         <div 
           className={`tab-inner-item ${activeSubTab === 'algo3' ? 'active' : ''}`}
