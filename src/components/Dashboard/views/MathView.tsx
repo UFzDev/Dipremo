@@ -1,56 +1,51 @@
 import { useState } from 'react'
+import SensorReadingView from './algorithms/SensorReadingView'
 
-// Importar los algoritmos individuales
-import Algo1 from './algorithms/Algo1'
-import Algo2 from './algorithms/Algo2'
-import Algo3 from './algorithms/Algo3'
+type MathViewProps = {};
 
-type AlgoTab = 'algo1' | 'algo2' | 'algo3';
+type SubTab = 'reading' | 'algo2' | 'algo3';
 
-function MathView() {
-  const [activeAlgo, setActiveAlgo] = useState<AlgoTab>('algo1');
+function MathView({}: MathViewProps) {
+  const [activeSubTab, setActiveSubTab] = useState<SubTab>('reading');
 
-  const renderAlgoContent = () => {
-    switch (activeAlgo) {
-      case 'algo1':
-        return <Algo1 />;
+  const renderAlgo = () => {
+    switch (activeSubTab) {
+      case 'reading':
+        return <SensorReadingView />;
       case 'algo2':
-        return <Algo2 />;
+        return <div className="card" style={{ padding: '3rem', color: 'var(--text-muted)' }}>Módulo Pendiente (Algoritmo 2)</div>;
       case 'algo3':
-        return <Algo3 />;
+        return <div className="card" style={{ padding: '3rem', color: 'var(--text-muted)' }}>Módulo Pendiente (Algoritmo 3)</div>;
       default:
-        return <Algo1 />;
+        return <SensorReadingView />;
     }
   };
 
   return (
     <section>
-      <h2 className="mb-4">Algoritmos Usados en la Aplicación</h2>
-      
-      {/* Sub-pestañas horizontales */}
       <div className="tabs-inner">
         <div 
-          className={`tab-inner-item ${activeAlgo === 'algo1' ? 'active' : ''}`}
-          onClick={() => setActiveAlgo('algo1')}
+          className={`tab-inner-item ${activeSubTab === 'reading' ? 'active' : ''}`}
+          onClick={() => setActiveSubTab('reading')}
         >
-          Algoritmo 1
+          Lectura del Sensor
         </div>
         <div 
-          className={`tab-inner-item ${activeAlgo === 'algo2' ? 'active' : ''}`}
-          onClick={() => setActiveAlgo('algo2')}
+          className={`tab-inner-item ${activeSubTab === 'algo2' ? 'active' : ''}`}
+          onClick={() => setActiveSubTab('algo2')}
         >
           Algoritmo 2
         </div>
         <div 
-          className={`tab-inner-item ${activeAlgo === 'algo3' ? 'active' : ''}`}
-          onClick={() => setActiveAlgo('algo3')}
+          className={`tab-inner-item ${activeSubTab === 'algo3' ? 'active' : ''}`}
+          onClick={() => setActiveSubTab('algo3')}
         >
           Algoritmo 3
         </div>
       </div>
 
-      <div style={{ marginTop: '1rem' }}>
-        {renderAlgoContent()}
+      <div className="algo-content" style={{ animation: 'fadeIn 0.3s ease-out' }}>
+        {renderAlgo()}
       </div>
     </section>
   );
