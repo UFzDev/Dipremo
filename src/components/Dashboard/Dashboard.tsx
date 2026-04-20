@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { type ESPData, type ConnectionStatus } from '../../lib/connection'
 import { RMSEngine, type RMSData } from '../../lib/algorithms/RMSEngine'
 import { FFTEngine, type FFTData } from '../../lib/algorithms/FFTEngine'
+import { IntegrationEngine, type VelocityRMSData } from '../../lib/algorithms/IntegrationEngine'
 
 // ... (Sub-componentes)
 import Sidebar from './Sidebar'
@@ -44,6 +45,10 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
   const fftRef = useRef<FFTData | null>(null);
   const [displayFft, setDisplayFft] = useState<FFTData | null>(null);
 
+  // 4. Estado Velocidad ISO (Integración)
+  const isoRef = useRef<VelocityRMSData | null>(null);
+  const [displayIso, setDisplayIso] = useState<VelocityRMSData | null>(null);
+
   // Gestión de entrada de datos (Velocidad de Sensor)
   useEffect(() => {
     if (data) {
@@ -61,6 +66,12 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
       if (fftResult) {
         fftRef.current = fftResult;
       }
+
+      // D. Integración Numérica ISO
+      const isoResult = IntegrationEngine.addSample(data);
+      if (isoResult) {
+        isoRef.current = isoResult;
+      }
     }
   }, [data]);
 
@@ -71,6 +82,9 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
       setDisplayRawHistory(rawBufferRef.current);
       if (fftRef.current) {
         setDisplayFft(fftRef.current);
+      }
+      if (isoRef.current) {
+        setDisplayIso(isoRef.current);
       }
     }, 100); 
 
@@ -93,7 +107,7 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
       case 'overview':
         return <OverviewView />;
       case 'charts':
-        return <ChartsView data={data} history={displayHistory} fftData={displayFft} />;
+        return <ChartsView data={data} history={displayHistory} fftData={displayFft} isoData={displayIso} />;
       case 'history':
         return <HistoryView history={displayHistory} />;
       case 'math':

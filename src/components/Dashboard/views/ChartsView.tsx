@@ -1,16 +1,19 @@
 import VibrationChart from './charts/VibrationChart'
 import RMSChart from './charts/RMSChart'
 import FFTChart from './charts/FFTChart'
+import ISO10816Chart from './charts/ISO10816Chart'
 import { type ESPData } from '../../../lib/connection'
 import { type FFTData } from '../../../lib/algorithms/FFTEngine'
+import { type VelocityRMSData } from '../../../lib/algorithms/IntegrationEngine'
 
 type ChartsViewProps = {
   data: ESPData | null;
   history: any[];
   fftData: FFTData | null;
+  isoData: VelocityRMSData | null;
 };
 
-function ChartsView({ data, history, fftData }: ChartsViewProps) {
+function ChartsView({ data, history, fftData, isoData }: ChartsViewProps) {
   return (
     <div className="charts-view" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', width: '100%', boxSizing: 'border-box' }}>
       <header style={{ gridColumn: '1 / span 3', marginBottom: '0.5rem' }}>
@@ -34,6 +37,11 @@ function ChartsView({ data, history, fftData }: ChartsViewProps) {
       {/* Gráfica Espectral FFT */}
       <div style={{ gridColumn: '1 / span 3' }}>
         <FFTChart data={fftData} />
+      </div>
+
+      {/* Termómetros de Velocidad (ISO 10816) */}
+      <div style={{ gridColumn: '1 / span 3', marginTop: '1rem' }}>
+        <ISO10816Chart data={isoData} />
       </div>
     </div>
   );

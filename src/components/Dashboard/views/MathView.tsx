@@ -5,6 +5,7 @@ import SensorReadingView from './algorithms/SensorReadingView'
 import NormalizationView from './algorithms/NormalizationView'
 import RMSView from './algorithms/RMSView'
 import FFTView from './algorithms/FFTView'
+import IntegrationView from './algorithms/IntegrationView'
 import { type ESPData } from '../../../lib/connection'
 import { type RMSData } from '../../../lib/algorithms/RMSEngine'
 
@@ -13,7 +14,7 @@ type MathViewProps = {
   rmsHistory: RMSData[];
 };
 
-type SubTab = 'reading' | 'normalization' | 'rms' | 'fft';
+type SubTab = 'reading' | 'normalization' | 'rms' | 'fft' | 'integration';
 
 function MathView({ rawHistory }: MathViewProps) {
   const [activeSubTab, setActiveSubTab] = useState<SubTab>('reading');
@@ -28,6 +29,8 @@ function MathView({ rawHistory }: MathViewProps) {
         return <RMSView />;
       case 'fft':
         return <FFTView />;
+      case 'integration':
+        return <IntegrationView />;
       default:
         return <SensorReadingView />;
     }
@@ -59,6 +62,12 @@ function MathView({ rawHistory }: MathViewProps) {
           onClick={() => setActiveSubTab('fft')}
         >
           Transformada FFT
+        </div>
+        <div 
+          className={`tab-inner-item ${activeSubTab === 'integration' ? 'active' : ''}`}
+          onClick={() => setActiveSubTab('integration')}
+        >
+          Velocidad ISO
         </div>
       </div>
 
