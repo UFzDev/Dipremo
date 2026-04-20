@@ -1,24 +1,24 @@
 function RMSView() {
   return (
-    <section className="engineering-report" style={{ animation: 'fadeIn 0.5s ease-out', maxWidth: '1000px', margin: '0 auto', textAlign: 'left', color: '#1a202c', fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <section className="engineering-report" >
       
       {/* Encabezado del Reporte */}
-      <header style={{ borderBottom: '3px solid #2d3748', paddingBottom: '2rem', marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '2.4rem', fontWeight: 800, margin: 0, letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
+      <header className="algo-header">
+        <h1 className="algo-title">
           ANÁLISIS DEL VALOR CUADRÁTICO MEDIO (RMS)
         </h1>
-        <p style={{ marginTop: '0.75rem', fontSize: '16px', fontWeight: 500, color: '#4a5568' }}>
+        <p className="algo-subtitle">
           Implementación de Métrica de Energía y Potencia en Vibración Mecánica
         </p>
       </header>
 
       {/* 1.- DEFINICIÓN Y FUNDAMENTO */}
-      <div className="report-section mb-12" style={{ marginBottom: '3rem' }}>
-        <h2 style={{ fontSize: '16px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#2b6cb0', borderLeft: '4px solid #2b6cb0', paddingLeft: '1rem', marginBottom: '1.5rem' }}>
+      <div className="algo-section">
+        <h2 className="algo-section-title">
           1.- ¿Qué es el Valor Cuadrático Medio (RMS)?
         </h2>
-        <div style={{ paddingLeft: '1.25rem' }}>
-          <p style={{ fontSize: '15px', lineHeight: '1.7', marginBottom: '1.5rem' }}>
+        <div className="algo-section-content">
+          <p className="algo-text">
             El RMS (Root Mean Square) es una medida estadística de la magnitud de una cantidad variable. En ingeniería, se utiliza para obtener un valor constante que represente la potencia o energía de una señal que cambia rápidamente en el tiempo.
           </p>
           
@@ -34,7 +34,7 @@ function RMSView() {
             position: 'relative'
           }}>
             {/* Ecuación Vectorial Profesional (SVG Precision) */}
-            <svg width="360" height="110" viewBox="0 0 360 110" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+            <svg width="360" height="110" viewBox="0 0 360 110" className="algo-math-svg">
               <defs>
                 <style>{`
                   .math-main { font-family: "Times New Roman", Times, serif; font-style: italic; font-size: 32px; fill: #1a202c; }
@@ -45,15 +45,15 @@ function RMSView() {
               
               {/* Parte Izquierda: X_RMS = */}
               <text x="10" y="60" className="math-main">X<tspan dy="10" className="math-sub">RMS</tspan></text>
-              <text x="100" y="60" className="math-main" style={{ fontStyle: 'normal' }}>=</text>
+              <text x="100" y="60" className="math-main" className="algo-math-normal">=</text>
               
               {/* Símbolo de la Raíz Cuadrada */}
               <path d="M140 55 L150 95 L175 15 L350 15" fill="none" stroke="#2d3748" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
               
               {/* Término de Fracción (1/N) */}
-              <text x="185" y="42" className="math-main" style={{ fontSize: '20px' }}>1</text>
+              <text x="185" y="42" className="math-main" className="algo-math-text-20">1</text>
               <line x1="182" y1="50" x2="205" y2="50" stroke="#2d3748" strokeWidth="2" />
-              <text x="185" y="75" className="math-main" style={{ fontSize: '20px' }}>N</text>
+              <text x="185" y="75" className="math-main" className="algo-math-text-20">N</text>
               
               {/* Símbolo de Sumatoria con límites perfectos */}
               <text x="220" y="63" className="math-symbol" style={{ fontSize: '50px', fontFamily: 'serif' }}>Σ</text>
@@ -61,7 +61,7 @@ function RMSView() {
               <text x="232" y="24" className="math-main" style={{ fontSize: '12px', fontStyle: 'normal' }}>N</text>
               
               {/* Variable y Exponente: x_i^2 */}
-              <text x="265" y="60" className="math-main">x<tspan dy="6" className="math-sub">i</tspan><tspan dy="-24" style={{ fontSize: '20px' }}>2</tspan></text>
+              <text x="265" y="60" className="math-main">x<tspan dy="6" className="math-sub">i</tspan><tspan dy="-24" className="algo-math-text-20">2</tspan></text>
             </svg>
           </div>
           
@@ -75,12 +75,12 @@ function RMSView() {
       </div>
 
       {/* 2.- IMPORTANCIA EN EL PROYECTO */}
-      <div className="report-section mb-12" style={{ marginBottom: '3rem' }}>
-        <h2 style={{ fontSize: '16px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#2b6cb0', borderLeft: '4px solid #2b6cb0', paddingLeft: '1rem', marginBottom: '1.5rem' }}>
+      <div className="algo-section">
+        <h2 className="algo-section-title">
           2.- Por qué es importante en el proyecto
         </h2>
-        <div style={{ paddingLeft: '1.25rem' }}>
-          <p style={{ fontSize: '15px', lineHeight: '1.7', marginBottom: '1.5rem' }}>
+        <div className="algo-section-content">
+          <p className="algo-text">
             La importancia del RMS radica en que es la métrica que representa fielmente el contenido energético de la señal.
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
@@ -102,14 +102,14 @@ function RMSView() {
 
       {/* 3.- CÓMO LO USAREMOS NOSOTROS */}
       <div className="report-section mb-12">
-        <h2 style={{ fontSize: '16px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#2b6cb0', borderLeft: '4px solid #2b6cb0', paddingLeft: '1rem', marginBottom: '1.5rem' }}>
+        <h2 className="algo-section-title">
           3.- Cómo lo usaremos nosotros
         </h2>
-        <div style={{ paddingLeft: '1.25rem' }}>
-          <p style={{ fontSize: '15px', lineHeight: '1.7', marginBottom: '1.5rem' }}>
+        <div className="algo-section-content">
+          <p className="algo-text">
             En el sistema de monitoreo, el RMS se aplica para tres funciones críticas:
           </p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
+          <div className="algo-list-grid">
             <div style={{ padding: '1.5rem', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
               <strong style={{ display: 'block', fontSize: '14px', marginBottom: '0.5rem', color: '#2d3748' }}>A. Determinación de la Severidad Vibratoria</strong>
               <div style={{ fontSize: '14px', color: '#4a5568' }}>Permite definir el estado de salud de la máquina. Un RMS elevado indica la presencia de problemas estructurales reales.</div>

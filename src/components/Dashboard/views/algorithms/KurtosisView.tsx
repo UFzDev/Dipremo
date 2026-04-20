@@ -1,24 +1,24 @@
 function KurtosisView() {
   return (
-    <section className="engineering-report" style={{ animation: 'fadeIn 0.5s ease-out', maxWidth: '1000px', margin: '0 auto', textAlign: 'left', color: '#1a202c', fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <section className="engineering-report" >
       
       {/* Encabezado del Reporte */}
-      <header style={{ borderBottom: '3px solid #2d3748', paddingBottom: '2rem', marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '2.4rem', fontWeight: 800, margin: 0, letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
+      <header className="algo-header">
+        <h1 className="algo-title">
           CUARTO MOMENTO ESTADÍSTICO (CURTOSIS)
         </h1>
-        <p style={{ marginTop: '0.75rem', fontSize: '16px', fontWeight: 500, color: '#4a5568' }}>
+        <p className="algo-subtitle">
           El "Espía Predictivo": Detección temprana de fallos en rodamientos e impactos mecánicos
         </p>
       </header>
 
       {/* 1.- FUNDAMENTO MATEMÁTICO */}
-      <div className="report-section mb-12" style={{ marginBottom: '3rem' }}>
-        <h2 style={{ fontSize: '16px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#8b5cf6', borderLeft: '4px solid #8b5cf6', paddingLeft: '1rem', marginBottom: '1.5rem' }}>
+      <div className="algo-section">
+        <h2 className="algo-section-title">
           1.- ¿Qué es la Curtosis?
         </h2>
-        <div style={{ paddingLeft: '1.25rem' }}>
-          <p style={{ fontSize: '15px', lineHeight: '1.7', marginBottom: '1.5rem' }}>
+        <div className="algo-section-content">
+          <p className="algo-text">
             Matemáticamente, es el cuarto momento estadístico de una señal. En términos mecánicos simples, <strong>mide qué tan "puntiaguda" o "esporádica"</strong> es la distribución de tus datos de aceleración frente a una distribución normal suave (Gaussiana de valor 3).
           </p>
           
@@ -31,7 +31,7 @@ function KurtosisView() {
             border: '1px solid #e2e8f0',
             boxShadow: 'inset 0 1px 4px 0 rgba(0,0,0,0.03)'
           }}>
-            <svg width="350" height="120" viewBox="0 0 350 120" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+            <svg width="350" height="120" viewBox="0 0 350 120" className="algo-math-svg">
               <defs>
                 <style>{`
                   .math-main { font-family: "Times New Roman", Times, serif; font-style: italic; font-size: 32px; fill: #1a202c; }
@@ -45,34 +45,34 @@ function KurtosisView() {
               <text x="55" y="70" className="math-op">=</text>
               
               {/* Numerador Σ (x_i - μ)^4 */}
-              <text x="120" y="45" className="math-op" style={{ fontSize: '26px' }}>Σ</text>
-              <text x="145" y="45" className="math-op" style={{ fontSize: '22px' }}>( x</text>
-              <text x="172" y="52" className="math-main" style={{ fontSize: '14px' }}>i</text>
-              <text x="185" y="45" className="math-op" style={{ fontSize: '22px' }}>-</text>
-              <text x="205" y="45" className="math-main" style={{ fontSize: '22px' }}>μ</text>
-              <text x="225" y="45" className="math-op" style={{ fontSize: '22px' }}>)</text>
+              <text x="120" y="45" className="math-op" className="algo-math-text-26">Σ</text>
+              <text x="145" y="45" className="math-op" className="algo-math-text-22">( x</text>
+              <text x="172" y="52" className="math-main" className="algo-math-text-14">i</text>
+              <text x="185" y="45" className="math-op" className="algo-math-text-22">-</text>
+              <text x="205" y="45" className="math-main" className="algo-math-text-22">μ</text>
+              <text x="225" y="45" className="math-op" className="algo-math-text-22">)</text>
               <text x="235" y="30" className="math-main" style={{ fontSize: '16px', fontStyle: 'normal' }}>4</text>
 
               <line x1="90" y1="65" x2="260" y2="65" stroke="#1a202c" strokeWidth="1.5" />
               
               {/* Denominador N * σ^4 */}
-              <text x="120" y="95" className="math-main" style={{ fontStyle: 'normal', fontSize: '24px' }}>N</text>
-              <text x="145" y="95" className="math-op" style={{ fontSize: '24px' }}>·</text>
-              <text x="165" y="95" className="math-main" style={{ fontSize: '24px' }}>σ</text>
+              <text x="120" y="95" className="math-main" className="algo-math-text-24 algo-math-normal">N</text>
+              <text x="145" y="95" className="math-op" className="algo-math-text-24">·</text>
+              <text x="165" y="95" className="math-main" className="algo-math-text-24">σ</text>
               <text x="180" y="80" className="math-main" style={{ fontSize: '16px', fontStyle: 'normal' }}>4</text>
             </svg>
           </div>
-          <p style={{ fontSize: '13px', color: '#64748b' }}>Donde <strong style={{color: '#1a202c'}}>x_i</strong> es cada muestra cruda de aceleración, <strong style={{color: '#1a202c'}}>μ</strong> es la media (cero natural), <strong style={{color: '#1a202c'}}>σ</strong> es la Desviación Estándar (aproximadamente el RMS en AC) y <strong style={{color: '#1a202c'}}>N</strong> es el tamaño del bloque computacional.</p>
+          <p className="algo-text-sm">Donde <strong style={{color: '#1a202c'}}>x_i</strong> es cada muestra cruda de aceleración, <strong style={{color: '#1a202c'}}>μ</strong> es la media (cero natural), <strong style={{color: '#1a202c'}}>σ</strong> es la Desviación Estándar (aproximadamente el RMS en AC) y <strong style={{color: '#1a202c'}}>N</strong> es el tamaño del bloque computacional.</p>
         </div>
       </div>
 
       {/* 2.- LA MAGIA VS RMS */}
-      <div className="report-section mb-12" style={{ marginBottom: '3rem' }}>
-        <h2 style={{ fontSize: '16px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#8b5cf6', borderLeft: '4px solid #8b5cf6', paddingLeft: '1rem', marginBottom: '1.5rem' }}>
+      <div className="algo-section">
+        <h2 className="algo-section-title">
           2.- ¿Por qué es el mejor espía industrial?
         </h2>
-        <div style={{ paddingLeft: '1.25rem' }}>
-          <p style={{ fontSize: '15px', lineHeight: '1.7', marginBottom: '1.5rem' }}>
+        <div className="algo-section-content">
+          <p className="algo-text">
             La magia pura de la curtosis radica en que es prácticamente <strong>insensible a los cambios masivos de RPM o carga pesada</strong> del motor, pero explota de dolor ante mínimos impactos metálicos como un rodamiento crujiendo.
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '1.5rem' }}>
@@ -94,22 +94,22 @@ function KurtosisView() {
 
       {/* 3.- EJECUCIÓN PRÁCTICA */}
       <div className="report-section mb-12">
-        <h2 style={{ fontSize: '16px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#8b5cf6', borderLeft: '4px solid #8b5cf6', paddingLeft: '1rem', marginBottom: '1.5rem' }}>
+        <h2 className="algo-section-title">
           3.- La Dinámica de la Salud Predictiva (El Tablero)
         </h2>
-        <div style={{ paddingLeft: '1.25rem' }}>
-          <p style={{ fontSize: '15px', lineHeight: '1.7', marginBottom: '1.5rem' }}>
+        <div className="algo-section-content">
+          <p className="algo-text">
             Nuestro motor captura bloques ininterrumpidos y exprime los valores <em>K</em> basándose en las leyes mundiales de predictibilidad de rodamientos de fricción:
           </p>
           
-          <div style={{ marginTop: '2rem', padding: '1.5rem', background: '#1e293b', borderRadius: '12px', border: '2px solid #334155' }}>
-             <h4 style={{ margin: '0 0 1rem 0', color: '#f8fafc', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div className="algo-card-dark">
+             <h4 className="algo-threshold-row mb-1">
                 <span style={{ color: '#a78bfa' }}>K=3.0</span> Estado de Salud Plena (Ruido Gausiano Natural)
              </h4>
-             <h4 style={{ margin: '0 0 1rem 0', color: '#fcd34d', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span style={{ color: '#fbbf24' }}>K=3.5</span> Alarma de Micro-fisuras incipientes (Warning)
+             <h4 className="algo-threshold-row mb-1">
+                <span className="text-amber">K=3.5</span> Alarma de Micro-fisuras incipientes (Warning)
              </h4>
-             <h4 style={{ margin: '0 0 0.5rem 0', color: '#fca5a5', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+             <h4 className="algo-threshold-row mb-0.5">
                 <span style={{ color: '#f87171' }}>K=10.0</span> Fallo Catastrófico del Balero / Impactos puros (Danger)
              </h4>
              <p style={{ margin: '1rem 0 0 0', fontSize: '13px', color: '#cbd5e1', lineHeight: '1.6', fontStyle: 'italic', borderTop: '1px solid #475569', paddingTop: '1rem' }}>

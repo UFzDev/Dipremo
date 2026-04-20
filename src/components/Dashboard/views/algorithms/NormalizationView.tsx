@@ -6,25 +6,25 @@ type NormalizationViewProps = {
 
 function NormalizationView({}: NormalizationViewProps) {
   return (
-    <section className="engineering-report" style={{ animation: 'fadeIn 0.5s ease-out', maxWidth: '1000px', margin: '0 auto', textAlign: 'left', color: '#1a202c', fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <section className="engineering-report" >
       
       {/* Encabezado del Reporte */}
       <header style={{ borderBottom: '3px solid #2d3748', paddingBottom: '2rem', marginBottom: '3rem' }}>
-        <h1 style={{ fontSize: '2.4rem', fontWeight: 800, margin: 0, letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
+        <h1 className="algo-title">
           ALGORITMO DE ZEROING (DC BLOCKER)
         </h1>
-        <p style={{ marginTop: '0.75rem', fontSize: '16px', fontWeight: 500, color: '#4a5568' }}>
+        <p className="algo-subtitle">
           Restador Dinámico de Gravedad y Orientación mediante Leaky Integrator
         </p>
       </header>
 
       {/* 1.- EL PROBLEMA DE LA GRAVEDAD */}
-      <div className="report-section mb-12" style={{ marginBottom: '3rem' }}>
-        <h2 style={{ fontSize: '16px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#2b6cb0', borderLeft: '4px solid #2b6cb0', paddingLeft: '1rem', marginBottom: '1.5rem' }}>
+      <div className="algo-section">
+        <h2 className="algo-section-title">
           1.- El Problema del Acelerómetro: Gravedad Estática (DC)
         </h2>
-        <div style={{ paddingLeft: '1.25rem' }}>
-          <p style={{ fontSize: '15px', lineHeight: '1.7', marginBottom: '1.5rem' }}>
+        <div className="algo-section-content">
+          <p className="algo-text">
             Cualquier acelerómetro (como el integrado en la placa) obedece a las leyes galileanas, reportando no solo la perturbación mecánica externa, sino también una fuerza invisible y constante: <strong>la Gravedad Terrestre (+1G / 9.8 m/s²)</strong>.
           </p>
           
@@ -41,12 +41,12 @@ function NormalizationView({}: NormalizationViewProps) {
       </div>
 
       {/* 2.- LA SOLUCIÓN INTELIGENTE */}
-      <div className="report-section mb-12" style={{ marginBottom: '3rem' }}>
-        <h2 style={{ fontSize: '16px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#2b6cb0', borderLeft: '4px solid #2b6cb0', paddingLeft: '1rem', marginBottom: '1.5rem' }}>
+      <div className="algo-section">
+        <h2 className="algo-section-title">
           2.- La Solución DC Blocker (Filtro Adaptativo)
         </h2>
-        <div style={{ paddingLeft: '1.25rem' }}>
-          <p style={{ fontSize: '15px', lineHeight: '1.7', marginBottom: '1.5rem' }}>
+        <div className="algo-section-content">
+          <p className="algo-text">
             El sistema DIPREMO aborda esto con un High-Pass DC Blocker implementado matemáticamente mediante un EMA (Exponential Moving Average o <em>Leaky Integrator</em>). Su objetivo es purificar las frecuencias basándose en un principio dicotómico simple:
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '1.5rem' }}>
@@ -70,11 +70,11 @@ function NormalizationView({}: NormalizationViewProps) {
 
       {/* 3.- CÓMO SE CALCULA */}
        <div className="report-section mb-12">
-        <h2 style={{ fontSize: '16px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#2b6cb0', borderLeft: '4px solid #2b6cb0', paddingLeft: '1rem', marginBottom: '1.5rem' }}>
+        <h2 className="algo-section-title">
           3.- Flujo Matemático de Normalización Activa
         </h2>
-        <div style={{ paddingLeft: '1.25rem' }}>
-          <p style={{ fontSize: '15px', lineHeight: '1.7', marginBottom: '1.5rem' }}>
+        <div className="algo-section-content">
+          <p className="algo-text">
             Operacionalmente, por cada ráfaga o milisegundo de información entrante, el microprocesador interno ejecuta dos fases de supresión simultáneas:  
           </p>
           <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', padding: '2rem', borderRadius: '12px' }}>

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import '../../../styles/algorithms.css'
 
 // Sub-vistas (Algoritmos)
 import SensorReadingView from './algorithms/SensorReadingView'

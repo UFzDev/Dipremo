@@ -1,24 +1,24 @@
 function IntegrationView() {
   return (
-    <section className="engineering-report" style={{ animation: 'fadeIn 0.5s ease-out', maxWidth: '1000px', margin: '0 auto', textAlign: 'left', color: '#1a202c', fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <section className="engineering-report" >
       
       {/* Encabezado del Reporte */}
-      <header style={{ borderBottom: '3px solid #2d3748', paddingBottom: '2rem', marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '2.4rem', fontWeight: 800, margin: 0, letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
+      <header className="algo-header">
+        <h1 className="algo-title">
           INTEGRACIÓN NUMÉRICA Y VELOCIDAD (ISO 10816)
         </h1>
-        <p style={{ marginTop: '0.75rem', fontSize: '16px', fontWeight: 500, color: '#4a5568' }}>
+        <p className="algo-subtitle">
           Conversión de Aceleración a Velocidad mediante la Regla del Trapezoide
         </p>
       </header>
 
       {/* 1.- FUNDAMENTO MATEMÁTICO */}
-      <div className="report-section mb-12" style={{ marginBottom: '3rem' }}>
-        <h2 style={{ fontSize: '16px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#2b6cb0', borderLeft: '4px solid #2b6cb0', paddingLeft: '1rem', marginBottom: '1.5rem' }}>
+      <div className="algo-section">
+        <h2 className="algo-section-title">
           1.- ¿Qué es el algoritmo de Integración Numérica?
         </h2>
-        <div style={{ paddingLeft: '1.25rem' }}>
-          <p style={{ fontSize: '15px', lineHeight: '1.7', marginBottom: '1.5rem' }}>
+        <div className="algo-section-content">
+          <p className="algo-text">
             Es el proceso matemático de convertir la señal de <strong>Aceleración (m/s²)</strong> que entrega el ADXL345 dictado en hardware, en una señal de <strong>Velocidad (mm/s)</strong>. En términos de cálculo diferencial puro, la velocidad es la integral de la aceleración respecto al tiempo:
           </p>
           
@@ -26,7 +26,7 @@ function IntegrationView() {
              v(t) = ∫ a(t) dt
           </div>
           
-          <p style={{ fontSize: '15px', lineHeight: '1.7', marginBottom: '1.5rem' }}>
+          <p className="algo-text">
             Dado que la arquitectura DIPREMO procesa data discreta fragmentada (puntos vectoriales en el JSON) y no un continuo, empleamos la táctica de cálculo conocida como la <strong>Regla del Trapezoide</strong>:
           </p>
 
@@ -39,7 +39,7 @@ function IntegrationView() {
             border: '1px solid #e2e8f0',
             boxShadow: 'inset 0 1px 4px 0 rgba(0,0,0,0.03)'
           }}>
-            <svg width="450" height="90" viewBox="0 0 450 90" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+            <svg width="450" height="90" viewBox="0 0 450 90" className="algo-math-svg">
               <defs>
                 <style>{`
                   .math-main { font-family: "Times New Roman", Times, serif; font-style: italic; font-size: 32px; fill: #1a202c; }
@@ -58,20 +58,20 @@ function IntegrationView() {
               <text x="170" y="65" className="math-paren">(</text>
               
               {/* Fracción a_n + a_{n-1} / 2 */}
-              <text x="195" y="35" className="math-main" style={{ fontSize: '24px' }}>a<tspan dy="8" className="math-sub" style={{ fontSize: '13px' }}>n</tspan></text>
-              <text x="230" y="35" className="math-op" style={{ fontSize: '24px' }}>+</text>
-              <text x="255" y="35" className="math-main" style={{ fontSize: '24px' }}>a<tspan dy="8" className="math-sub" style={{ fontSize: '13px' }}>n-1</tspan></text>
+              <text x="195" y="35" className="math-main" className="algo-math-text-24">a<tspan dy="8" className="math-sub" className="algo-math-text-13">n</tspan></text>
+              <text x="230" y="35" className="math-op" className="algo-math-text-24">+</text>
+              <text x="255" y="35" className="math-main" className="algo-math-text-24">a<tspan dy="8" className="math-sub" className="algo-math-text-13">n-1</tspan></text>
               
               <line x1="190" y1="45" x2="300" y2="45" stroke="#1a202c" strokeWidth="1.5" />
               
-              <text x="240" y="70" className="math-main" style={{ fontStyle: 'normal', fontSize: '24px' }}>2</text>
+              <text x="240" y="70" className="math-main" className="algo-math-text-24 algo-math-normal">2</text>
               
               {/* Paren Derecho */}
               <text x="310" y="65" className="math-paren">)</text>
 
               {/* * dt */}
               <text x="340" y="55" className="math-op">·</text>
-              <text x="365" y="55" className="math-main" style={{ fontStyle: 'normal' }}>Δ</text>
+              <text x="365" y="55" className="math-main" className="algo-math-normal">Δ</text>
               <text x="385" y="55" className="math-main">t</text>
             </svg>
           </div>
@@ -79,12 +79,12 @@ function IntegrationView() {
       </div>
 
       {/* 2.- IMPORTANCIA */}
-      <div className="report-section mb-12" style={{ marginBottom: '3rem' }}>
-        <h2 style={{ fontSize: '16px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#2b6cb0', borderLeft: '4px solid #2b6cb0', paddingLeft: '1rem', marginBottom: '1.5rem' }}>
+      <div className="algo-section">
+        <h2 className="algo-section-title">
           2.- ¿Por qué es importante en tu proyecto?
         </h2>
-        <div style={{ paddingLeft: '1.25rem' }}>
-          <p style={{ fontSize: '15px', lineHeight: '1.7', marginBottom: '1.5rem' }}>
+        <div className="algo-section-content">
+          <p className="algo-text">
             Esta componente es la piedra angular que cataloga a DIPREMO como un software de monitoreo "Profesional", respaldado por las métricas de fiabilidad ISO:
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '1.5rem' }}>
@@ -106,11 +106,11 @@ function IntegrationView() {
 
       {/* 3.- FLUJO DE APLICACIÓN */}
       <div className="report-section mb-12">
-        <h2 style={{ fontSize: '16px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#2b6cb0', borderLeft: '4px solid #2b6cb0', paddingLeft: '1rem', marginBottom: '1.5rem' }}>
+        <h2 className="algo-section-title">
           3.- ¿Cómo lo usamos? (Pipeline de Software)
         </h2>
-        <div style={{ paddingLeft: '1.25rem' }}>
-          <p style={{ fontSize: '15px', lineHeight: '1.7', marginBottom: '1.5rem' }}>
+        <div className="algo-section-content">
+          <p className="algo-text">
             Al delegar esto directamente en la PC, obtenemos integraciones de alta precisión en tiempo real de la siguiente manera operativa:
           </p>
           
@@ -142,8 +142,8 @@ function IntegrationView() {
 
           </div>
 
-          <div style={{ marginTop: '2rem', padding: '1.5rem', background: '#1e293b', borderRadius: '12px', border: '2px solid #334155' }}>
-             <h4 style={{ margin: '0 0 0.5rem 0', color: '#f8fafc', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div className="algo-card-dark">
+             <h4 className="algo-threshold-row mb-0.5">
                 <span style={{ color: '#38bdf8' }}>▶</span> Salida Visual Directa
              </h4>
              <p style={{ margin: 0, fontSize: '14px', color: '#cbd5e1', lineHeight: '1.6' }}>

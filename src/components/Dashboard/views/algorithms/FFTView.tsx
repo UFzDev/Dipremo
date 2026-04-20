@@ -1,25 +1,25 @@
 
 function FFTView() {
   return (
-    <section className="engineering-report" style={{ animation: 'fadeIn 0.5s ease-out', maxWidth: '1000px', margin: '0 auto', textAlign: 'left', color: '#1a202c', fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <section className="engineering-report" >
       
       {/* Encabezado del Reporte */}
-      <header style={{ borderBottom: '3px solid #2d3748', paddingBottom: '2rem', marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '2.4rem', fontWeight: 800, margin: 0, letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
+      <header className="algo-header">
+        <h1 className="algo-title">
           TRANSFORMADA RÁPIDA DE FOURIER (FFT)
         </h1>
-        <p style={{ marginTop: '0.75rem', fontSize: '16px', fontWeight: 500, color: '#4a5568' }}>
+        <p className="algo-subtitle">
           Análisis Espectral y Detección de Patrones Mecánicos en el Dominio de Frecuencia
         </p>
       </header>
 
       {/* 1.- FUNDAMENTO MATEMÁTICO */}
-      <div className="report-section mb-12" style={{ marginBottom: '3rem' }}>
-        <h2 style={{ fontSize: '16px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#2b6cb0', borderLeft: '4px solid #2b6cb0', paddingLeft: '1rem', marginBottom: '1.5rem' }}>
+      <div className="algo-section">
+        <h2 className="algo-section-title">
           1.- Fundamento Matemático
         </h2>
-        <div style={{ paddingLeft: '1.25rem' }}>
-          <p style={{ fontSize: '15px', lineHeight: '1.7', marginBottom: '1.5rem' }}>
+        <div className="algo-section-content">
+          <p className="algo-text">
             La <strong>FFT</strong> es un algoritmo optimizado para calcular la Transformada Discreta de Fourier (DFT). Su principio fundamental es que cualquier señal compleja en el tiempo (como el "ruido" de un motor) puede descomponerse en una suma de ondas senoidales simples de diferentes frecuencias, amplitudes y fases.
           </p>
           
@@ -29,16 +29,8 @@ function FFTView() {
             Para una serie de <strong style={{ fontFamily: 'serif', fontStyle: 'italic', fontSize: '16px' }}>N</strong> muestras de aceleración <strong style={{ fontFamily: 'serif', fontStyle: 'italic', fontSize: '16px' }}>x(n)</strong>, el espectro de frecuencias <strong style={{ fontFamily: 'serif', fontStyle: 'italic', fontSize: '16px' }}>X(k)</strong> se calcula mediante:
           </p>
 
-          <div style={{ 
-            padding: '3rem 2rem', 
-            background: '#ffffff', 
-            borderRadius: '12px', 
-            textAlign: 'center', 
-            marginBottom: '2rem', 
-            border: '1px solid #e2e8f0',
-            boxShadow: 'inset 0 1px 4px 0 rgba(0,0,0,0.03)'
-          }}>
-            <svg width="400" height="120" viewBox="0 0 400 120" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+          <div className="algo-math-box-lg">
+            <svg width="400" height="120" viewBox="0 0 400 120" className="algo-math-svg">
               <defs>
                 <style>{`
                   .math-main { font-family: "Times New Roman", Times, serif; font-style: italic; font-size: 32px; fill: #1a202c; }
@@ -66,9 +58,9 @@ function FFTView() {
               {/* -j */}
               <text x="290" y="35" className="math-exp">-j</text>
               {/* 2pi / N */}
-              <text x="316" y="27" className="math-main math-frac-num" style={{ fontStyle: 'normal' }}>2π</text>
+              <text x="316" y="27" className="math-main math-frac-num" className="algo-math-normal">2π</text>
               <line x1="312" y1="32" x2="336" y2="32" stroke="#1a202c" strokeWidth="1.5" />
-              <text x="316" y="48" className="math-main" style={{ fontSize: '16px' }}>N</text>
+              <text x="316" y="48" className="math-main" className="algo-math-text-16">N</text>
               {/* kn */}
               <text x="340" y="35" className="math-exp">kn</text>
             </svg>
@@ -89,12 +81,12 @@ function FFTView() {
       </div>
 
       {/* 2.- IMPORTANCIA */}
-      <div className="report-section mb-12" style={{ marginBottom: '3rem' }}>
-        <h2 style={{ fontSize: '16px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#2b6cb0', borderLeft: '4px solid #2b6cb0', paddingLeft: '1rem', marginBottom: '1.5rem' }}>
+      <div className="algo-section">
+        <h2 className="algo-section-title">
           2.- ¿Por qué es importante?
         </h2>
-        <div style={{ paddingLeft: '1.25rem' }}>
-          <p style={{ fontSize: '15px', lineHeight: '1.7', marginBottom: '1.5rem' }}>
+        <div className="algo-section-content">
+          <p className="algo-text">
             En el mantenimiento industrial, el dominio del tiempo indica que la máquina vibra anormalmente, pero no indica <em>por qué</em>. La importancia de la FFT radica en la visualización de la <strong>Firma Vibratoria</strong>:
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
@@ -116,11 +108,11 @@ function FFTView() {
 
       {/* 3.- FLUJO DE APLICACIÓN */}
       <div className="report-section mb-12">
-        <h2 style={{ fontSize: '16px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#2b6cb0', borderLeft: '4px solid #2b6cb0', paddingLeft: '1rem', marginBottom: '1.5rem' }}>
+        <h2 className="algo-section-title">
           3.- ¿Cómo lo vamos a usar? (Flujo de Aplicación)
         </h2>
-        <div style={{ paddingLeft: '1.25rem' }}>
-          <p style={{ fontSize: '15px', lineHeight: '1.7', marginBottom: '1.5rem' }}>
+        <div className="algo-section-content">
+          <p className="algo-text">
             El análisis FFT sigue un proceso de cuatro etapas críticas para convertir datos crudos en un diagnóstico automático:
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: '1.5rem' }}>
