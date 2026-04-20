@@ -4,6 +4,7 @@ import { RMSEngine, type RMSData } from '../../lib/algorithms/RMSEngine'
 import { FFTEngine, type FFTData } from '../../lib/algorithms/FFTEngine'
 import { IntegrationEngine, type VelocityRMSData } from '../../lib/algorithms/IntegrationEngine'
 import { KurtosisEngine, type KurtosisData } from '../../lib/algorithms/KurtosisEngine'
+import { SkewnessEngine, type SkewnessData } from '../../lib/algorithms/SkewnessEngine'
 
 // ... (Sub-componentes)
 import Sidebar from './Sidebar'
@@ -54,6 +55,10 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
   const kurtosisRef = useRef<KurtosisData | null>(null);
   const [displayKurtosis, setDisplayKurtosis] = useState<KurtosisData | null>(null);
 
+  // 6. Estado Asimetría (Skewness)
+  const skewnessRef = useRef<SkewnessData | null>(null);
+  const [displaySkewness, setDisplaySkewness] = useState<SkewnessData | null>(null);
+
   // Gestión de entrada de datos (Velocidad de Sensor)
   useEffect(() => {
     if (data) {
@@ -83,6 +88,12 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
       if (kurtosisResult) {
         kurtosisRef.current = kurtosisResult;
       }
+
+      // F. Detección de Aflojamiento Mecánico (Asimetría)
+      const skewnessResult = SkewnessEngine.addSample(data);
+      if (skewnessResult) {
+        skewnessRef.current = skewnessResult;
+      }
     }
   }, [data]);
 
@@ -99,6 +110,9 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
       }
       if (kurtosisRef.current) {
         setDisplayKurtosis(kurtosisRef.current);
+      }
+      if (skewnessRef.current) {
+        setDisplaySkewness(skewnessRef.current);
       }
     }, 100); 
 
@@ -121,7 +135,7 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
       case 'overview':
         return <OverviewView />;
       case 'charts':
-        return <ChartsView data={data} history={displayHistory} fftData={displayFft} isoData={displayIso} kurtosisData={displayKurtosis} />;
+        return <ChartsView data={data} history={displayHistory} fftData={displayFft} isoData={displayIso} kurtosisData={displayKurtosis} skewnessData={displaySkewness} />;
       case 'history':
         return <HistoryView history={displayHistory} />;
       case 'math':

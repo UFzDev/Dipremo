@@ -7,6 +7,7 @@ import RMSView from './algorithms/RMSView'
 import FFTView from './algorithms/FFTView'
 import IntegrationView from './algorithms/IntegrationView'
 import KurtosisView from './algorithms/KurtosisView'
+import SkewnessView from './algorithms/SkewnessView'
 import { type ESPData } from '../../../lib/connection'
 import { type RMSData } from '../../../lib/algorithms/RMSEngine'
 
@@ -15,7 +16,7 @@ type MathViewProps = {
   rmsHistory: RMSData[];
 };
 
-type SubTab = 'reading' | 'normalization' | 'rms' | 'fft' | 'integration' | 'kurtosis';
+type SubTab = 'reading' | 'normalization' | 'rms' | 'fft' | 'integration' | 'kurtosis' | 'skewness';
 
 function MathView({ rawHistory }: MathViewProps) {
   const [activeSubTab, setActiveSubTab] = useState<SubTab>('reading');
@@ -34,6 +35,8 @@ function MathView({ rawHistory }: MathViewProps) {
         return <IntegrationView />;
       case 'kurtosis':
         return <KurtosisView />;
+      case 'skewness':
+        return <SkewnessView />;
       default:
         return <SensorReadingView />;
     }
@@ -77,6 +80,12 @@ function MathView({ rawHistory }: MathViewProps) {
           onClick={() => setActiveSubTab('kurtosis')}
         >
           Curtosis
+        </div>
+        <div 
+          className={`tab-inner-item ${activeSubTab === 'skewness' ? 'active' : ''}`}
+          onClick={() => setActiveSubTab('skewness')}
+        >
+          Asimetría
         </div>
       </div>
 
