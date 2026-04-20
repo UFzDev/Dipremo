@@ -23,10 +23,10 @@ function FFTView() {
             La <strong>FFT</strong> es un algoritmo optimizado para calcular la Transformada Discreta de Fourier (DFT). Su principio fundamental es que cualquier señal compleja en el tiempo (como el "ruido" de un motor) puede descomponerse en una suma de ondas senoidales simples de diferentes frecuencias, amplitudes y fases.
           </p>
           
-          <h3 style={{ fontSize: '14px', fontWeight: 700, marginBottom: '1.5rem', color: '#4a5568' }}>La Ecuación de Base</h3>
+          <h3 className="algo-info-card-title">La Ecuación de Base</h3>
           
-          <p style={{ fontSize: '14px', marginBottom: '1.5rem' }}>
-            Para una serie de <strong style={{ fontFamily: 'serif', fontStyle: 'italic', fontSize: '16px' }}>N</strong> muestras de aceleración <strong style={{ fontFamily: 'serif', fontStyle: 'italic', fontSize: '16px' }}>x(n)</strong>, el espectro de frecuencias <strong style={{ fontFamily: 'serif', fontStyle: 'italic', fontSize: '16px' }}>X(k)</strong> se calcula mediante:
+          <p className="algo-text">
+            Para una serie de <strong>N</strong> muestras de aceleración <strong>x(n)</strong>, el espectro de frecuencias <strong>X(k)</strong> se calcula mediante:
           </p>
 
           <div className="algo-math-box-lg">
@@ -47,9 +47,9 @@ function FFTView() {
               <text x="95" y="70" className="math-op">=</text>
               
               {/* Sumatoria */}
-              <text x="140" y="75" className="math-symbol">∑</text>
-              <text x="145" y="105" className="math-main" style={{ fontSize: '14px', fontStyle: 'normal' }}>n=0</text>
-              <text x="140" y="25" className="math-main" style={{ fontSize: '14px', fontStyle: 'normal' }}>N-1</text>
+              <text x="140" y="75" className="math-symbol algo-math-text-50">∑</text>
+              <text x="145" y="105" className="math-main algo-math-text-14 algo-math-normal">n=0</text>
+              <text x="140" y="25" className="math-main algo-math-text-14 algo-math-normal">N-1</text>
               
               {/* Término x(n) * e^-j... */}
               <text x="190" y="70" className="math-main">x(n) · e</text>
@@ -58,24 +58,24 @@ function FFTView() {
               {/* -j */}
               <text x="290" y="35" className="math-exp">-j</text>
               {/* 2pi / N */}
-              <text x="316" y="27" className="math-main math-frac-num" className="algo-math-normal">2π</text>
+              <text x="316" y="27" className="math-main math-frac-num algo-math-normal">2π</text>
               <line x1="312" y1="32" x2="336" y2="32" stroke="#1a202c" strokeWidth="1.5" />
-              <text x="316" y="48" className="math-main" className="algo-math-text-16">N</text>
+              <text x="316" y="48" className="math-main algo-math-text-16">N</text>
               {/* kn */}
               <text x="340" y="35" className="math-exp">kn</text>
             </svg>
           </div>
           
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', fontSize: '14px', background: '#f8fafc', padding: '1.5rem', borderRadius: '8px', border: '1px solid #f1f5f9' }}>
-            <div><strong style={{ color: '#2b6cb0' }}>N:</strong> Número total de muestras (debe ser potencia de 2, como 1024 o 2048).</div>
-            <div><strong style={{ color: '#2b6cb0' }}>x(n):</strong> Valor de la aceleración en el dominio del tiempo.</div>
-            <div><strong style={{ color: '#2b6cb0' }}>X(k):</strong> Componente de la señal en la frecuencia determinada por <em>k</em>.</div>
-            <div><strong style={{ color: '#2b6cb0' }}>e<sup>-j...</sup>:</strong> Representa la rotación en el plano complejo, necesaria para extraer la fase y la amplitud.</div>
+          <div className="algo-info-grid algo-box-slate">
+            <div><strong className="text-blue-dark">N:</strong> Número total de muestras (debe ser potencia de 2, como 1024 o 2048).</div>
+            <div><strong className="text-blue-dark">x(n):</strong> Valor de la aceleración en el dominio del tiempo.</div>
+            <div><strong className="text-blue-dark">X(k):</strong> Componente de la señal en la frecuencia determinada por <em>k</em>.</div>
+            <div><strong className="text-blue-dark">e<sup>-j...</sup>:</strong> Representa la rotación en el plano complejo, necesaria para extraer la fase y la amplitud.</div>
           </div>
           
-          <h3 style={{ fontSize: '14px', fontWeight: 700, margin: '2rem 0 1rem 0', color: '#4a5568' }}>El Proceso de Optimización</h3>
-          <p style={{ fontSize: '14px', lineHeight: '1.8' }}>
-            La DFT original requiere <strong>N²</strong> operaciones. La FFT (algoritmo de Cooley-Tukey) reduce esto a <strong>N log₂ N</strong>. Para un bloque de 1024 datos, pasamos de 1,048,576 operaciones a solo 10,240. Esta eficiencia matemática es lo que permite que el análisis espectral ocurra en "tiempo real".
+          <h3 className="algo-info-card-title">El Proceso de Optimización</h3>
+          <p className="algo-text">
+            La DFT original requiere <strong>N<sup>2</sup></strong> operaciones. La FFT (algoritmo de Cooley-Tukey) reduce esto a <strong>N log<sub>2</sub> N</strong>. Para un bloque de 1024 datos, pasamos de 1,048,576 operaciones a solo 10,240. Esta eficiencia matemática es lo que permite que el análisis espectral ocurra en "tiempo real".
           </p>
         </div>
       </div>
@@ -89,18 +89,18 @@ function FFTView() {
           <p className="algo-text">
             En el mantenimiento industrial, el dominio del tiempo indica que la máquina vibra anormalmente, pero no indica <em>por qué</em>. La importancia de la FFT radica en la visualización de la <strong>Firma Vibratoria</strong>:
           </p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
-            <div style={{ padding: '1.25rem', background: '#fff1f2', borderRadius: '8px', border: '1px solid #ffe4e6' }}>
-              <div style={{ fontWeight: 800, marginBottom: '0.5rem', fontSize: '12px', color: '#e11d48' }}>AISLAMIENTO DE FALLAS</div>
-              <div style={{ fontSize: '13px', lineHeight: '1.5', color: '#4a5568' }}>Los problemas mecánicos no ocurren al azar; tienen "domicilios" fijos predecibles en el espectro de frecuencias analizado.</div>
+          <div className="algo-info-grid">
+            <div className="algo-box-danger">
+              <div className="algo-info-card-title">AISLAMIENTO DE FALLAS</div>
+              <p className="algo-info-card-desc">Los problemas mecánicos no ocurren al azar; tienen "domicilios" fijos predecibles en el espectro de frecuencias analizado.</p>
             </div>
-            <div style={{ padding: '1.25rem', background: '#f0fdf4', borderRadius: '8px', border: '1px solid #dcfce7' }}>
-              <div style={{ fontWeight: 800, marginBottom: '0.5rem', fontSize: '12px', color: '#16a34a' }}>DETECCIÓN PRECOZ</div>
-              <div style={{ fontSize: '13px', lineHeight: '1.5', color: '#4a5568' }}>Fallas incipientes (ej. rodamientos) generan señales muy débiles que el RMS omite, pero en la FFT saltan como picos aislados de alta frecuencia.</div>
+            <div className="algo-box-success">
+              <div className="algo-info-card-title">DETECCIÓN PRECOZ</div>
+              <p className="algo-info-card-desc">Fallas incipientes (ej. rodamientos) generan señales muy débiles que el RMS omite, pero en la FFT saltan como picos aislados de alta frecuencia.</p>
             </div>
-            <div style={{ padding: '1.25rem', background: '#fef3c7', borderRadius: '8px', border: '1px solid #fde68a' }}>
-              <div style={{ fontWeight: 800, marginBottom: '0.5rem', fontSize: '12px', color: '#d97706' }}>LIMPIEZA DE DATOS</div>
-              <div style={{ fontSize: '13px', lineHeight: '1.5', color: '#4a5568' }}>Permite ignorar el ruido eléctrico a 50/60Hz o vibraciones de fondo parásitas de otras máquinas que alteran la lectura del motor objetivo.</div>
+            <div className="algo-box-warning">
+              <div className="algo-info-card-title">LIMPIEZA DE DATOS</div>
+              <p className="algo-info-card-desc">Permite ignorar el ruido eléctrico a 50/60Hz o vibraciones de fondo parásitas de otras máquinas que alteran la lectura del motor objetivo.</p>
             </div>
           </div>
         </div>
@@ -115,54 +115,54 @@ function FFTView() {
           <p className="algo-text">
             El análisis FFT sigue un proceso de cuatro etapas críticas para convertir datos crudos en un diagnóstico automático:
           </p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: '1.5rem' }}>
+          <div className="algo-list-grid">
             
             {/* Stage A */}
-            <div style={{ padding: '1.5rem', background: '#ffffff', border: '1px solid #e2e8f0', borderLeft: '4px solid #8b5cf6', borderRadius: '8px' }}>
-              <strong style={{ fontSize: '14px', marginBottom: '0.5rem', color: '#2d3748', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span style={{ display: 'inline-block', width: '24px', height: '24px', background: '#8b5cf6', color: '#fff', borderRadius: '50%', textAlign: 'center', lineHeight: '24px', fontSize: '12px' }}>A</span>
+            <div className="algo-stage-card border-violet">
+              <strong className="algo-stage-header">
+                <span className="algo-stage-badge bg-violet">A</span>
                 Ventaneo (Windowing)
               </strong>
-              <div style={{ fontSize: '14px', color: '#4a5568', lineHeight: '1.6' }}>
+              <p className="algo-info-card-desc">
                 Antes de aplicar la fórmula, los datos se multiplican por una función (como la Ventana de Hanning). Esto es vital porque la FFT asume que la señal es infinita y periódica. El ventaneo suaviza los bordes para prevenir errores de "filtración espectral" (leakage).
-              </div>
+              </p>
             </div>
 
             {/* Stage B */}
-            <div style={{ padding: '1.5rem', background: '#ffffff', border: '1px solid #e2e8f0', borderLeft: '4px solid #3b82f6', borderRadius: '8px' }}>
-              <strong style={{ fontSize: '14px', marginBottom: '0.5rem', color: '#2d3748', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span style={{ display: 'inline-block', width: '24px', height: '24px', background: '#3b82f6', color: '#fff', borderRadius: '50%', textAlign: 'center', lineHeight: '24px', fontSize: '12px' }}>B</span>
+            <div className="algo-stage-card border-blue">
+              <strong className="algo-stage-header">
+                <span className="algo-stage-badge bg-blue">B</span>
                 Cálculo de Magnitud
               </strong>
-              <div style={{ fontSize: '14px', color: '#4a5568', lineHeight: '1.6' }}>
-                El resultado inicial son números complejos. Para la gráfica del espectro, obtenemos la Magnitud matemática calculando el módulo pitagórico: <strong style={{ fontFamily: 'monospace', background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px', letterSpacing: '0.05em' }}>|X(k)| = √(Re² + Im²)</strong>
-              </div>
+              <p className="algo-info-card-desc">
+                El resultado inicial son números complejos. Para la gráfica del espectro, obtenemos la Magnitud matemática calculando el módulo pitagórico: <code className="algo-code-box" style={{ padding: '2px 6px', display: 'inline', margin: 0 }}>|X(k)| = &(Re<sup>2</sup> + Im<sup>2</sup>)</code>
+              </p>
             </div>
 
             {/* Stage C */}
-            <div style={{ padding: '1.5rem', background: '#ffffff', border: '1px solid #e2e8f0', borderLeft: '4px solid #06b6d4', borderRadius: '8px' }}>
-              <strong style={{ fontSize: '14px', marginBottom: '0.5rem', color: '#2d3748', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span style={{ display: 'inline-block', width: '24px', height: '24px', background: '#06b6d4', color: '#fff', borderRadius: '50%', textAlign: 'center', lineHeight: '24px', fontSize: '12px' }}>C</span>
+            <div className="algo-stage-card border-cyan">
+              <strong className="algo-stage-header">
+                <span className="algo-stage-badge bg-cyan">C</span>
                 Mapeo de Frecuencias (Eje X)
               </strong>
-              <div style={{ fontSize: '14px', color: '#4a5568', lineHeight: '1.6' }}>
-                Cada "bin" del resultado corresponde a una frecuencia. La resolución <strong style={{ fontFamily: 'serif', fontStyle: 'italic' }}>Δf</strong> de la gráfica es <strong style={{ fontFamily: 'monospace', background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px' }}>Fs / N</strong>. Si procesamos con 1024 puntos a 1000 Hz, cada barra representará bloques miniatura de espectro de aproximadamente 0.97 Hz.
-              </div>
+              <p className="algo-info-card-desc">
+                Cada "bin" del resultado corresponde a una frecuencia. La resolución <strong>&Delta;f</strong> de la gráfica es <code className="algo-code-box" style={{ padding: '2px 6px', display: 'inline', margin: 0 }}>Fs / N</code>. Si procesamos con 1024 puntos a 1000 Hz, cada barra representará bloques miniatura de espectro de aproximadamente 0.97 Hz.
+              </p>
             </div>
 
             {/* Stage D */}
-            <div style={{ padding: '1.5rem', background: '#ffffff', border: '1px solid #e2e8f0', borderLeft: '4px solid #10b981', borderRadius: '8px' }}>
-              <strong style={{ fontSize: '14px', marginBottom: '0.5rem', color: '#2d3748', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span style={{ display: 'inline-block', width: '24px', height: '24px', background: '#10b981', color: '#fff', borderRadius: '50%', textAlign: 'center', lineHeight: '24px', fontSize: '12px' }}>D</span>
+            <div className="algo-stage-card border-emerald">
+              <strong className="algo-stage-header">
+                <span className="algo-stage-badge bg-emerald">D</span>
                 Identificación de Patrones
               </strong>
-              <div style={{ fontSize: '14px', color: '#4a5568', lineHeight: '1.6' }}>
+              <div className="algo-info-card-desc">
                 Finalmente, cruzamos los picos detectados con las cinemáticas mecánicas intrínsecas:
-                <ul style={{ marginTop: '0.75rem', paddingLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <li><strong style={{ color: '#0f172a' }}>Pico 1X (RPM):</strong> Fuerte indicador de desbalanceo de masa.</li>
-                  <li><strong style={{ color: '#0f172a' }}>Pico 2X:</strong> Probable desalineación de ejes u holladuras en poleas.</li>
-                  <li><strong style={{ color: '#0f172a' }}>Armónicos Múltiples (1X, 2X, 3X...):</strong> Común en estados de holgura mecánica estructural.</li>
-                  <li><strong style={{ color: '#0f172a' }}>Bandas de Alta Frecuencia ("Alfombras"):</strong> Fallas inminentes de fricción o estrés de materiales en rodamientos.</li>
+                <ul className="algo-list">
+                  <li><strong>Pico 1X (RPM):</strong> Fuerte indicador de desbalanceo de masa.</li>
+                  <li><strong>Pico 2X:</strong> Probable desalineación de ejes u holladuras en poleas.</li>
+                  <li><strong>Armónicos Múltiples (1X, 2X, 3X...):</strong> Común en estados de holgura mecánica estructural.</li>
+                  <li><strong>Bandas de Alta Frecuencia ("Alfombras"):</strong> Fallas inminentes de fricción o estrés de materiales en rodamientos.</li>
                 </ul>
               </div>
             </div>
@@ -171,12 +171,6 @@ function FFTView() {
         </div>
       </div>
 
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </section>
   );
 }

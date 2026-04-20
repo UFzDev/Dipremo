@@ -22,15 +22,7 @@ function KurtosisView() {
             Matemáticamente, es el cuarto momento estadístico de una señal. En términos mecánicos simples, <strong>mide qué tan "puntiaguda" o "esporádica"</strong> es la distribución de tus datos de aceleración frente a una distribución normal suave (Gaussiana de valor 3).
           </p>
           
-          <div style={{ 
-            padding: '2.5rem 2rem', 
-            background: '#ffffff', 
-            borderRadius: '12px', 
-            textAlign: 'center', 
-            marginBottom: '2rem', 
-            border: '1px solid #e2e8f0',
-            boxShadow: 'inset 0 1px 4px 0 rgba(0,0,0,0.03)'
-          }}>
+          <div className="algo-math-box-lg">
             <svg width="350" height="120" viewBox="0 0 350 120" className="algo-math-svg">
               <defs>
                 <style>{`
@@ -45,24 +37,24 @@ function KurtosisView() {
               <text x="55" y="70" className="math-op">=</text>
               
               {/* Numerador Σ (x_i - μ)^4 */}
-              <text x="120" y="45" className="math-op" className="algo-math-text-26">Σ</text>
-              <text x="145" y="45" className="math-op" className="algo-math-text-22">( x</text>
-              <text x="172" y="52" className="math-main" className="algo-math-text-14">i</text>
-              <text x="185" y="45" className="math-op" className="algo-math-text-22">-</text>
-              <text x="205" y="45" className="math-main" className="algo-math-text-22">μ</text>
-              <text x="225" y="45" className="math-op" className="algo-math-text-22">)</text>
+              <text x="120" y="45" className="math-op algo-math-text-26">Σ</text>
+              <text x="145" y="45" className="math-op algo-math-text-22">( x</text>
+              <text x="172" y="52" className="math-main algo-math-text-14">i</text>
+              <text x="185" y="45" className="math-op algo-math-text-22">-</text>
+              <text x="205" y="45" className="math-main algo-math-text-22">μ</text>
+              <text x="225" y="45" className="math-op algo-math-text-22">)</text>
               <text x="235" y="30" className="math-main" style={{ fontSize: '16px', fontStyle: 'normal' }}>4</text>
 
               <line x1="90" y1="65" x2="260" y2="65" stroke="#1a202c" strokeWidth="1.5" />
               
               {/* Denominador N * σ^4 */}
-              <text x="120" y="95" className="math-main" className="algo-math-text-24 algo-math-normal">N</text>
-              <text x="145" y="95" className="math-op" className="algo-math-text-24">·</text>
-              <text x="165" y="95" className="math-main" className="algo-math-text-24">σ</text>
+              <text x="120" y="95" className="math-main algo-math-text-24 algo-math-normal">N</text>
+              <text x="145" y="95" className="math-op algo-math-text-24">·</text>
+              <text x="165" y="95" className="math-main algo-math-text-24">σ</text>
               <text x="180" y="80" className="math-main" style={{ fontSize: '16px', fontStyle: 'normal' }}>4</text>
             </svg>
           </div>
-          <p className="algo-text-sm">Donde <strong style={{color: '#1a202c'}}>x_i</strong> es cada muestra cruda de aceleración, <strong style={{color: '#1a202c'}}>μ</strong> es la media (cero natural), <strong style={{color: '#1a202c'}}>σ</strong> es la Desviación Estándar (aproximadamente el RMS en AC) y <strong style={{color: '#1a202c'}}>N</strong> es el tamaño del bloque computacional.</p>
+          <p className="algo-text-sm">Donde <strong>x_i</strong> es cada muestra cruda de aceleración, <strong>μ</strong> es la media (cero natural), <strong>σ</strong> es la Desviación Estándar (aproximadamente el RMS en AC) y <strong>N</strong> es el tamaño del bloque computacional.</p>
         </div>
       </div>
 
@@ -75,45 +67,45 @@ function KurtosisView() {
           <p className="algo-text">
             La magia pura de la curtosis radica en que es prácticamente <strong>insensible a los cambios masivos de RPM o carga pesada</strong> del motor, pero explota de dolor ante mínimos impactos metálicos como un rodamiento crujiendo.
           </p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '1.5rem' }}>
-            <div style={{ padding: '1.5rem', background: '#fef2f2', borderRadius: '8px', border: '1px solid #fee2e2' }}>
-              <div style={{ fontWeight: 800, marginBottom: '0.5rem', fontSize: '13px', color: '#ef4444' }}>EL FALLO DEL RMS (ENGAÑO)</div>
-              <div style={{ fontSize: '14px', lineHeight: '1.6', color: '#4a5568' }}>
-                Cuando una bola de rodamiento tiene un <em>micro-pitting</em> (una fisura miniatura), choca metálicamente y genera picos violentos. Pero al ser tan cortos (milisegundos), al promediarse matemáticamente bajo raíz cuadrática, <strong>no tienen peso total para mover el RMS general</strong>. La gráfica de daños severos se verá absurdamente "Sana y Verde".
-              </div>
+          <div className="algo-info-grid">
+            <div className="algo-box-danger">
+              <div className="algo-info-card-title" style={{ color: 'inherit' }}>EL FALLO DEL RMS (ENGAÑO)</div>
+              <p className="algo-info-card-desc" style={{ color: 'inherit' }}>
+                Cuando una bola de rodamiento tiene un <strong>micro-pitting</strong> (una fisura miniatura), choca metálicamente y genera picos violentos. Pero al ser tan cortos (milisegundos), al promediarse matemáticamente bajo raíz cuadrática, <strong>no tienen peso total para mover el RMS general</strong>. La gráfica de daños severos se verá absurdamente "Sana y Verde".
+              </p>
             </div>
-            <div style={{ padding: '1.5rem', background: '#f5f3ff', borderRadius: '8px', border: '1px solid #ede9fe' }}>
-              <div style={{ fontWeight: 800, marginBottom: '0.5rem', fontSize: '13px', color: '#7c3aed' }}>LA EXPOSICIÓN DE LA CURTOSIS</div>
-              <div style={{ fontSize: '14px', lineHeight: '1.6', color: '#4a5568' }}>
-                Elevamos la ecuación a la <strong>cuarta potencia (x⁴)</strong>. Los temblores normales suaves ($~= 1$) se mantienen bajos ($1^4 = 1$), pero ese micro pico violento ($~= 10$) explota de inmediato ($10^4 = 10,000$). La campana matemática se deforma y grita la alerta en nuestro panel antes de que la máquina siquiera empiece a calentarse.
-              </div>
+            <div className="algo-box-warning">
+              <div className="algo-info-card-title" style={{ color: 'inherit' }}>LA EXPOSICI&Oacute;N DE LA CURTOSIS</div>
+              <p className="algo-info-card-desc" style={{ color: 'inherit' }}>
+                Elevamos la ecuaci&oacute;n a la <strong>cuarta potencia (x<sup>4</sup>)</strong>. Los temblores normales suaves (<strong>~= 1</strong>) se mantienen bajos (<strong>1<sup>4</sup> = 1</strong>), pero ese micro pico violento (<strong>~= 10</strong>) explota de inmediato (<strong>10<sup>4</sup> = 10,000</strong>). La campana matem&aacute;tica se deforma y grita la alerta en nuestro panel antes de que la m&aacute;quina siquiera empieza a calentarse.
+              </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 3.- EJECUCIÓN PRÁCTICA */}
+      {/* 3.- EJECUCI&Oacute;N PR&Aacute;CTICA */}
       <div className="report-section mb-12">
         <h2 className="algo-section-title">
-          3.- La Dinámica de la Salud Predictiva (El Tablero)
+          3.- La Din&aacute;mica de la Salud Predictiva (El Tablero)
         </h2>
         <div className="algo-section-content">
           <p className="algo-text">
-            Nuestro motor captura bloques ininterrumpidos y exprime los valores <em>K</em> basándose en las leyes mundiales de predictibilidad de rodamientos de fricción:
+            Nuestro motor captura bloques ininterrumpidos y exprime los valores <em>K</em> bas&aacute;ndose en las leyes mundiales de predictibilidad de rodamientos de fricci&oacute;n:
           </p>
           
           <div className="algo-card-dark">
              <h4 className="algo-threshold-row mb-1">
-                <span style={{ color: '#a78bfa' }}>K=3.0</span> Estado de Salud Plena (Ruido Gausiano Natural)
+                <span className="text-emerald">K=3.0</span> Estado de Salud Plena (Ruido Gausiano Natural)
              </h4>
              <h4 className="algo-threshold-row mb-1">
                 <span className="text-amber">K=3.5</span> Alarma de Micro-fisuras incipientes (Warning)
              </h4>
              <h4 className="algo-threshold-row mb-0.5">
-                <span style={{ color: '#f87171' }}>K=10.0</span> Fallo Catastrófico del Balero / Impactos puros (Danger)
+                <span className="text-rose">K=10.0</span> Fallo Catastr&oacute;fico del Balero / Impactos puros (Danger)
              </h4>
-             <p style={{ margin: '1rem 0 0 0', fontSize: '13px', color: '#cbd5e1', lineHeight: '1.6', fontStyle: 'italic', borderTop: '1px solid #475569', paddingTop: '1rem' }}>
-               "Todo este diagnóstico visual ahora subyace en la Pestaña Global de Gráficas de Máquina como un semáforo progresivo para tus operadores de mantenimiento, indicándoles: **'Tu máquina no vibra aún, pero su rodamiento ya se está pudriendo por dentro.'**"
+             <p className="algo-quote">
+                "Todo este diagn&oacute;stico visual ahora subyace en la Pesta&ntilde;a Global de Gr&aacute;ficas de M&aacute;quina como un sem&aacute;foro progresivo para tus operadores de mantenimiento, indic&aacute;ndoles: <strong>'Tu m&aacute;quina no vibra a&uacute;n, pero su rodamiento ya se est&aacute; pudriendo por dentro.'</strong>"
              </p>
           </div>
         </div>
