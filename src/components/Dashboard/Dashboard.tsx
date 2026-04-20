@@ -3,6 +3,7 @@ import { type ESPData, type ConnectionStatus } from '../../lib/connection'
 import { RMSEngine, type RMSData } from '../../lib/algorithms/RMSEngine'
 import { FFTEngine, type FFTData } from '../../lib/algorithms/FFTEngine'
 import { IntegrationEngine, type VelocityRMSData } from '../../lib/algorithms/IntegrationEngine'
+import { KurtosisEngine, type KurtosisData } from '../../lib/algorithms/KurtosisEngine'
 
 // ... (Sub-componentes)
 import Sidebar from './Sidebar'
@@ -49,6 +50,10 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
   const isoRef = useRef<VelocityRMSData | null>(null);
   const [displayIso, setDisplayIso] = useState<VelocityRMSData | null>(null);
 
+  // 5. Estado Curtosis
+  const kurtosisRef = useRef<KurtosisData | null>(null);
+  const [displayKurtosis, setDisplayKurtosis] = useState<KurtosisData | null>(null);
+
   // Gestión de entrada de datos (Velocidad de Sensor)
   useEffect(() => {
     if (data) {
@@ -72,6 +77,12 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
       if (isoResult) {
         isoRef.current = isoResult;
       }
+
+      // E. Detección de Daños de Rodamientos (Curtosis)
+      const kurtosisResult = KurtosisEngine.addSample(data);
+      if (kurtosisResult) {
+        kurtosisRef.current = kurtosisResult;
+      }
     }
   }, [data]);
 
@@ -85,6 +96,9 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
       }
       if (isoRef.current) {
         setDisplayIso(isoRef.current);
+      }
+      if (kurtosisRef.current) {
+        setDisplayKurtosis(kurtosisRef.current);
       }
     }, 100); 
 
@@ -107,7 +121,7 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
       case 'overview':
         return <OverviewView />;
       case 'charts':
-        return <ChartsView data={data} history={displayHistory} fftData={displayFft} isoData={displayIso} />;
+        return <ChartsView data={data} history={displayHistory} fftData={displayFft} isoData={displayIso} kurtosisData={displayKurtosis} />;
       case 'history':
         return <HistoryView history={displayHistory} />;
       case 'math':

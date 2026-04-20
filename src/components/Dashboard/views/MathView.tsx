@@ -6,6 +6,7 @@ import NormalizationView from './algorithms/NormalizationView'
 import RMSView from './algorithms/RMSView'
 import FFTView from './algorithms/FFTView'
 import IntegrationView from './algorithms/IntegrationView'
+import KurtosisView from './algorithms/KurtosisView'
 import { type ESPData } from '../../../lib/connection'
 import { type RMSData } from '../../../lib/algorithms/RMSEngine'
 
@@ -14,7 +15,7 @@ type MathViewProps = {
   rmsHistory: RMSData[];
 };
 
-type SubTab = 'reading' | 'normalization' | 'rms' | 'fft' | 'integration';
+type SubTab = 'reading' | 'normalization' | 'rms' | 'fft' | 'integration' | 'kurtosis';
 
 function MathView({ rawHistory }: MathViewProps) {
   const [activeSubTab, setActiveSubTab] = useState<SubTab>('reading');
@@ -31,6 +32,8 @@ function MathView({ rawHistory }: MathViewProps) {
         return <FFTView />;
       case 'integration':
         return <IntegrationView />;
+      case 'kurtosis':
+        return <KurtosisView />;
       default:
         return <SensorReadingView />;
     }
@@ -68,6 +71,12 @@ function MathView({ rawHistory }: MathViewProps) {
           onClick={() => setActiveSubTab('integration')}
         >
           Velocidad ISO
+        </div>
+        <div 
+          className={`tab-inner-item ${activeSubTab === 'kurtosis' ? 'active' : ''}`}
+          onClick={() => setActiveSubTab('kurtosis')}
+        >
+          Curtosis
         </div>
       </div>
 
