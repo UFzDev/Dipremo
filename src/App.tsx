@@ -19,7 +19,6 @@ function App() {
     setData(null)
   }
 
-  // Siempre renderizamos el Dashboard para una experiencia directa
   return (
     <Dashboard 
       data={data} 

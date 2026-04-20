@@ -5,6 +5,7 @@ import { FFTEngine, type FFTData } from '../../lib/algorithms/FFTEngine'
 import { IntegrationEngine, type VelocityRMSData } from '../../lib/algorithms/IntegrationEngine'
 import { KurtosisEngine, type KurtosisData } from '../../lib/algorithms/KurtosisEngine'
 import { SkewnessEngine, type SkewnessData } from '../../lib/algorithms/SkewnessEngine'
+import { ConnectionEngine, type ConnectionHealth } from '../../lib/algorithms/ConnectionEngine'
 
 // ... (Sub-componentes)
 import Sidebar from './Sidebar'
@@ -59,6 +60,10 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
   const skewnessRef = useRef<SkewnessData | null>(null);
   const [displaySkewness, setDisplaySkewness] = useState<SkewnessData | null>(null);
 
+  // 7. Estado Diagnóstico de Conexión
+  const healthRef = useRef<ConnectionHealth | null>(null);
+  const [displayHealth, setDisplayHealth] = useState<ConnectionHealth | null>(null);
+
   // Gestión de entrada de datos (Velocidad de Sensor)
   useEffect(() => {
     if (data) {
@@ -94,6 +99,9 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
       if (skewnessResult) {
         skewnessRef.current = skewnessResult;
       }
+
+      // G. Diagnóstico de Red (Cada muestra cuenta para detectar pérdida)
+      healthRef.current = ConnectionEngine.processSample(data);
     }
   }, [data]);
 
@@ -114,6 +122,9 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
       if (skewnessRef.current) {
         setDisplaySkewness(skewnessRef.current);
       }
+      if (healthRef.current) {
+        setDisplayHealth(healthRef.current);
+      }
     }, 100); 
 
     return () => clearInterval(timer);
@@ -133,7 +144,7 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
   const renderContent = () => {
     switch (activeTab) {
       case 'overview':
-        return <OverviewView />;
+        return <OverviewView data={data} health={displayHealth} />;
       case 'charts':
         return <ChartsView data={data} history={displayHistory} fftData={displayFft} isoData={displayIso} kurtosisData={displayKurtosis} skewnessData={displaySkewness} />;
       case 'history':
@@ -143,7 +154,7 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
       case 'raw':
         return <RawView data={data} />;
       default:
-        return <OverviewView />;
+        return <OverviewView data={data} health={displayHealth} />;
     }
   };
 
@@ -154,6 +165,7 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
         setActiveTab={setActiveTab} 
         data={data} 
         status={status}
+        health={displayHealth}
         onConnect={onConnect}
         onDisconnect={onDisconnect} 
       />

@@ -8,6 +8,7 @@ import FFTView from './algorithms/FFTView'
 import IntegrationView from './algorithms/IntegrationView'
 import KurtosisView from './algorithms/KurtosisView'
 import SkewnessView from './algorithms/SkewnessView'
+import ConnectionView from './algorithms/ConnectionView'
 import { type ESPData } from '../../../lib/connection'
 import { type RMSData } from '../../../lib/algorithms/RMSEngine'
 
@@ -16,7 +17,7 @@ type MathViewProps = {
   rmsHistory: RMSData[];
 };
 
-type SubTab = 'reading' | 'normalization' | 'rms' | 'fft' | 'integration' | 'kurtosis' | 'skewness';
+type SubTab = 'reading' | 'connection' | 'normalization' | 'rms' | 'fft' | 'integration' | 'kurtosis' | 'skewness';
 
 function MathView({ rawHistory }: MathViewProps) {
   const [activeSubTab, setActiveSubTab] = useState<SubTab>('reading');
@@ -37,6 +38,8 @@ function MathView({ rawHistory }: MathViewProps) {
         return <KurtosisView />;
       case 'skewness':
         return <SkewnessView />;
+      case 'connection':
+        return <ConnectionView />;
       default:
         return <SensorReadingView />;
     }
@@ -50,6 +53,12 @@ function MathView({ rawHistory }: MathViewProps) {
           onClick={() => setActiveSubTab('reading')}
         >
           Lectura del Sensor
+        </div>
+        <div 
+          className={`tab-inner-item ${activeSubTab === 'connection' ? 'active' : ''}`}
+          onClick={() => setActiveSubTab('connection')}
+        >
+          Diagnóstico Red
         </div>
         <div 
           className={`tab-inner-item ${activeSubTab === 'normalization' ? 'active' : ''}`}

@@ -1,15 +1,39 @@
 import { STATUS, type ESPData, type ConnectionStatus } from '../../lib/connection'
+import { type ConnectionHealth } from '../../lib/algorithms/ConnectionEngine'
 
 type SidebarProps = {
   activeTab: string;
   setActiveTab: (tab: any) => void;
   data: ESPData | null;
   status: ConnectionStatus;
+  health: ConnectionHealth | null;
   onConnect: () => void;
   onDisconnect: () => void;
 };
 
-function Sidebar({ activeTab, setActiveTab, data, status, onConnect, onDisconnect }: SidebarProps) {
+function SignalBars({ quality }: { quality: number }) {
+  const bars = [1, 2, 3, 4];
+  const activeBars = Math.ceil(quality / 25);
+  
+  return (
+    <div style={{ display: 'flex', alignItems: 'flex-end', gap: '2px', height: '14px' }}>
+      {bars.map((bar, i) => (
+        <div 
+          key={bar} 
+          style={{ 
+            width: '3px', 
+            height: `${(i + 1) * 25}%`, 
+            background: i < activeBars ? (quality > 50 ? '#10b981' : '#f59e0b') : '#e2e8f0',
+            borderRadius: '1px',
+            transition: 'background 0.3s ease'
+          }} 
+        />
+      ))}
+    </div>
+  );
+}
+
+function Sidebar({ activeTab, setActiveTab, data, status, health, onConnect, onDisconnect }: SidebarProps) {
   const isConnected = status === STATUS.CONNECTED;
   const isConnecting = status === STATUS.CONNECTING;
 
@@ -57,17 +81,25 @@ function Sidebar({ activeTab, setActiveTab, data, status, onConnect, onDisconnec
         <div className="label-sm" style={{ marginBottom: '0.5rem' }}>Dispositivo</div>
         
         {isConnected ? (
-          <>
+          <div style={{ marginBottom: '1.2rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+               <div style={{ fontSize: '11px', fontWeight: 700, color: '#10b981', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></div>
+                  CONECTADO
+               </div>
+               <SignalBars quality={health?.quality ?? 0} />
+            </div>
+            
             <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-main)', marginBottom: '0.25rem', wordBreak: 'break-all' }}>
-              ID: {data?.device_id || 'Conectado (Sin Datos)'}
+              ID: {data?.device_id || 'Cargando...'}
             </div>
-            <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginBottom: '1.2rem' }}>
-              Boot Count: {data?.boot_id ?? '--'}
+            <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>
+              Salud de Red: <span style={{ color: (health?.quality ?? 0) > 80 ? '#10b981' : '#f59e0b', fontWeight: 700 }}>{health?.quality ?? 0}%</span>
             </div>
-            <button className="btn btn-ghost w-full" onClick={onDisconnect} style={{ fontSize: '13px' }}>
+            <button className="btn btn-ghost w-full" onClick={onDisconnect} style={{ fontSize: '12px', padding: '0.4rem' }}>
               Desconectar
             </button>
-          </>
+          </div>
         ) : (
           <>
             <div style={{ fontSize: '11px', color: status === STATUS.ERROR ? 'var(--error)' : 'var(--text-muted)', marginBottom: '1.2rem', fontWeight: 500 }}>
