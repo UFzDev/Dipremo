@@ -4,6 +4,7 @@ import { useState } from 'react'
 import SensorReadingView from './algorithms/SensorReadingView'
 import NormalizationView from './algorithms/NormalizationView'
 import RMSView from './algorithms/RMSView'
+import FFTView from './algorithms/FFTView'
 import { type ESPData } from '../../../lib/connection'
 import { type RMSData } from '../../../lib/algorithms/RMSEngine'
 
@@ -12,7 +13,7 @@ type MathViewProps = {
   rmsHistory: RMSData[];
 };
 
-type SubTab = 'reading' | 'normalization' | 'rms';
+type SubTab = 'reading' | 'normalization' | 'rms' | 'fft';
 
 function MathView({ rawHistory }: MathViewProps) {
   const [activeSubTab, setActiveSubTab] = useState<SubTab>('reading');
@@ -25,6 +26,8 @@ function MathView({ rawHistory }: MathViewProps) {
         return <NormalizationView history={rawHistory} />;
       case 'rms':
         return <RMSView />;
+      case 'fft':
+        return <FFTView />;
       default:
         return <SensorReadingView />;
     }
@@ -50,6 +53,12 @@ function MathView({ rawHistory }: MathViewProps) {
           onClick={() => setActiveSubTab('rms')}
         >
           Análisis RMS
+        </div>
+        <div 
+          className={`tab-inner-item ${activeSubTab === 'fft' ? 'active' : ''}`}
+          onClick={() => setActiveSubTab('fft')}
+        >
+          Transformada FFT
         </div>
       </div>
 

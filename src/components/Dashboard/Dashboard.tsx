@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { type ESPData, type ConnectionStatus } from '../../lib/connection'
 import { RMSEngine, type RMSData } from '../../lib/algorithms/RMSEngine'
+import { FFTEngine, type FFTData } from '../../lib/algorithms/FFTEngine'
 
 // ... (Sub-componentes)
 import Sidebar from './Sidebar'
@@ -39,6 +40,10 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
   const [displayHistory, setDisplayHistory] = useState<RMSData[]>(historyRef.current);
   const [displayRawHistory, setDisplayRawHistory] = useState<ESPData[]>([]);
 
+  // 3. Estado FFT
+  const fftRef = useRef<FFTData | null>(null);
+  const [displayFft, setDisplayFft] = useState<FFTData | null>(null);
+
   // Gestión de entrada de datos (Velocidad de Sensor)
   useEffect(() => {
     if (data) {
@@ -50,6 +55,12 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
       if (rmsResult) {
         historyRef.current = [rmsResult, ...historyRef.current].slice(0, 5000);
       }
+
+      // C. Procesamiento Espectral (FFT)
+      const fftResult = FFTEngine.addSample(data);
+      if (fftResult) {
+        fftRef.current = fftResult;
+      }
     }
   }, [data]);
 
@@ -58,6 +69,9 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
     const timer = setInterval(() => {
       setDisplayHistory(historyRef.current);
       setDisplayRawHistory(rawBufferRef.current);
+      if (fftRef.current) {
+        setDisplayFft(fftRef.current);
+      }
     }, 100); 
 
     return () => clearInterval(timer);
@@ -79,7 +93,7 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
       case 'overview':
         return <OverviewView />;
       case 'charts':
-        return <ChartsView data={data} history={displayHistory} />;
+        return <ChartsView data={data} history={displayHistory} fftData={displayFft} />;
       case 'history':
         return <HistoryView history={displayHistory} />;
       case 'math':

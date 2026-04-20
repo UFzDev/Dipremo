@@ -1,13 +1,16 @@
 import VibrationChart from './charts/VibrationChart'
 import RMSChart from './charts/RMSChart'
+import FFTChart from './charts/FFTChart'
 import { type ESPData } from '../../../lib/connection'
+import { type FFTData } from '../../../lib/algorithms/FFTEngine'
 
 type ChartsViewProps = {
   data: ESPData | null;
   history: any[];
+  fftData: FFTData | null;
 };
 
-function ChartsView({ data, history }: ChartsViewProps) {
+function ChartsView({ data, history, fftData }: ChartsViewProps) {
   return (
     <div className="charts-view" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', width: '100%', boxSizing: 'border-box' }}>
       <header style={{ gridColumn: '1 / span 3', marginBottom: '0.5rem' }}>
@@ -26,6 +29,11 @@ function ChartsView({ data, history }: ChartsViewProps) {
       {/* Gráfica de Energía (Trend) - Ocupa todo el ancho */}
       <div style={{ gridColumn: '1 / span 3', marginTop: '1rem' }}>
         <RMSChart history={history} />
+      </div>
+
+      {/* Gráfica Espectral FFT */}
+      <div style={{ gridColumn: '1 / span 3' }}>
+        <FFTChart data={fftData} />
       </div>
     </div>
   );
