@@ -153,7 +153,17 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
   const renderContent = () => {
     switch (activeTab) {
       case 'overview':
-        return <OverviewView data={data} health={displayHealth} />;
+        return (
+          <OverviewView 
+            data={data} 
+            health={displayHealth}
+            rmsData={displayHistory[0] || null}
+            fftData={displayFft}
+            isoData={displayIso}
+            kurtosisData={displayKurtosis}
+            skewnessData={displaySkewness}
+          />
+        );
       case 'charts':
         return <ChartsView data={data} history={displayHistory} fftData={displayFft} isoData={displayIso} kurtosisData={displayKurtosis} skewnessData={displaySkewness} />;
       case 'history':
@@ -163,7 +173,17 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
       case 'raw':
         return <RawView data={data} />;
       default:
-        return <OverviewView data={data} health={displayHealth} />;
+        return (
+          <OverviewView 
+            data={data} 
+            health={displayHealth}
+            rmsData={displayHistory[0] || null}
+            fftData={displayFft}
+            isoData={displayIso}
+            kurtosisData={displayKurtosis}
+            skewnessData={displaySkewness}
+          />
+        );
     }
   };
 
