@@ -44,7 +44,7 @@ export class FFTEngine {
         magnitudeZ: magZ,
         magnitudeRes: magnitudeRes,
         bins: this.WINDOW_SIZE / 2,
-        sampleRateHz: sample.sample_rate_hz || 1000,
+        sampleRateHz: sample.sample_rate_hz || 100.0,
         timestamp: Date.now()
       };
 

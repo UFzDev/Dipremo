@@ -17,8 +17,15 @@ export class SkewnessEngine {
   private static bufferY: number[] = [];
   private static bufferZ: number[] = [];
 
-  // Filtro HPF interactivo (Idéntico a Curtosis, ~50Hz para ser aséptico al movimiento de manos)
-  private static readonly HPF_ALPHA = 0.75; 
+  // Filtro Pasa-Altas: Remueve movimientos lentos. 
+  // Calculamos Alpha dinámicamente basado en fs.
+  private static getHpfAlpha(fs: number): number {
+    const fc = Math.min(50.0, fs * 0.4); 
+    const rc = 1.0 / (2.0 * Math.PI * fc);
+    const dt = 1.0 / fs;
+    return rc / (rc + dt);
+  }
+
   private static filterX = 0;
   private static filterY = 0;
   private static filterZ = 0;
@@ -39,10 +46,13 @@ export class SkewnessEngine {
       return null;
     }
 
-    // Filtrado de bajas frecuencias (evitar engaños por balanceos de peso de la estructura)
-    this.filterX = this.HPF_ALPHA * (this.filterX + aClean.x - this.lastRawX);
-    this.filterY = this.HPF_ALPHA * (this.filterY + aClean.y - this.lastRawY);
-    this.filterZ = this.HPF_ALPHA * (this.filterZ + aClean.z - this.lastRawZ);
+    // Filtrado de bajas frecuencias
+    const fs = sample.sample_rate_hz || 100;
+    const alpha = this.getHpfAlpha(fs);
+
+    this.filterX = alpha * (this.filterX + aClean.x - this.lastRawX);
+    this.filterY = alpha * (this.filterY + aClean.y - this.lastRawY);
+    this.filterZ = alpha * (this.filterZ + aClean.z - this.lastRawZ);
 
     this.lastRawX = aClean.x;
     this.lastRawY = aClean.y;
@@ -58,7 +68,7 @@ export class SkewnessEngine {
         skewnessY: this.calculateSkewness(this.bufferY),
         skewnessZ: this.calculateSkewness(this.bufferZ),
         timestamp: Date.now(),
-        sampleRateHz: sample.sample_rate_hz || 1000
+        sampleRateHz: fs
       };
 
       // Vaciamos el pipeline para el siguiente diagnóstico

@@ -18,10 +18,13 @@ export class IntegrationEngine {
   private static readonly LSB_TO_MMS2 = 38.2459; 
   
   // NORMA ISO 10816 EXIGE FILTRAR BAJAS FRECUENCIAS (< 10 Hz)
-  // a Fs = 1000 Hz, un Alpha de 0.94 crea un filtro pasa-altas perfecto con f_c = ~10 Hz.
-  // Esto hace a la integral inmune a movimientos de mano (MACRO desplazamientos)
-  // y se enfoca en las vibraciones de motor (MICRO desplazamientos de alta frecuencia).
-  private static readonly LEAKY_ALPHA = 0.94; // Filtro Pasa-Altas ISO (10 Hz)
+  // Calculamos el Alpha dinámicamente: alpha = RC / (RC + dt)
+  private static getLeakyAlpha(fs: number): number {
+    const fc = 10.0; // Corte ISO en 10 Hz
+    const rc = 1.0 / (2.0 * Math.PI * fc);
+    const dt = 1.0 / fs;
+    return rc / (rc + dt);
+  }
 
   // Memoria estado Integración (Trapezoide)
   private static aOldX = 0;
@@ -55,16 +58,18 @@ export class IntegrationEngine {
       return null;
     }
 
-    // 3. Resolución Temporal (Delta T)
-    const dt = 1.0 / (sample.sample_rate_hz || 1000.0);
+    // 3. Resolución Temporal (Delta T) y Alpha Dinámico
+    const fs = sample.sample_rate_hz || 100.0;
+    const dt = 1.0 / fs;
+    const alpha = this.getLeakyAlpha(fs);
 
     // 4. Integración Numérica Adaptativa (Leaky Integrator)
-    // El "Leak" (0.98) multiplica el resultado en cada ciclo. Actúa como un
+    // El "Leak" (alpha) multiplica el resultado en cada ciclo. Actúa como un
     // resorte que jala la velocidad siempre de regreso a cero, matando 
-    // absolutamente la deriva a infinito (drift) en caso de sesgos permanentes miniatura.
-    this.vX = this.LEAKY_ALPHA * (this.vX + ((aCurrentX + this.aOldX) / 2.0) * dt);
-    this.vY = this.LEAKY_ALPHA * (this.vY + ((aCurrentY + this.aOldY) / 2.0) * dt);
-    this.vZ = this.LEAKY_ALPHA * (this.vZ + ((aCurrentZ + this.aOldZ) / 2.0) * dt);
+    // absolutamente la deriva a infinito (drift).
+    this.vX = alpha * (this.vX + ((aCurrentX + this.aOldX) / 2.0) * dt);
+    this.vY = alpha * (this.vY + ((aCurrentY + this.aOldY) / 2.0) * dt);
+    this.vZ = alpha * (this.vZ + ((aCurrentZ + this.aOldZ) / 2.0) * dt);
 
     // Actualizamos los "olds" para el siguiente ciclo
     this.aOldX = aCurrentX;
@@ -90,7 +95,7 @@ export class IntegrationEngine {
         vRmsZ: vRmsZ,
         vRmsRes: vRmsRes,
         timestamp: Date.now(),
-        sampleRateHz: sample.sample_rate_hz || 1000
+        sampleRateHz: sample.sample_rate_hz || 100
       };
 
       // Vaciado de pipeline

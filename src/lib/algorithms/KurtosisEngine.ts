@@ -11,7 +11,15 @@ export type KurtosisData = {
 
 export class KurtosisEngine {
   private static readonly WINDOW_SIZE = 512; // Cantidad estadística de muestras por bloque
-  private static readonly HPF_ALPHA = 0.75; // Filtro Pasa-Altas ultra agresivo (~50 Hz)
+  
+  // Filtro Pasa-Altas: Remueve movimientos lentos. 
+  // Calculamos Alpha dinámicamente basado en fs.
+  private static getHpfAlpha(fs: number): number {
+    const fc = Math.min(50.0, fs * 0.4); // Intentamos 50Hz, o 40% de fs para evitar Nyquist
+    const rc = 1.0 / (2.0 * Math.PI * fc);
+    const dt = 1.0 / fs;
+    return rc / (rc + dt);
+  }
 
   // Umbral de Actividad: Si la varianza es menor a este valor, consideramos que el sensor
   // está en reposo y el "ruido" es insignificante para el diagnóstico.
@@ -45,11 +53,12 @@ export class KurtosisEngine {
     }
 
     // Filtro Pasa-Altas Matemático (HPF: High-Pass Filter):
-    // Elimina de raíz las frecuencias lentas causadas por manos (< 50 Hz).
-    // Deja pasar únicamente impactos rápidos, secos y agudos de un rodamiento roto.
-    this.filterX = this.HPF_ALPHA * (this.filterX + aClean.x - this.lastRawX);
-    this.filterY = this.HPF_ALPHA * (this.filterY + aClean.y - this.lastRawY);
-    this.filterZ = this.HPF_ALPHA * (this.filterZ + aClean.z - this.lastRawZ);
+    const fs = sample.sample_rate_hz || 100;
+    const alpha = this.getHpfAlpha(fs);
+
+    this.filterX = alpha * (this.filterX + aClean.x - this.lastRawX);
+    this.filterY = alpha * (this.filterY + aClean.y - this.lastRawY);
+    this.filterZ = alpha * (this.filterZ + aClean.z - this.lastRawZ);
 
     this.lastRawX = aClean.x;
     this.lastRawY = aClean.y;
@@ -65,7 +74,7 @@ export class KurtosisEngine {
         kurtosisY: this.calculateKurtosis(this.bufferY),
         kurtosisZ: this.calculateKurtosis(this.bufferZ),
         timestamp: Date.now(),
-        sampleRateHz: sample.sample_rate_hz || 1000
+        sampleRateHz: fs
       };
 
       // Vaciamos el pipeline para el siguiente bloque diagnóstico

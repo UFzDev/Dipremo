@@ -94,7 +94,7 @@ function OverviewView({ data, health, rmsData, fftData, isoData, kurtosisData, s
      for(let i=0; i<bins.length; i++) {
        if(bins[i] > maxVal) { maxVal = bins[i]; maxIdx = i; }
      }
-     return maxIdx * (fftData.sampleRateHz / 256);
+     return maxIdx * (fftData.sampleRateHz / (fftData.magnitudeX.length * 2));
   };
 
   const f = (n: number | undefined) => n !== undefined ? n.toFixed(3) : '--';

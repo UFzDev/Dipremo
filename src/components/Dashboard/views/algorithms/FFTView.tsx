@@ -1,78 +1,71 @@
-
 type FFTViewProps = {
   motorRpm: number;
 };
 
 function FFTView({ motorRpm }: FFTViewProps) {
   return (
-    <section className="engineering-report" >
+    <section className="engineering-report">
       
       {/* Encabezado del Reporte */}
       <header className="algo-header">
         <h1 className="algo-title">
-          TRANSFORMADA RÁPIDA DE FOURIER (FFT)
+          TRANSFORMADA R&Aacute;PIDA DE FOURIER (FFT)
         </h1>
         <p className="algo-subtitle">
-          Análisis Espectral y Detección de Patrones Mecánicos en el Dominio de Frecuencia
+          An&aacute;lisis Espectral y Detecci&oacute;n de Patrones Mec&aacute;nicos a 100 Hz
         </p>
       </header>
 
-      {/* 1.- FUNDAMENTO MATEMÁTICO */}
-      <div className="algo-section">
-        <h2 className="algo-section-title">
-          1.- Fundamento Matemático
-        </h2>
-        <div className="algo-section-content">
-          <p className="algo-text">
-            La <strong>FFT</strong> es un algoritmo optimizado para calcular la Transformada Discreta de Fourier (DFT). Su principio fundamental es que cualquier señal compleja en el tiempo (como el "ruido" de un motor) puede descomponerse en una suma de ondas senoidales simples de diferentes frecuencias, amplitudes y fases.
-          </p>
-          
-          <h3 className="algo-info-card-title">La Ecuación de Base</h3>
-          
-          <p className="algo-text">
-            Para una serie de <strong>N</strong> muestras de aceleración <strong>x(n)</strong>, el espectro de frecuencias <strong>X(k)</strong> se calcula mediante:
-          </p>
+      <div className="algo-section-content">
+        <p className="algo-text-primary">
+          La <strong>FFT</strong> es un algoritmo optimizado para calcular la Transformada Discreta de Fourier (DFT). Su principio fundamental es que cualquier señal compleja en el tiempo (como el "ruido" de un motor) puede descomponerse en una suma de ondas senoidales simples de diferentes frecuencias, amplitudes y fases.
+        </p>
+        
+        <h3 className="algo-info-card-title">La Ecuación de Base</h3>
+        
+        <p className="algo-text">
+          Para una serie de <strong>N</strong> muestras de aceleración <strong>x(n)</strong>, el espectro de frecuencias <strong>X(k)</strong> se calcula mediante:
+        </p>
 
-          <div className="algo-math-box-lg">
-            <div className="math-container">
-              <span>X(k)</span>
-              <span className="math-op">=</span>
-              <div className="math-sum">
-                <span className="math-sum-limit">N-1</span>
-                <span className="math-sum-sym">&Sigma;</span>
-                <span className="math-sum-limit">n=0</span>
+        <div className="algo-math-box-lg">
+          <div className="math-container">
+            <span>X(k)</span>
+            <span className="math-op">=</span>
+            <div className="math-sum">
+              <span className="math-sum-limit">N-1</span>
+              <span className="math-sum-sym">&Sigma;</span>
+              <span className="math-sum-limit">n=0</span>
+            </div>
+            <span>x(n) &middot; e</span>
+            <div className="math-sup" style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', top: '-1em' }}>
+              <span>-j</span>
+              <div className="math-frac" style={{ fontSize: '0.7em' }}>
+                <span className="math-frac-num" style={{ borderBottomWidth: '1px' }}>2&pi;</span>
+                <span className="math-frac-den">N</span>
               </div>
-              <span>x(n) &middot; e</span>
-              <div className="math-sup" style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', top: '-1em' }}>
-                <span>-j</span>
-                <div className="math-frac" style={{ fontSize: '0.7em' }}>
-                  <span className="math-frac-num" style={{ borderBottomWidth: '1px' }}>2&pi;</span>
-                  <span className="math-frac-den">N</span>
-                </div>
-                <span>kn</span>
-              </div>
+              <span>kn</span>
             </div>
           </div>
-          
-          <div className="algo-info-grid algo-box-slate" style={{ marginTop: '1.5rem', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
-            <div><strong className="text-blue-dark">X(k):</strong> Magnitud de señal en frecuencia.</div>
-            <div><strong className="text-blue-dark">x(n):</strong> Valor de la muestra en tiempo n.</div>
-            <div><strong className="text-blue-dark">e:</strong> Base natural.</div>
-            <div><strong className="text-blue-dark">-j:</strong> Unidad imaginaria o rotación.</div>
-            <div><strong className="text-blue-dark">2&pi;/N:</strong> Resolución angular por muestra.</div>
-            <div><strong className="text-blue-dark">kn:</strong> Producto de índices de correlación.</div>
-          </div>
-          
-          <h3 className="algo-info-card-title" style={{ marginTop: '2rem' }}>El Proceso de Transformación</h3>
-          <p className="algo-text">
-            Matemáticamente, la FFT correlaciona la señal de tiempo con una serie de ondas complejas (senoidales). Si la señal "vibra" de forma similar a una de estas ondas, el resultado de la sumatoria explota en un <strong>Pico Espectral</strong>, indicando presencia de energía en esa frecuencia exacta.
-          </p>
-          
-          <h3 className="algo-info-card-title">El Proceso de Optimización</h3>
-          <p className="algo-text">
-            La DFT original requiere <strong>N<sup>2</sup></strong> operaciones. La FFT (algoritmo de Cooley-Tukey) reduce esto a <strong>N log<sub>2</sub> N</strong>. Para un bloque de 1024 datos, pasamos de 1,048,576 operaciones a solo 10,240. Esta eficiencia matemática es lo que permite que el análisis espectral ocurra en "tiempo real".
-          </p>
         </div>
+        
+        <div className="algo-info-grid algo-box-slate" style={{ marginTop: '1.5rem', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+          <div><strong className="text-blue-dark">X(k):</strong> Magnitud de señal en frecuencia.</div>
+          <div><strong className="text-blue-dark">x(n):</strong> Valor de la muestra en tiempo n.</div>
+          <div><strong className="text-blue-dark">e:</strong> Base natural.</div>
+          <div><strong className="text-blue-dark">-j:</strong> Unidad imaginaria o rotación.</div>
+          <div><strong className="text-blue-dark">2&pi;/N:</strong> Resolución angular por muestra.</div>
+          <div><strong className="text-blue-dark">kn:</strong> Producto de índices de correlación.</div>
+        </div>
+        
+        <h3 className="algo-info-card-title" style={{ marginTop: '2rem' }}>El Proceso de Transformación</h3>
+        <p className="algo-text">
+          Matemáticamente, la FFT correlaciona la señal de tiempo con una serie de ondas complejas (senoidales). Si la señal "vibra" de forma similar a una de estas ondas, el resultado de la sumatoria explota en un <strong>Pico Espectral</strong>, indicando presencia de energía en esa frecuencia exacta.
+        </p>
+        
+        <h3 className="algo-info-card-title">El Proceso de Optimización</h3>
+        <p className="algo-text">
+          La DFT original requiere <strong>N<sup>2</sup></strong> operaciones. La FFT (algoritmo de Cooley-Tukey) reduce esto a <strong>N log<sub>2</sub> N</strong>. Para un bloque de 1024 datos, pasamos de 1,048,576 operaciones a solo 10,240. Esta eficiencia matemática es lo que permite que el análisis espectral ocurra en "tiempo real".
+        </p>
       </div>
 
       {/* 2.- IMPORTANCIA */}
