@@ -31,9 +31,6 @@ function GaugeBar({ value, axisLabel }: { value: number; axisLabel: string }) {
       </div>
       {/* Marcadores de referencia */}
       <div style={{ position: 'relative', height: '10px', marginTop: '4px' }}>
-         <div style={{ position: 'absolute', left: `${(3.0/12)*100}%`, width: '2px', height: '100%', background: '#cbd5e1' }}></div>
-         <span style={{ position: 'absolute', left: `${(3.0/12)*100}%`, top: '10px', fontSize: '9px', color: '#94a3b8', transform: 'translateX(-50%)' }}>Base (3.0)</span>
-
          <div style={{ position: 'absolute', left: `${(3.5/12)*100}%`, width: '2px', height: '100%', background: '#fcd34d' }}></div>
          <span style={{ position: 'absolute', left: `${(3.5/12)*100}%`, top: '10px', fontSize: '9px', color: '#f59e0b', transform: 'translateX(-50%)' }}>Warn (3.5)</span>
 
