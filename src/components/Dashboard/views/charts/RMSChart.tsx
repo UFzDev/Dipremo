@@ -1,5 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { ChartEngine } from '../../../../lib/utils/chart-engine';
+import ChartFilters, { TRIAXIAL_WITH_RES } from './ChartFilters';
 
 type RMSChartProps = {
   history: any[];
@@ -8,31 +9,54 @@ type RMSChartProps = {
 
 function RMSChart({ history, height = 200 }: RMSChartProps) {
   const width = 800;
-  const WINDOW_SIZE = 100; // Mostraremos los últimos 100 puntos RMS (aprox 1.4 horas de tendencia)
+  const WINDOW_SIZE = 100;
+  
+  // Estado para filtros de ejes
+  const [activeKeys, setActiveKeys] = useState<Set<string>>(new Set(['x', 'y', 'z', 'res']));
+
+  const handleToggle = (key: string) => {
+    const next = new Set(activeKeys);
+    if (next.has(key)) next.delete(key);
+    else next.add(key);
+    setActiveKeys(next);
+  };
 
   // 1. Filtramos y preparamos los datos RMS
   const rmsData = useMemo(() => {
     return history
       .filter(p => p.isRMS)
       .slice(0, WINDOW_SIZE)
-      .reverse(); // De izquierda a derecha
+      .reverse();
   }, [history]);
 
-  // 2. Generamos puntos para los 3 ejes
+  // 2. Generamos puntos para los ejes visibles
   const axisPoints = useMemo(() => {
-    const scale = { min: 0, max: 256 }; // Rango esperado de energía RMS en LSB
+    // Calculamos el máximo real de los datos visibles para auto-scaling inteligente
+    const allVisibleValues = rmsData.flatMap(p => {
+      const vals = [];
+      if (activeKeys.has('x')) vals.push(p.x);
+      if (activeKeys.has('y')) vals.push(p.y);
+      if (activeKeys.has('z')) vals.push(p.z);
+      if (activeKeys.has('res')) vals.push(p.res);
+      return vals;
+    });
+
+    const maxVal = Math.max(...allVisibleValues, 10);
+    const scale = { min: 0, max: maxVal * 1.1 };
     
     return {
-      x: ChartEngine.generatePolylinePoints(rmsData.map(p => p.x), { width, height }, scale),
-      y: ChartEngine.generatePolylinePoints(rmsData.map(p => p.y), { width, height }, scale),
-      z: ChartEngine.generatePolylinePoints(rmsData.map(p => p.z), { width, height }, scale),
+      x: activeKeys.has('x') ? ChartEngine.generatePolylinePoints(rmsData.map(p => p.x), { width, height }, scale) : '',
+      y: activeKeys.has('y') ? ChartEngine.generatePolylinePoints(rmsData.map(p => p.y), { width, height }, scale) : '',
+      z: activeKeys.has('z') ? ChartEngine.generatePolylinePoints(rmsData.map(p => p.z), { width, height }, scale) : '',
+      res: activeKeys.has('res') ? ChartEngine.generatePolylinePoints(rmsData.map(p => p.res || 0), { width, height }, scale) : '',
+      max: scale.max
     };
-  }, [rmsData, height]);
+  }, [rmsData, height, activeKeys]);
 
   if (rmsData.length === 0) {
     return (
       <div className="rms-chart-container" style={{ 
-        height: height + 60, 
+        height: height + 80, 
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'center', 
@@ -48,32 +72,54 @@ function RMSChart({ history, height = 200 }: RMSChartProps) {
       }}>
         <div className="spinner" style={{ width: '20px', height: '20px', border: '2px solid #e2e8f0', borderTopColor: '#3b82f6', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
         Esperando estabilización de energía...
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
 
+  const latest = rmsData[rmsData.length - 1] || {};
+
   return (
-    <div className="rms-chart-container" style={{ position: 'relative', background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '1rem', marginBottom: '2rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', alignItems: 'center' }}>
-        <h4 style={{ margin: 0, fontSize: '12px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>Monitor de Tendencia Energética (3 Ejes)</h4>
-        <div style={{ display: 'flex', gap: '1rem', fontSize: '10px', fontWeight: 700 }}>
-          <span style={{ color: '#ef4444' }}>● Eje X</span>
-          <span style={{ color: '#10b981' }}>● Eje Y</span>
-          <span style={{ color: '#3b82f6' }}>● Eje Z</span>
+    <div className="rms-chart-container" style={{ position: 'relative', background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '1.25rem', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+        <div>
+          <h4 style={{ margin: 0, fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            Tendencia Energética (RMS)
+          </h4>
+          <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '2px' }}>Escala Automática: 0 - {axisPoints.max.toFixed(1)} LSB</div>
         </div>
+        
+        <ChartFilters axes={TRIAXIAL_WITH_RES} activeKeys={activeKeys} onToggle={handleToggle} />
       </div>
 
-      <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" style={{ overflow: 'visible' }}>
-        {/* Rejilla de Referencia */}
-        <line x1="0" y1={height/2} x2={width} y2={height/2} stroke="#f1f5f9" strokeWidth="1" />
-        <line x1="0" y1={height} x2={width} y2={height} stroke="#e2e8f0" strokeWidth="1" />
+      <div style={{ position: 'relative', paddingLeft: '35px' }}>
+        {/* Etiquetas de Eje Y (Escala) */}
+        <div style={{ position: 'absolute', left: 0, top: 0, height: height, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', fontSize: '9px', fontWeight: 700, color: '#94a3b8', textAlign: 'right', width: '30px' }}>
+          <span>{axisPoints.max.toFixed(0)}</span>
+          <span>{(axisPoints.max / 2).toFixed(0)}</span>
+          <span>0</span>
+        </div>
 
-        {/* Líneas de Tendencia */}
-        <polyline points={axisPoints.z} fill="none" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.6" />
-        <polyline points={axisPoints.y} fill="none" stroke="#10b981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.7" />
-        <polyline points={axisPoints.x} fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
+        <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" style={{ overflow: 'visible' }}>
+          {/* Rejilla de Referencia */}
+          <line x1="0" y1="0" x2={width} y2="0" stroke="#f8fafc" strokeWidth="1" />
+          <line x1="0" y1={height/2} x2={width} y2={height/2} stroke="#f8fafc" strokeWidth="1" />
+          <line x1="0" y1={height} x2={width} y2={height} stroke="#f1f5f9" strokeWidth="1" />
+
+          {/* Líneas de Tendencia */}
+          {activeKeys.has('res') && <polyline points={axisPoints.res} fill="none" stroke="#8b5cf6" strokeWidth="3" strokeDasharray="4 2" opacity="0.8" style={{ transition: 'all 0.3s' }} />}
+          {activeKeys.has('z') && <polyline points={axisPoints.z} fill="none" stroke="#3b82f6" strokeWidth="2" opacity="0.6" style={{ transition: 'all 0.3s' }} />}
+          {activeKeys.has('y') && <polyline points={axisPoints.y} fill="none" stroke="#10b981" strokeWidth="2" opacity="0.6" style={{ transition: 'all 0.3s' }} />}
+          {activeKeys.has('x') && <polyline points={axisPoints.x} fill="none" stroke="#ef4444" strokeWidth="2" style={{ transition: 'all 0.3s' }} />}
+        </svg>
+      </div>
+
+      {/* Valores Actuales */}
+      <div style={{ display: 'flex', gap: '1.5rem', marginTop: '1rem', padding: '0.75rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #f1f5f9' }}>
+         {activeKeys.has('x') && <div><span style={{ fontSize: '10px', color: '#64748b' }}>RMS X:</span> <strong style={{ color: '#ef4444' }}>{latest.x?.toFixed(2)}</strong></div>}
+         {activeKeys.has('y') && <div><span style={{ fontSize: '10px', color: '#64748b' }}>RMS Y:</span> <strong style={{ color: '#10b981' }}>{latest.y?.toFixed(2)}</strong></div>}
+         {activeKeys.has('z') && <div><span style={{ fontSize: '10px', color: '#64748b' }}>RMS Z:</span> <strong style={{ color: '#3b82f6' }}>{latest.z?.toFixed(2)}</strong></div>}
+         {activeKeys.has('res') && <div><span style={{ fontSize: '10px', color: '#64748b' }}>RESULTANTE:</span> <strong style={{ color: '#8b5cf6' }}>{latest.res?.toFixed(2)}</strong></div>}
+      </div>
     </div>
   );
 }

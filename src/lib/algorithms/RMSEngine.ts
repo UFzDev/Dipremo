@@ -5,6 +5,7 @@ export type RMSData = {
   x: number;
   y: number;
   z: number;
+  res: number;
   timestamp: number;
   diag: ESPData['diag'];
   sample_rate_hz: number;
@@ -30,10 +31,18 @@ export class RMSEngine {
     this.bufferZ.push(normalized.z);
 
     if (this.bufferX.length >= this.WINDOW_SIZE) {
+      const xRMS = this.calculateRMS(this.bufferX);
+      const yRMS = this.calculateRMS(this.bufferY);
+      const zRMS = this.calculateRMS(this.bufferZ);
+      
+      // Magnitud Resultante (Combinada) según ISO
+      const resultant = Math.sqrt((xRMS * xRMS) + (yRMS * yRMS) + (zRMS * zRMS));
+
       const rms: RMSData = {
-        x: this.calculateRMS(this.bufferX),
-        y: this.calculateRMS(this.bufferY),
-        z: this.calculateRMS(this.bufferZ),
+        x: xRMS,
+        y: yRMS,
+        z: zRMS,
+        res: resultant,
         timestamp: sample.uptime_ms || Date.now(),
         diag: sample.diag,
         sample_rate_hz: sample.sample_rate_hz,
@@ -56,7 +65,7 @@ export class RMSEngine {
    * Fórmula: sqrt( sum(ai^2) / N )
    */
   private static calculateRMS(values: number[]): number {
-    const sumSquares = values.reduce((sum, val) => sum + Math.pow(val, 2), 0);
+    const sumSquares = values.reduce((sum, val) => sum + (val * val), 0);
     return Math.sqrt(sumSquares / values.length);
   }
 }
