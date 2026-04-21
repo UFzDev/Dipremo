@@ -37,6 +37,34 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
   useEffect(() => {
     localStorage.setItem('dipremo_motor_rpm', motorRpm.toString());
   }, [motorRpm]);
+
+  // 0.1 Configuración Avanzada (Límites y Picos)
+  const [vibeLimits, setVibeLimits] = useState(() => {
+    const saved = localStorage.getItem('dipremo_vibe_limits');
+    return saved ? JSON.parse(saved) : { minX: -16, maxX: 16, minY: -16, maxY: 16, minZ: -16, maxZ: 16 };
+  });
+
+  const [rmsPeaks, setRmsPeaks] = useState(() => {
+    const saved = localStorage.getItem('dipremo_rms_peaks');
+    return saved ? JSON.parse(saved) : { x: 50, y: 50, z: 50, res: 80 };
+  });
+
+  const [fftRange, setFftRange] = useState(() => {
+    const saved = localStorage.getItem('dipremo_fft_range');
+    return saved ? JSON.parse(saved) : { minHz: 0, maxHz: 50 };
+  });
+
+  useEffect(() => {
+    localStorage.setItem('dipremo_vibe_limits', JSON.stringify(vibeLimits));
+  }, [vibeLimits]);
+
+  useEffect(() => {
+    localStorage.setItem('dipremo_rms_peaks', JSON.stringify(rmsPeaks));
+  }, [rmsPeaks]);
+
+  useEffect(() => {
+    localStorage.setItem('dipremo_fft_range', JSON.stringify(fftRange));
+  }, [fftRange]);
   
   // 1. Historial en memoria (solo para renderizado UI)
   const historyRef = useRef<RMSData[]>([]);
@@ -198,7 +226,14 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
       case 'raw':
         return <RawView data={data} />;
       case 'settings':
-        return <ConfigView motorRpm={motorRpm} setMotorRpm={setMotorRpm} />;
+        return (
+          <ConfigView 
+            motorRpm={motorRpm} setMotorRpm={setMotorRpm} 
+            vibeLimits={vibeLimits} setVibeLimits={setVibeLimits}
+            rmsPeaks={rmsPeaks} setRmsPeaks={setRmsPeaks}
+            fftRange={fftRange} setFftRange={setFftRange}
+          />
+        );
       default:
         return (
           <OverviewView 
