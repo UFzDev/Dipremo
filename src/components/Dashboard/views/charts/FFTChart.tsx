@@ -6,9 +6,10 @@ import ChartFilters, { TRIAXIAL_WITH_RES } from './ChartFilters';
 type FFTChartProps = {
   data: FFTData | null;
   height?: number;
+  motorRpm: number;
 };
 
-function FFTChart({ data, height = 280 }: FFTChartProps) {
+function FFTChart({ data, height = 280, motorRpm }: FFTChartProps) {
   const width = 800;
   
   // Estado para filtros de ejes
@@ -138,6 +139,31 @@ function FFTChart({ data, height = 280 }: FFTChartProps) {
             {activeKeys.has('z') && chartData.lines.z && <polyline points={chartData.lines.z} fill="none" stroke="#3b82f6" strokeWidth="2" opacity="0.6" strokeLinejoin="round" />}
             {activeKeys.has('y') && chartData.lines.y && <polyline points={chartData.lines.y} fill="none" stroke="#10b981" strokeWidth="2" opacity="0.6" strokeLinejoin="round" />}
             {activeKeys.has('x') && chartData.lines.x && <polyline points={chartData.lines.x} fill="none" stroke="#ef4444" strokeWidth="2" opacity="0.7" strokeLinejoin="round" />}
+
+            {/* Referencias Mecánicas (1X, 2X) */}
+            {motorRpm > 0 && (() => {
+              const f1X = motorRpm / 60;
+              const f2X = f1X * 2;
+              const maxFreq = data.sampleRateHz / 2;
+              const x1X = (f1X / maxFreq) * width;
+              const x2X = (f2X / maxFreq) * width;
+
+              return (
+                <g>
+                  {/* 1X Line */}
+                  <line x1={x1X} y1={0} x2={x1X} y2={height} stroke="#64748b" strokeWidth="1.5" strokeDasharray="4 2" opacity="0.8" />
+                  <text x={x1X + 4} y={20} fill="#64748b" fontSize="10" fontWeight="800">1X (Giro)</text>
+                  
+                  {/* 2X Line (Opcional, solo si está en rango) */}
+                  {f2X < maxFreq && (
+                    <>
+                      <line x1={x2X} y1={0} x2={x2X} y2={height} stroke="#94a3b8" strokeWidth="1" strokeDasharray="3 3" opacity="0.5" />
+                      <text x={x2X + 4} y={35} fill="#94a3b8" fontSize="9" fontWeight="700">2X</text>
+                    </>
+                  )}
+                </g>
+              );
+            })()}
           </svg>
         </div>
       </div>

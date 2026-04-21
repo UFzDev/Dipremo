@@ -17,9 +17,10 @@ type ChartsViewProps = {
   isoData: VelocityRMSData | null;
   kurtosisData: KurtosisData | null;
   skewnessData: SkewnessData | null;
+  motorRpm: number;
 };
 
-function ChartsView({ data, history, fftData, isoData, kurtosisData, skewnessData }: ChartsViewProps) {
+function ChartsView({ data, history, fftData, isoData, kurtosisData, skewnessData, motorRpm }: ChartsViewProps) {
   return (
     <div className="charts-view" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', width: '100%', boxSizing: 'border-box' }}>
       <header style={{ gridColumn: '1 / span 3', marginBottom: '0.5rem' }}>
@@ -42,7 +43,7 @@ function ChartsView({ data, history, fftData, isoData, kurtosisData, skewnessDat
 
       {/* Gráfica Espectral FFT */}
       <div style={{ gridColumn: '1 / span 3' }}>
-        <FFTChart data={fftData} />
+        <FFTChart data={fftData} motorRpm={motorRpm} />
       </div>
 
       {/* Indicadores Predictivos Múltiples (Bottom Row) */}

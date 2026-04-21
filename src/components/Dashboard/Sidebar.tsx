@@ -75,6 +75,13 @@ function Sidebar({ activeTab, setActiveTab, data, status, health, onConnect, onD
         >
           Consola JSON
         </div>
+        <div 
+          className={`nav-item ${activeTab === 'settings' ? 'active' : ''}`}
+          onClick={() => setActiveTab('settings')}
+          style={{ marginTop: 'auto', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}
+        >
+          Configuraci&oacute;n
+        </div>
       </nav>
 
       <div className="sidebar-footer">

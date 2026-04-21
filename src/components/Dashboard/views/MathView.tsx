@@ -16,11 +16,12 @@ import { type RMSData } from '../../../lib/algorithms/RMSEngine'
 type MathViewProps = {
   rawHistory: ESPData[];
   rmsHistory: RMSData[];
+  motorRpm: number;
 };
 
 type SubTab = 'reading' | 'connection' | 'normalization' | 'rms' | 'fft' | 'integration' | 'kurtosis' | 'skewness';
 
-function MathView({ rawHistory }: MathViewProps) {
+function MathView({ rawHistory, motorRpm }: MathViewProps) {
   const [activeSubTab, setActiveSubTab] = useState<SubTab>('reading');
 
   const renderAlgo = () => {
@@ -32,7 +33,7 @@ function MathView({ rawHistory }: MathViewProps) {
       case 'rms':
         return <RMSView />;
       case 'fft':
-        return <FFTView />;
+        return <FFTView motorRpm={motorRpm} />;
       case 'integration':
         return <IntegrationView />;
       case 'kurtosis':

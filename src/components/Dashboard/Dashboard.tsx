@@ -14,6 +14,7 @@ import ChartsView from './views/ChartsView'
 import HistoryView from './views/HistoryView'
 import MathView from './views/MathView'
 import RawView from './views/RawView'
+import ConfigView from './views/ConfigView'
 
 type DashboardProps = {
   data: ESPData | null;
@@ -22,10 +23,20 @@ type DashboardProps = {
   onDisconnect: () => void;
 };
 
-export type Tab = 'overview' | 'charts' | 'history' | 'math' | 'raw';
+export type Tab = 'overview' | 'charts' | 'history' | 'math' | 'raw' | 'settings';
 
 function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
   const [activeTab, setActiveTab] = useState<Tab>('overview');
+  
+  // 0. Configuración de Motor (Persistente)
+  const [motorRpm, setMotorRpm] = useState<number>(() => {
+    const saved = localStorage.getItem('dipremo_motor_rpm');
+    return saved ? parseInt(saved, 10) : 1800;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('dipremo_motor_rpm', motorRpm.toString());
+  }, [motorRpm]);
   
   // 1. Historial en memoria (solo para renderizado UI)
   const historyRef = useRef<RMSData[]>([]);
@@ -162,16 +173,29 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
             isoData={displayIso}
             kurtosisData={displayKurtosis}
             skewnessData={displaySkewness}
+            motorRpm={motorRpm}
           />
         );
       case 'charts':
-        return <ChartsView data={data} history={displayHistory} fftData={displayFft} isoData={displayIso} kurtosisData={displayKurtosis} skewnessData={displaySkewness} />;
+        return (
+          <ChartsView 
+            data={data} 
+            history={displayHistory} 
+            fftData={displayFft} 
+            isoData={displayIso} 
+            kurtosisData={displayKurtosis} 
+            skewnessData={displaySkewness} 
+            motorRpm={motorRpm}
+          />
+        );
       case 'history':
         return <HistoryView history={displayHistory} />;
       case 'math':
-        return <MathView rawHistory={displayRawHistory} rmsHistory={displayHistory} />;
+        return <MathView rawHistory={displayRawHistory} rmsHistory={displayHistory} motorRpm={motorRpm} />;
       case 'raw':
         return <RawView data={data} />;
+      case 'settings':
+        return <ConfigView motorRpm={motorRpm} setMotorRpm={setMotorRpm} />;
       default:
         return (
           <OverviewView 
@@ -182,6 +206,7 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
             isoData={displayIso}
             kurtosisData={displayKurtosis}
             skewnessData={displaySkewness}
+            motorRpm={motorRpm}
           />
         );
     }

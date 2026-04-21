@@ -5,7 +5,7 @@ function RMSView() {
       {/* Encabezado del Reporte */}
       <header className="algo-header">
         <h1 className="algo-title">
-          AN&Aacute;LISIS DEL VALOR CUADR&Aacute;TICO MEDIO (RMS)
+          VALOR CUADR&Aacute;TICO MEDIO (RMS)
         </h1>
         <p className="algo-subtitle">
           Implementaci&oacute;n de M&eacute;trica de Energ&iacute;a y Potencia en Vibraci&oacute;n Mec&aacute;nica
@@ -83,7 +83,7 @@ function RMSView() {
       {/* 3.- C&Oacute;MO LO USAREMOS NOSOTROS */}
       <div className="report-section mb-12">
         <h2 className="algo-section-title">
-          3.- C&Oacute;MO LO USAREMOS NOSOTROS
+          3.- C&Oacute;MO SE USA EN EL PROYECTO
         </h2>
         <div className="algo-section-content">
           <p className="algo-text">
@@ -99,7 +99,7 @@ function RMSView() {
               <p className="algo-info-card-desc">Acomoda umbrales l&oacute;gicos de operaci&oacute;n: Zonas de funcionamiento normal, alerta por incremento y peligro cr&iacute;tico.</p>
             </div>
             <div className="algo-stage-card">
-              <strong className="algo-info-card-title">C. An&aacute;lisis de Tendencias (Trend Analysis)</strong>
+              <strong className="algo-info-card-title">C. An&aacute;lisis de Tendencia</strong>
               <p className="algo-info-card-desc">Registra la evoluci&oacute;n temporal de la energ&iacute;a. Facilita la predicci&oacute;n de fallas mediante el seguimiento del incremento gradual de vibraci&oacute;n.</p>
             </div>
           </div>

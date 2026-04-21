@@ -1,5 +1,9 @@
 
-function FFTView() {
+type FFTViewProps = {
+  motorRpm: number;
+};
+
+function FFTView({ motorRpm }: FFTViewProps) {
   return (
     <section className="engineering-report" >
       
@@ -61,7 +65,7 @@ function FFTView() {
           
           <h3 className="algo-info-card-title" style={{ marginTop: '2rem' }}>El Proceso de Transformación</h3>
           <p className="algo-text">
-            Matemáticamente, la FFT correlaciona tu señal de tiempo con una serie de ondas complejas (senoidales). Si la señal "vibra" de forma similar a una de estas ondas, el resultado de la sumatoria explota en un <strong>Pico Espectral</strong>, indicando presencia de energía en esa frecuencia exacta.
+            Matemáticamente, la FFT correlaciona la señal de tiempo con una serie de ondas complejas (senoidales). Si la señal "vibra" de forma similar a una de estas ondas, el resultado de la sumatoria explota en un <strong>Pico Espectral</strong>, indicando presencia de energía en esa frecuencia exacta.
           </p>
           
           <h3 className="algo-info-card-title">El Proceso de Optimización</h3>
@@ -97,64 +101,47 @@ function FFTView() {
         </div>
       </div>
 
-      {/* 3.- FLUJO DE APLICACIÓN */}
+      {/* 3.- CÓMO SE USA EN EL PROYECTO */}
       <div className="report-section mb-12">
         <h2 className="algo-section-title">
-          3.- ¿Cómo lo vamos a usar? (Flujo de Aplicación)
+          3.- CÓMO SE USA EN EL PROYECTO
         </h2>
         <div className="algo-section-content">
           <p className="algo-text">
-            El análisis FFT sigue un proceso de cuatro etapas críticas para convertir datos crudos en un diagnóstico automático:
+            El análisis FFT es el cerebro detrás de tus diagnósticos. Sigue un pipeline de procesamiento de cuatro etapas para convertir vibración cruda en información accionable:
           </p>
+          
           <div className="algo-list-grid">
             
-            {/* Stage A */}
-            <div className="algo-stage-card border-violet">
-              <strong className="algo-stage-header">
-                <span className="algo-stage-badge bg-violet">A</span>
-                Ventaneo (Windowing)
-              </strong>
-              <p className="algo-info-card-desc">
-                Antes de aplicar la fórmula, los datos se multiplican por una función (como la Ventana de Hanning). Esto es vital porque la FFT asume que la señal es infinita y periódica. El ventaneo suaviza los bordes para prevenir errores de "filtración espectral" (leakage).
-              </p>
+            <div className="algo-num-step-card">
+              <div className="algo-num-step-badge bg-violet">1</div>
+              <div className="algo-num-step-content">
+                <strong className="algo-num-step-title">Preparación</strong>
+                <p className="algo-num-step-desc" >Antes del cálculo, suavizamos los bordes de la señal para evitar el "leakage" (fugas de energía). Esto garantiza que los picos en la gráfica sean reales y no errores matemáticos.</p>
+              </div>
             </div>
 
-            {/* Stage B */}
-            <div className="algo-stage-card border-blue">
-              <strong className="algo-stage-header">
-                <span className="algo-stage-badge bg-blue">B</span>
-                Cálculo de Magnitud
-              </strong>
-              <p className="algo-info-card-desc">
-                El resultado inicial son números complejos. Para la gráfica del espectro, obtenemos la Magnitud matemática calculando el módulo pitagórico: <code className="algo-code-box" style={{ padding: '2px 6px', display: 'inline', margin: 0 }}>|X(k)| = &(Re<sup>2</sup> + Im<sup>2</sup>)</code>
-              </p>
+            <div className="algo-num-step-card">
+              <div className="algo-num-step-badge bg-blue">2</div>
+              <div className="algo-num-step-content">
+                <strong className="algo-num-step-title">Transformación al Espectro</strong>
+                <p className="algo-num-step-desc">El motor descompone la señal compleja en un mapa de frecuencias. Aquí es donde descubrimos qué componentes (RPM, Poleas, Baleros) están aportando energía destructiva al motor.</p>
+              </div>
             </div>
 
-            {/* Stage C */}
-            <div className="algo-stage-card border-cyan">
-              <strong className="algo-stage-header">
-                <span className="algo-stage-badge bg-cyan">C</span>
-                Mapeo de Frecuencias (Eje X)
-              </strong>
-              <p className="algo-info-card-desc">
-                Cada "bin" del resultado corresponde a una frecuencia. La resolución <strong>&Delta;f</strong> de la gráfica es <code className="algo-code-box" style={{ padding: '2px 6px', display: 'inline', margin: 0 }}>Fs / N</code>. Si procesamos con 1024 puntos a 1000 Hz, cada barra representará bloques miniatura de espectro de aproximadamente 0.97 Hz.
-              </p>
+            <div className="algo-num-step-card">
+              <div className="algo-num-step-badge bg-cyan">3</div>
+              <div className="algo-num-step-content">
+                <strong className="algo-num-step-title">Mapeo de Frecuencias y Magnitud</strong>
+                <p className="algo-num-step-desc">Calculamos la magnitud real (energía) de cada pico. El sistema sitúa la <strong>Referencia 1X en {(motorRpm / 60).toFixed(1)} Hz</strong> (basado en tus {motorRpm} RPM) para una lectura físicamente precisa del estado del activo.</p>
+              </div>
             </div>
 
-            {/* Stage D */}
-            <div className="algo-stage-card border-emerald">
-              <strong className="algo-stage-header">
-                <span className="algo-stage-badge bg-emerald">D</span>
-                Identificación de Patrones
-              </strong>
-              <div className="algo-info-card-desc">
-                Finalmente, cruzamos los picos detectados con las cinemáticas mecánicas intrínsecas:
-                <ul className="algo-list">
-                  <li><strong>Pico 1X (RPM):</strong> Fuerte indicador de desbalanceo de masa.</li>
-                  <li><strong>Pico 2X:</strong> Probable desalineación de ejes u holladuras en poleas.</li>
-                  <li><strong>Armónicos Múltiples (1X, 2X, 3X...):</strong> Común en estados de holgura mecánica estructural.</li>
-                  <li><strong>Bandas de Alta Frecuencia ("Alfombras"):</strong> Fallas inminentes de fricción o estrés de materiales en rodamientos.</li>
-                </ul>
+            <div className="algo-num-step-card">
+              <div className="algo-num-step-badge bg-emerald">4</div>
+              <div className="algo-num-step-content">
+                <strong className="algo-num-step-title">Diagnóstico Industrial Automático</strong>
+                <p className="algo-num-step-desc">Finalmente, cruzamos los picos con las cinemáticas mecánicas: 1X para desbalanceo, 2X para desalineación y bandas de alta frecuencia para fallas inminentes de rodamientos.</p>
               </div>
             </div>
 
