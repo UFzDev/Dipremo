@@ -68,44 +68,45 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
 
   // Gestión de entrada de datos (Velocidad de Sensor)
   useEffect(() => {
-    if (data) {
-      // A. Buffer RAW (Volátil - Solo para Math/Normalization)
+    // A. Gatekeeper: Solo procesar si estamos conectados y hay data
+    if (data && status === STATUS.CONNECTED) {
+      // B. Buffer RAW (Volátil - Solo para Math/Normalization)
       rawBufferRef.current = [data, ...rawBufferRef.current].slice(0, 200);
 
-      // B. Procesamiento RMS (Persistente - Para Auditoría/Tendencia)
+      // C. Procesamiento RMS (Persistente - Para Auditoría/Tendencia)
       const rmsResult = RMSEngine.addSample(data);
       if (rmsResult) {
         historyRef.current = [rmsResult, ...historyRef.current].slice(0, 5000);
       }
 
-      // C. Procesamiento Espectral (FFT)
+      // D. Procesamiento Espectral (FFT)
       const fftResult = FFTEngine.addSample(data);
       if (fftResult) {
         fftRef.current = fftResult;
       }
 
-      // D. Integración Numérica ISO
+      // E. Integración Numérica ISO
       const isoResult = IntegrationEngine.addSample(data);
       if (isoResult) {
         isoRef.current = isoResult;
       }
 
-      // E. Detección de Daños de Rodamientos (Curtosis)
+      // F. Detección de Daños de Rodamientos (Curtosis)
       const kurtosisResult = KurtosisEngine.addSample(data);
       if (kurtosisResult) {
         kurtosisRef.current = kurtosisResult;
       }
 
-      // F. Detección de Aflojamiento Mecánico (Asimetría)
+      // G. Detección de Aflojamiento Mecánico (Asimetría)
       const skewnessResult = SkewnessEngine.addSample(data);
       if (skewnessResult) {
         skewnessRef.current = skewnessResult;
       }
 
-      // G. Diagnóstico de Red (Cada muestra cuenta para detectar pérdida)
+      // H. Diagnóstico de Red (Cada muestra cuenta para detectar pérdida)
       healthRef.current = ConnectionEngine.processSample(data);
     }
-  }, [data]);
+  }, [data, status]);
 
   // Motor de Actualización Visual (Throttle a 10Hz/100ms para estabilidad total)
   useEffect(() => {
@@ -135,23 +136,25 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
   // Motor de Logging Físico (CSV - Cada 10 segundos)
   useEffect(() => {
     const persistTimer = setInterval(() => {
-      // SOLO grabar si estamos conectados y hay datos reales
-      if (status !== STATUS.CONNECTED || !data) return;
-
+      // 1. Gatekeepers Estrictos
+      if (status !== STATUS.CONNECTED) return;
+      
+      const health = healthRef.current;
       const current = rawBufferRef.current[0];
-      if (!current) return; 
+      
+      // Solo grabar si hay calidad de señal mínima (> 10%)
+      if (!health || health.quality < 10 || !current) return; 
 
       const now = new Date().toISOString();
       const rms = historyRef.current[0];
       const kurt = kurtosisRef.current;
       const iso = isoRef.current;
-      const health = healthRef.current;
       
       const maxIso = Math.max(iso?.vRmsX ?? 0, iso?.vRmsY ?? 0, iso?.vRmsZ ?? 0);
       const f = (val: number | undefined) => (val || 0).toFixed(4);
 
-      // Ensamblaje estricto de las 10 columnas (sin estado de alarma)
-      const csvLine = `${now},${f(rms?.x)},${f(rms?.y)},${f(rms?.z)},${f(kurt?.kurtosisX)},${f(kurt?.kurtosisY)},${f(kurt?.kurtosisZ)},${f(maxIso)},${current.diag.temp_c.toFixed(1)},${health?.quality ?? 100}`;
+      // Ensamblaje estricto de las 10 columnas
+      const csvLine = `${now},${f(rms?.x)},${f(rms?.y)},${f(rms?.z)},${f(kurt?.kurtosisX)},${f(kurt?.kurtosisY)},${f(kurt?.kurtosisZ)},${f(maxIso)},${current.diag.temp_c.toFixed(1)},${health.quality}`;
       
       fetch('/api/history/append', { method: 'POST', body: csvLine })
         .catch(err => console.error("Error grabando en disco:", err));
@@ -159,7 +162,7 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
     }, 10000); 
 
     return () => clearInterval(persistTimer);
-  }, [status, data]); // Añpdir dependencias para reaccionar al estado de conexión
+  }, [status]); // Quitamos 'data' para evitar resets infinitos del timer
 
   const renderContent = () => {
     switch (activeTab) {

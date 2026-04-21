@@ -5,6 +5,27 @@ type RawViewProps = {
 };
 
 function RawView({ data }: RawViewProps) {
+  // Transformamos el objeto para la consola JSON según preferencias del usuario
+  const displayData = data ? {
+    id: data.device_id,
+    boot: data.boot_id,
+    sample: data.sample_id,
+    rate: data.sample_rate_hz,
+    uptime: data.uptime_ms,
+    delta: data.delta_ms,
+    axis: {
+      x: data.raw.x,
+      y: data.raw.y,
+      z: data.raw.z
+    },
+    diag: {
+      temp: data.diag.temp_c,
+      heap: data.diag.free_heap,
+      rssi: data.diag.rssi_dbm,
+      errors: data.diag.i2c_error_count
+    }
+  } : null;
+
   return (
     <section>
       <div className="mb-8">
@@ -19,7 +40,7 @@ function RawView({ data }: RawViewProps) {
           maxHeight: '200px', 
           overflowY: 'auto' 
         }}>
-          {JSON.stringify(data, null, 2)}
+          {JSON.stringify(displayData, null, 2)}
         </pre>
       </div>
 
@@ -51,19 +72,19 @@ function RawView({ data }: RawViewProps) {
       <div className="section-title">Conexión</div>
       <div className="grid-telemetry">
         <div className="card-mini">
-          <div className="label-sm">Device ID</div>
+          <div className="label-sm">id</div>
           <div style={{ fontWeight: 600, fontSize: '14px' }}>{data?.device_id || '--'}</div>
         </div>
         <div className="card-mini">
-          <div className="label-sm">Boot ID</div>
+          <div className="label-sm">boot</div>
           <div style={{ fontWeight: 700, fontSize: '18px' }}>{data?.boot_id ?? '--'}</div>
         </div>
         <div className="card-mini">
-          <div className="label-sm">WiFi RSSI</div>
+          <div className="label-sm">rssi</div>
           <div style={{ fontWeight: 700, fontSize: '18px', color: '#8b5cf6' }}>{data?.diag.rssi_dbm ?? '--'} dBm</div>
         </div>
         <div className="card-mini">
-          <div className="label-sm">Uptime</div>
+          <div className="label-sm">uptime</div>
           <div style={{ fontWeight: 700, fontSize: '18px' }}>{(data?.uptime_ms ? (data.uptime_ms / 1000).toFixed(1) : '--')} s</div>
         </div>
       </div>
@@ -72,15 +93,15 @@ function RawView({ data }: RawViewProps) {
       <div className="section-title">Parámetros de Muestreo</div>
       <div className="grid-telemetry">
         <div className="card-mini">
-          <div className="label-sm">Sample ID</div>
+          <div className="label-sm">sample</div>
           <div style={{ fontWeight: 700, fontSize: '18px' }}>{data?.sample_id?.toLocaleString() ?? '--'}</div>
         </div>
         <div className="card-mini">
-          <div className="label-sm">Sample Rate</div>
+          <div className="label-sm">rate</div>
           <div style={{ fontWeight: 700, fontSize: '18px', color: '#ec4899' }}>{data?.sample_rate_hz ?? '--'} Hz</div>
         </div>
         <div className="card-mini">
-          <div className="label-sm">Delta (Δt)</div>
+          <div className="label-sm">delta</div>
           <div style={{ fontWeight: 700, fontSize: '18px', color: '#f59e0b' }}>{data?.delta_ms.toFixed(2) ?? '--'} ms</div>
         </div>
       </div>
@@ -89,15 +110,15 @@ function RawView({ data }: RawViewProps) {
       <div className="section-title">Aceleración Cruda</div>
       <div className="grid-telemetry">
         <div className="card-mini">
-          <div className="label-sm">Eje X</div>
+          <div className="label-sm">axis_x</div>
           <div style={{ fontWeight: 800, fontSize: '22px', color: '#3b82f6' }}>{data?.raw.x ?? '--'}</div>
         </div>
         <div className="card-mini">
-          <div className="label-sm">Eje Y</div>
+          <div className="label-sm">axis_y</div>
           <div style={{ fontWeight: 800, fontSize: '22px', color: '#10b981' }}>{data?.raw.y ?? '--'}</div>
         </div>
         <div className="card-mini">
-          <div className="label-sm">Eje Z</div>
+          <div className="label-sm">axis_z</div>
           <div style={{ fontWeight: 800, fontSize: '22px', color: '#f97316' }}>{data?.raw.z ?? '--'}</div>
         </div>
       </div>
@@ -106,17 +127,17 @@ function RawView({ data }: RawViewProps) {
       <div className="section-title">Datos del Microcontrolador</div>
       <div className="grid-telemetry">
         <div className="card-mini">
-          <div className="label-sm">Temperatura</div>
+          <div className="label-sm">temp</div>
           <div style={{ fontWeight: 700, fontSize: '18px' }}>{data?.diag.temp_c.toFixed(1) ?? '--'} °C</div>
         </div>
         <div className="card-mini" style={{ opacity: data?.diag.i2c_error_count ? 1 : 0.5 }}>
-          <div className="label-sm">Errores I2C</div>
+          <div className="label-sm">errors</div>
           <div style={{ fontWeight: 700, fontSize: '18px', color: (data?.diag.i2c_error_count ?? 0) > 0 ? '#ef4444' : 'inherit' }}>
             {data?.diag.i2c_error_count ?? '--'}
           </div>
         </div>
         <div className="card-mini">
-          <div className="label-sm">Free Heap</div>
+          <div className="label-sm">heap</div>
           <div style={{ fontWeight: 700, fontSize: '16px' }}>{data?.diag.free_heap.toLocaleString() ?? '--'} B</div>
         </div>
       </div>

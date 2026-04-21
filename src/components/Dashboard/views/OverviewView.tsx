@@ -61,7 +61,6 @@ function DataRow({
 }
 
 function OverviewView({ data, health, rmsData, fftData, isoData, kurtosisData, skewnessData, motorRpm }: OverviewViewProps) {
-  const isDisconnected = !data;
 
   // --- LÓGICA DE MAPEO DE ESTADOS ---
 
@@ -111,10 +110,6 @@ function OverviewView({ data, health, rmsData, fftData, isoData, kurtosisData, s
         <div className="card-mini" style={{ padding: '1rem', background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
            <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 800, textTransform: 'uppercase' }}>Temperatura MCU</div>
            <div style={{ fontSize: '20px', fontWeight: 800, color: '#1e293b' }}>{data ? data.diag.temp_c.toFixed(1) : '--'}°C</div>
-        </div>
-        <div className="card-mini" style={{ padding: '1rem', background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-           <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 800, textTransform: 'uppercase' }}>Estado Link</div>
-           <div style={{ fontSize: '14px', fontWeight: 800, color: isDisconnected ? '#94a3b8' : '#10b981' }}>{isDisconnected ? 'DESCONECTADO' : 'LINK ACTIVO'}</div>
         </div>
         <div className="card-mini" style={{ padding: '1rem', background: '#f5f3ff', borderRadius: '8px', border: '1px solid #ddd6fe' }}>
            <div style={{ fontSize: '11px', color: '#7c3aed', fontWeight: 800, textTransform: 'uppercase' }}>Velocidad Motor</div>

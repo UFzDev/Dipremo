@@ -141,17 +141,22 @@ function HistoryView({}: HistoryViewProps) {
   // --- FILTRADO Y PAGINACIÓN ---
   const filteredHistory = useMemo(() => {
     return csvData.filter(row => {
+      // Para el timestamp (fecha), comparamos solo la parte YYYY-MM-DD si es un selector de fecha
+      const rowDateString = row.timestamp !== '--' ? new Date(row.timestamp).toISOString().split('T')[0] : '';
+      const dateMatch = !filters.timestamp || rowDateString === filters.timestamp;
+
+      // Para los campos numéricos, aplicamos coincidencia por prefijo (empezar con...)
       return (
-        (!filters.timestamp || row.timestamp.toLowerCase().includes(filters.timestamp.toLowerCase())) &&
-        (!filters.rmsX || row.rmsX.toLowerCase().includes(filters.rmsX.toLowerCase())) &&
-        (!filters.rmsY || row.rmsY.toLowerCase().includes(filters.rmsY.toLowerCase())) &&
-        (!filters.rmsZ || row.rmsZ.toLowerCase().includes(filters.rmsZ.toLowerCase())) &&
-        (!filters.kurtX || row.kurtX.toLowerCase().includes(filters.kurtX.toLowerCase())) &&
-        (!filters.kurtY || row.kurtY.toLowerCase().includes(filters.kurtY.toLowerCase())) &&
-        (!filters.kurtZ || row.kurtZ.toLowerCase().includes(filters.kurtZ.toLowerCase())) &&
-        (!filters.velIso || row.velIso.toLowerCase().includes(filters.velIso.toLowerCase())) &&
-        (!filters.temp || row.temp.toLowerCase().includes(filters.temp.toLowerCase())) &&
-        (!filters.health || row.health.toLowerCase().includes(filters.health.toLowerCase()))
+        dateMatch &&
+        (!filters.rmsX || row.rmsX.toLowerCase().startsWith(filters.rmsX.toLowerCase())) &&
+        (!filters.rmsY || row.rmsY.toLowerCase().startsWith(filters.rmsY.toLowerCase())) &&
+        (!filters.rmsZ || row.rmsZ.toLowerCase().startsWith(filters.rmsZ.toLowerCase())) &&
+        (!filters.kurtX || row.kurtX.toLowerCase().startsWith(filters.kurtX.toLowerCase())) &&
+        (!filters.kurtY || row.kurtY.toLowerCase().startsWith(filters.kurtY.toLowerCase())) &&
+        (!filters.kurtZ || row.kurtZ.toLowerCase().startsWith(filters.kurtZ.toLowerCase())) &&
+        (!filters.velIso || row.velIso.toLowerCase().startsWith(filters.velIso.toLowerCase())) &&
+        (!filters.temp || row.temp.toLowerCase().startsWith(filters.temp.toLowerCase())) &&
+        (!filters.health || row.health.toLowerCase().startsWith(filters.health.toLowerCase()))
       );
     });
   }, [csvData, filters]);
@@ -221,16 +226,16 @@ function HistoryView({}: HistoryViewProps) {
                 <th style={{ padding: '0.8rem 1rem' }}>CONEXIÓN</th>
               </tr>
               <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0', textAlign: 'left' }}>
-                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.timestamp} onChange={e => handleFilterChange('timestamp', e.target.value)} /></th>
-                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.rmsX} onChange={e => handleFilterChange('rmsX', e.target.value)} /></th>
-                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.rmsY} onChange={e => handleFilterChange('rmsY', e.target.value)} /></th>
-                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.rmsZ} onChange={e => handleFilterChange('rmsZ', e.target.value)} /></th>
-                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.kurtX} onChange={e => handleFilterChange('kurtX', e.target.value)} /></th>
-                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.kurtY} onChange={e => handleFilterChange('kurtY', e.target.value)} /></th>
-                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.kurtZ} onChange={e => handleFilterChange('kurtZ', e.target.value)} /></th>
-                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.velIso} onChange={e => handleFilterChange('velIso', e.target.value)} /></th>
-                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.temp} onChange={e => handleFilterChange('temp', e.target.value)} /></th>
-                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.health} onChange={e => handleFilterChange('health', e.target.value)} /></th>
+                <th style={{ padding: '0.4rem 0.5rem' }}><input type="date" style={filterInputStyle} value={filters.timestamp} onChange={e => handleFilterChange('timestamp', e.target.value)} /></th>
+                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Inicio..." style={filterInputStyle} value={filters.rmsX} onChange={e => handleFilterChange('rmsX', e.target.value)} /></th>
+                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Inicio..." style={filterInputStyle} value={filters.rmsY} onChange={e => handleFilterChange('rmsY', e.target.value)} /></th>
+                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Inicio..." style={filterInputStyle} value={filters.rmsZ} onChange={e => handleFilterChange('rmsZ', e.target.value)} /></th>
+                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Inicio..." style={filterInputStyle} value={filters.kurtX} onChange={e => handleFilterChange('kurtX', e.target.value)} /></th>
+                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Inicio..." style={filterInputStyle} value={filters.kurtY} onChange={e => handleFilterChange('kurtY', e.target.value)} /></th>
+                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Inicio..." style={filterInputStyle} value={filters.kurtZ} onChange={e => handleFilterChange('kurtZ', e.target.value)} /></th>
+                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Inicio..." style={filterInputStyle} value={filters.velIso} onChange={e => handleFilterChange('velIso', e.target.value)} /></th>
+                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Inicio..." style={filterInputStyle} value={filters.temp} onChange={e => handleFilterChange('temp', e.target.value)} /></th>
+                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Inicio..." style={filterInputStyle} value={filters.health} onChange={e => handleFilterChange('health', e.target.value)} /></th>
               </tr>
             </thead>
             <tbody>
