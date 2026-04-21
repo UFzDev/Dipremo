@@ -7,13 +7,20 @@ type ConfigViewProps = {
   setRmsPeaks: (val: any) => void;
   fftRange: { minHz: number; maxHz: number };
   setFftRange: (val: any) => void;
+  sessionPeaks: {
+    minX: number; maxX: number; minY: number; maxY: number; minZ: number; maxZ: number;
+    rmsX: number; rmsY: number; rmsZ: number; rmsRes: number;
+    maxFreqHz: number; maxFreqLSB: number;
+  };
+  onResetSessionPeaks: () => void;
 };
 
 function ConfigView({ 
   motorRpm, setMotorRpm, 
   vibeLimits, setVibeLimits,
   rmsPeaks, setRmsPeaks,
-  fftRange, setFftRange
+  fftRange, setFftRange,
+  sessionPeaks, onResetSessionPeaks
 }: ConfigViewProps) {
 
   const labelStyle: React.CSSProperties = { 
@@ -149,6 +156,88 @@ function ConfigView({
               <input type="number" value={rmsPeaks.res} onChange={(e) => setRmsPeaks({ ...rmsPeaks, res: parseFloat(e.target.value) || 0 })} style={inputStyle} />
             </div>
           </div>
+        </section>
+
+        {/* SECCIÓN 5: REFERENCIA DE SESIÓN (SOLO LECTURA) */}
+        <section style={{ gridColumn: '1 / -1', marginTop: '2rem', borderTop: '1px solid var(--border-subtle)', paddingTop: '2rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <h3 style={{ ...sectionTitleStyle, borderLeftColor: 'var(--success)', marginBottom: 0 }}>Valores M&aacute;ximos Le&iacute;dos (Sesi&oacute;n Actual)</h3>
+            <button 
+              onClick={onResetSessionPeaks}
+              style={{
+                padding: '0.5rem 1rem',
+                fontSize: '11px',
+                fontWeight: 800,
+                textTransform: 'uppercase',
+                background: '#f1f5f9',
+                border: '1px solid #e2e8f0',
+                borderRadius: '6px',
+                color: '#64748b',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.background = '#e2e8f0'}
+              onMouseOut={(e) => e.currentTarget.style.background = '#f1f5f9'}
+            >
+              Reiniciar Lecturas
+            </button>
+          </div>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
+            {/* Triaxial Peaks */}
+            <div className="algo-card-light" style={{ padding: '1rem', border: '1px solid var(--border-subtle)', borderRadius: '8px' }}>
+              <h4 style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 900, margin: '0 0 1rem 0', textTransform: 'uppercase' }}>Vibraci&oacute;n (Extremos)</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontFamily: '"JetBrains Mono", monospace', fontSize: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: 'var(--error)' }}>X</span>
+                  <span style={{ fontWeight: 700 }}>{sessionPeaks.minX.toFixed(0)} | {sessionPeaks.maxX.toFixed(0)}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: 'var(--success)' }}>Y</span>
+                  <span style={{ fontWeight: 700 }}>{sessionPeaks.minY.toFixed(0)} | {sessionPeaks.maxY.toFixed(0)}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: 'var(--primary)' }}>Z</span>
+                  <span style={{ fontWeight: 700 }}>{sessionPeaks.minZ.toFixed(0)} | {sessionPeaks.maxZ.toFixed(0)}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* RMS Peaks */}
+            <div className="algo-card-light" style={{ padding: '1rem', border: '1px solid var(--border-subtle)', borderRadius: '8px', gridColumn: 'span 2' }}>
+              <h4 style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 900, margin: '0 0 1rem 0', textTransform: 'uppercase' }}>Energ&iacute;a RMS (Picos de Sesi&oacute;n)</h4>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', fontFamily: '"JetBrains Mono", monospace' }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '9px', opacity: 0.5 }}>X</div>
+                  <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--error)' }}>{sessionPeaks.rmsX.toFixed(2)}</div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '9px', opacity: 0.5 }}>Y</div>
+                  <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--success)' }}>{sessionPeaks.rmsY.toFixed(2)}</div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '9px', opacity: 0.5 }}>Z</div>
+                  <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--primary)' }}>{sessionPeaks.rmsZ.toFixed(2)}</div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '9px', opacity: 0.5 }}>RES</div>
+                  <div style={{ fontSize: '18px', fontWeight: 800, color: '#8b5cf6' }}>{sessionPeaks.rmsRes.toFixed(2)}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* FFT Peak Frequency */}
+            <div className="algo-card-light" style={{ padding: '1rem', border: '1px solid var(--border-subtle)', borderRadius: '8px', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <h4 style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 900, margin: '0 0 1rem 0', textTransform: 'uppercase' }}>Frecuencia Pico</h4>
+              <div style={{ fontFamily: '"JetBrains Mono", monospace' }}>
+                <div style={{ fontSize: '24px', fontWeight: 900, color: 'var(--warning)' }}>{sessionPeaks.maxFreqHz.toFixed(1)}</div>
+                <div style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)' }}>HERTZ</div>
+              </div>
+            </div>
+          </div>
+          <p style={{ marginTop: '1.5rem', fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic', textAlign: 'center' }}>
+            * Estos valores representan el techo y piso absoluto detectado por el sensor. Úsalos como base para configurar tus límites operativos.
+          </p>
         </section>
 
       </div>

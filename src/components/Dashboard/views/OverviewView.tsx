@@ -15,6 +15,9 @@ type OverviewViewProps = {
   kurtosisData: KurtosisData | null;
   skewnessData: SkewnessData | null;
   motorRpm: number;
+  vibeLimits: { minX: number; maxX: number; minY: number; maxY: number; minZ: number; maxZ: number };
+  rmsPeaks: { x: number; y: number; z: number; res: number };
+  vibeData: { x: number; y: number; z: number };
 };
 
 /**
@@ -25,7 +28,8 @@ function DataRow({
   x, y, z, res, 
   unit = '', 
   isStatus = false,
-  getStyle = () => ({})
+  getStyle = () => ({}),
+  thresholds
 }: { 
   title: string, 
   x: string | number, 
@@ -34,7 +38,8 @@ function DataRow({
   res: string | number, 
   unit?: string,
   isStatus?: boolean,
-  getStyle?: (val: any) => React.CSSProperties
+  getStyle?: (val: any) => React.CSSProperties,
+  thresholds?: { x: number | string; y: number | string; z: number | string; res: number | string }
 }) {
   const cellStyle: React.CSSProperties = {
     flex: 1,
@@ -44,7 +49,17 @@ function DataRow({
     fontSize: isStatus ? '12px' : '14px',
     fontWeight: isStatus ? 800 : 700,
     fontFamily: isStatus ? 'inherit' : 'monospace',
-    color: 'var(--text-main)'
+    color: 'var(--text-main)',
+    position: 'relative'
+  };
+
+  const thresholdLabelStyle: React.CSSProperties = {
+    fontSize: '9px',
+    color: 'var(--text-muted)',
+    opacity: 0.6,
+    display: 'block',
+    marginTop: '2px',
+    fontWeight: 600
   };
 
   return (
@@ -52,15 +67,30 @@ function DataRow({
       <div style={{ width: '180px', padding: '0.75rem 1rem', fontSize: '12px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
         {title}
       </div>
-      <div style={{ ...cellStyle, ...getStyle(x) }}>{x}{!isStatus && unit}</div>
-      <div style={{ ...cellStyle, ...getStyle(y) }}>{y}{!isStatus && unit}</div>
-      <div style={{ ...cellStyle, ...getStyle(z) }}>{z}{!isStatus && unit}</div>
-      <div style={{ ...cellStyle, background: '#f8fafc', fontWeight: 900, ...getStyle(res) }}>{res}{!isStatus && unit}</div>
+      <div style={{ ...cellStyle, ...getStyle(x) }}>
+        {x}{!isStatus && unit}
+        {thresholds && thresholds.x !== undefined && <span style={thresholdLabelStyle}>LIM: {thresholds.x}</span>}
+      </div>
+      <div style={{ ...cellStyle, ...getStyle(y) }}>
+        {y}{!isStatus && unit}
+        {thresholds && thresholds.y !== undefined && <span style={thresholdLabelStyle}>LIM: {thresholds.y}</span>}
+      </div>
+      <div style={{ ...cellStyle, ...getStyle(z) }}>
+        {z}{!isStatus && unit}
+        {thresholds && thresholds.z !== undefined && <span style={thresholdLabelStyle}>LIM: {thresholds.z}</span>}
+      </div>
+      <div style={{ ...cellStyle, background: '#f8fafc', fontWeight: 900, ...getStyle(res) }}>
+        {res}{!isStatus && unit}
+        {thresholds && thresholds.res !== undefined && <span style={thresholdLabelStyle}>LIM: {thresholds.res}</span>}
+      </div>
     </div>
   );
 }
 
-function OverviewView({ data, health, rmsData, fftData, isoData, kurtosisData, skewnessData, motorRpm }: OverviewViewProps) {
+function OverviewView({ 
+  data, health, rmsData, fftData, isoData, kurtosisData, skewnessData, motorRpm,
+  vibeLimits, rmsPeaks, vibeData
+}: OverviewViewProps) {
 
   // --- LÓGICA DE MAPEO DE ESTADOS ---
 
@@ -137,9 +167,25 @@ function OverviewView({ data, health, rmsData, fftData, isoData, kurtosisData, s
         <DataRow 
           title="Energía RMS (m/s²)" 
           x={f(rmsData?.x)} y={f(rmsData?.y)} z={f(rmsData?.z)} res={f(rmsData?.res)} 
+          thresholds={{ x: rmsPeaks.x, y: rmsPeaks.y, z: rmsPeaks.z, res: rmsPeaks.res }}
         />
 
-        {/* 2. Picos FFT */}
+        {/* 2. Vibración Normalizada (Momento actual vs Límites) */}
+        <DataRow 
+          title="Picos Vibración (LSB)" 
+          x={vibeData.x.toFixed(0)} 
+          y={vibeData.y.toFixed(0)} 
+          z={vibeData.z.toFixed(0)} 
+          res="--"
+          thresholds={{ 
+            x: `${vibeLimits.minX}/${vibeLimits.maxX}`, 
+            y: `${vibeLimits.minY}/${vibeLimits.maxY}`, 
+            z: `${vibeLimits.minZ}/${vibeLimits.maxZ}`, 
+            res: '' 
+          }}
+        />
+
+        {/* 3. Picos FFT */}
         <DataRow 
           title="Pico Espectral (Hz)" 
           unit=" Hz"

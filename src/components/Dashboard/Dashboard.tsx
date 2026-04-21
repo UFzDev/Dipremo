@@ -6,6 +6,7 @@ import { IntegrationEngine, type VelocityRMSData } from '../../lib/algorithms/In
 import { KurtosisEngine, type KurtosisData } from '../../lib/algorithms/KurtosisEngine'
 import { SkewnessEngine, type SkewnessData } from '../../lib/algorithms/SkewnessEngine'
 import { ConnectionEngine, type ConnectionHealth } from '../../lib/algorithms/ConnectionEngine'
+import { NormalizationEngine } from '../../lib/algorithms/Normalization'
 
 // ... (Sub-componentes)
 import Sidebar from './Sidebar'
@@ -94,44 +95,94 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
   const healthRef = useRef<ConnectionHealth | null>(null);
   const [displayHealth, setDisplayHealth] = useState<ConnectionHealth | null>(null);
 
+  // 8. Registro de Picos de Sesión (Para Calibración)
+  const sessionPeaksRef = useRef({
+    minX: 0, maxX: 0, minY: 0, maxY: 0, minZ: 0, maxZ: 0,
+    rmsX: 0, rmsY: 0, rmsZ: 0, rmsRes: 0,
+    maxFreqHz: 0, maxFreqLSB: 0
+  });
+  const [displaySessionPeaks, setDisplaySessionPeaks] = useState(sessionPeaksRef.current);
+
+  // 9. Estado Vibración Normalizada (En tiempo real)
+  const normalizedRef = useRef({ x: 0, y: 0, z: 0 });
+  const [displayNormalized, setDisplayNormalized] = useState(normalizedRef.current);
+
+  const resetSessionPeaks = () => {
+    sessionPeaksRef.current = {
+      minX: 0, maxX: 0, minY: 0, maxY: 0, minZ: 0, maxZ: 0,
+      rmsX: 0, rmsY: 0, rmsZ: 0, rmsRes: 0,
+      maxFreqHz: 0, maxFreqLSB: 0
+    };
+    setDisplaySessionPeaks(sessionPeaksRef.current);
+  };
+
   // Gestión de entrada de datos (Velocidad de Sensor)
   useEffect(() => {
     // A. Gatekeeper: Solo procesar si estamos conectados y hay data
     if (data && status === STATUS.CONNECTED) {
+      // 0. Normalización Única (Evita corrupción de EMA por llamadas múltiples)
+      const normalized = NormalizationEngine.processSample(data);
+      normalizedRef.current = { x: normalized.x, y: normalized.y, z: normalized.z };
+
+      // 1. Registro de Picos de Sesión (Absolutos)
+      const p = sessionPeaksRef.current;
+      p.minX = Math.min(p.minX, normalized.x);
+      p.maxX = Math.max(p.maxX, normalized.x);
+      p.minY = Math.min(p.minY, normalized.y);
+      p.maxY = Math.max(p.maxY, normalized.y);
+      p.minZ = Math.min(p.minZ, normalized.z);
+      p.maxZ = Math.max(p.maxZ, normalized.z);
+
       // B. Buffer RAW (Volátil - Solo para Math/Normalization)
       rawBufferRef.current = [data, ...rawBufferRef.current].slice(0, 200);
 
       // C. Procesamiento RMS (Persistente - Para Auditoría/Tendencia)
+      // Nota: RMSEngine.addSample ahora debería usar el normalized calculado si fuera posible,
+      // pero para no romper compatibilidad, le pasamos la data. 
+      // TODO: Refactorizar motores para aceptar pre-normalized.
       const rmsResult = RMSEngine.addSample(data);
       if (rmsResult) {
         historyRef.current = [rmsResult, ...historyRef.current].slice(0, 5000);
+        
+        // Actualizar picos RMS de sesión
+        p.rmsX = Math.max(p.rmsX, rmsResult.x);
+        p.rmsY = Math.max(p.rmsY, rmsResult.y);
+        p.rmsZ = Math.max(p.rmsZ, rmsResult.z);
+        p.rmsRes = Math.max(p.rmsRes, rmsResult.res);
       }
 
       // D. Procesamiento Espectral (FFT)
       const fftResult = FFTEngine.addSample(data);
       if (fftResult) {
         fftRef.current = fftResult;
-      }
 
-      // E. Integración Numérica ISO
+        // Buscar el pico más alto en la resultante para la sesión
+        let currentPeakMag = 0;
+        let currentPeakIdx = 0;
+        fftResult.magnitudeRes.forEach((mag, i) => {
+          if (mag > currentPeakMag) {
+            currentPeakMag = mag;
+            currentPeakIdx = i;
+          }
+        });
+
+        // Solo actualizar si este pico es mayor al histórico de la sesión
+        if (currentPeakMag > p.maxFreqLSB) {
+          p.maxFreqLSB = currentPeakMag;
+          p.maxFreqHz = currentPeakIdx * (fftResult.sampleRateHz / (fftResult.bins * 2));
+        }
+      }
+      
+      // ... resto de motores
       const isoResult = IntegrationEngine.addSample(data);
-      if (isoResult) {
-        isoRef.current = isoResult;
-      }
+      if (isoResult) isoRef.current = isoResult;
 
-      // F. Detección de Daños de Rodamientos (Curtosis)
       const kurtosisResult = KurtosisEngine.addSample(data);
-      if (kurtosisResult) {
-        kurtosisRef.current = kurtosisResult;
-      }
+      if (kurtosisResult) kurtosisRef.current = kurtosisResult;
 
-      // G. Detección de Aflojamiento Mecánico (Asimetría)
       const skewnessResult = SkewnessEngine.addSample(data);
-      if (skewnessResult) {
-        skewnessRef.current = skewnessResult;
-      }
+      if (skewnessResult) skewnessRef.current = skewnessResult;
 
-      // H. Diagnóstico de Red (Cada muestra cuenta para detectar pérdida)
       healthRef.current = ConnectionEngine.processSample(data);
     }
   }, [data, status]);
@@ -156,6 +207,8 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
       if (healthRef.current) {
         setDisplayHealth(healthRef.current);
       }
+      setDisplaySessionPeaks({ ...sessionPeaksRef.current });
+      setDisplayNormalized({ ...normalizedRef.current });
     }, 100); 
 
     return () => clearInterval(timer);
@@ -205,6 +258,9 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
             kurtosisData={displayKurtosis}
             skewnessData={displaySkewness}
             motorRpm={motorRpm}
+            vibeLimits={vibeLimits}
+            rmsPeaks={rmsPeaks}
+            vibeData={displayNormalized}
           />
         );
       case 'charts':
@@ -235,6 +291,8 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
             vibeLimits={vibeLimits} setVibeLimits={setVibeLimits}
             rmsPeaks={rmsPeaks} setRmsPeaks={setRmsPeaks}
             fftRange={fftRange} setFftRange={setFftRange}
+            sessionPeaks={displaySessionPeaks}
+            onResetSessionPeaks={resetSessionPeaks}
           />
         );
       default:
@@ -248,6 +306,9 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
             kurtosisData={displayKurtosis}
             skewnessData={displaySkewness}
             motorRpm={motorRpm}
+            vibeLimits={vibeLimits}
+            rmsPeaks={rmsPeaks}
+            vibeData={displayNormalized}
           />
         );
     }
