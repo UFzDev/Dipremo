@@ -4,7 +4,7 @@ type NormalizationViewProps = {
   history: ESPData[];
 };
 
-function NormalizationView({ history }: NormalizationViewProps) {
+function NormalizationView({}: NormalizationViewProps) {
   return (
     <section className="engineering-report" >
       
@@ -83,25 +83,33 @@ function NormalizationView({ history }: NormalizationViewProps) {
       {/* 3.- C&Oacute;MO SE CALCULA */}
        <div className="report-section mb-12">
         <h2 className="algo-section-title">
-          3.- Implementaci&oacute;n del Leaky Integrator (EMA)
+          3.- Arquitectura de Filtrado en Cascada de Triple Acci&oacute;n
         </h2>
         <div className="algo-section-content">
           <p className="algo-text">
-            El microprocesador ejecuta un Promedio M&oacute;vil Exponencial (EMA) en tiempo real. La selecci&oacute;n de la constante de suavizado (<strong>Alpha = 0.98</strong>) es vital: permite que el sistema ignore los picos de vibraci&oacute;n r&aacute;pidos pero reaccione ante cambios lentos en la inclinaci&oacute;n o gravedad.
+            Para garantizar una telemetr&iacute;a de grado industrial libre de parpadeos en reposo, el sistema implementa una <strong>Cascada de Procesamiento</strong> en tres etapas secuenciales:
           </p>
           <div className="algo-card-light">
-             <h4 className="algo-info-card-title" style={{ color: '#64748b', fontSize: '13px' }}>Fase 1: Estimaci&oacute;n Din&aacute;mica del Vector de Postura</h4>
-             <div className="algo-code-box" style={{ marginBottom: '2rem' }}>
-                <span className="algo-math-color" style={{ marginRight: '0.5rem' }}>Gravity_EMA =</span> (0.98 * Gravity_EMA) + (0.02 * Sensor_Raw)
-             </div>
+             <h4 className="algo-info-card-title" style={{ color: '#64748b', fontSize: '13px' }}>Fase 1: Conclave de Inicializaci&oacute;n (Calibraci&oacute;n en Fr&iacute;o)</h4>
+             <p className="algo-info-card-desc" style={{ marginBottom: '1rem' }}>
+                Al arrancar, el algoritmo captura una ventana de <strong>32 muestras</strong> para establecer un promediado est&aacute;tico del vector de gravedad. Esto evita el "desplazamiento de arranque" y ancla la se&ntilde;al en cero instant&aacute;neamente.
+             </p>
 
-             <h4 className="algo-info-card-title" style={{ color: '#64748b', fontSize: '13px' }}>Fase 2: Extracci&oacute;n de Cero Absoluto (Filtro AC)</h4>
-             <div className="algo-code-box" style={{ background: '#eef2ff', color: '#4338ca' }}>
-                <span style={{ color: '#6366f1', marginRight: '0.5rem' }}>Vibration_Clean =</span> Sensor_Raw - Gravity_EMA
+             <h4 className="algo-info-card-title" style={{ color: '#64748b', fontSize: '13px' }}>Fase 2: Seguimiento Adaptive Low-Pass (Alpha 0.998)</h4>
+             <div className="algo-code-box" style={{ marginBottom: '1rem' }}>
+                <span className="algo-math-color" style={{ marginRight: '0.5rem' }}>Gravity_DC =</span> (0.998 * Gravity_DC) + (0.002 * Raw_Sample)
              </div>
-          </div>
-          <div className="algo-box-success" style={{ marginTop: '1.5rem', textAlign: 'center' }}>
-            <span style={{ fontSize: '18px', marginRight: '5px' }}>🛡️</span> <strong>AUTONOM&Iacute;A DE CALIBRACI&Oacute;N:</strong> Este m&eacute;todo elimina la dependencia de botones de "Zero" manuales. Al iniciar o reubicar el sensor, el algoritmo atraviesa una etapa de <strong>Reconvergencia Din&aacute;mica</strong> de ~1.0s, tras la cual las gr&aacute;ficas retornan autom&aacute;ticamente a su centro de energ&iacute;a, garantizando la integridad de la telemetr&iacute;a sin importar el &aacute;ngulo de montaje.
+             <p className="algo-info-card-desc" style={{ marginBottom: '1.5rem' }}>
+                Se utiliza un <strong>Leaky Integrator</strong> de alt&iacute;sima inercia para rastrear cambios lentos en la postura (DC) sin permitir que la vibraci&oacute;n real (AC) contamine la estimaci&oacute;n de la gravedad.
+             </p>
+
+             <h4 className="algo-info-card-title" style={{ color: '#64748b', fontSize: '13px' }}>Fase 3: Supresi&oacute;n No-Lineal (Deadzone 2.5 + Smoothing 0.8)</h4>
+             <div className="algo-code-box" style={{ background: '#eef2ff', color: '#4338ca', marginBottom: '1rem' }}>
+                <span style={{ color: '#6366f1', marginRight: '0.5rem' }}>Vibration_AC =</span> |Raw - Gravity| &lt; 2.5 ? 0 : (Raw - Gravity)
+             </div>
+             <p className="algo-info-card-desc">
+                Finalmente, se aplica una <strong>Zona Muerta</strong> de 2.5 LSBs para silenciar el ruido t&eacute;rmico del sensor, seguida de un segundo filtro de suavizado visual (<strong>Alpha 0.8</strong>) que "ablanda" la llegada a cero, eliminando cualquier jitter residual.
+             </p>
           </div>
         </div>
       </div>
