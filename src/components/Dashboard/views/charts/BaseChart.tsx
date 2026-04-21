@@ -8,6 +8,7 @@ type BaseChartProps = {
   footerDisplay?: ReactNode;
   width?: number;
   height?: number;
+  children?: ReactNode;
 };
 
 function BaseChart({ 
@@ -17,7 +18,8 @@ function BaseChart({
   valueDisplay, 
   footerDisplay,
   width = 800,
-  height = 120 
+  height = 120,
+  children
 }: BaseChartProps) {
   return (
     <div className="base-chart" style={{ 
@@ -65,6 +67,9 @@ function BaseChart({
           points={points}
           style={{ transition: 'points 0.1s linear' }}
         />
+
+        {/* Capas Adicionales (Umbrales, Zonas de Operación, etc.) */}
+        {children}
       </svg>
 
       {/* Footer / Labels de Ejes */}

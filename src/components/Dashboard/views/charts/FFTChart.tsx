@@ -7,9 +7,10 @@ type FFTChartProps = {
   data: FFTData | null;
   height?: number;
   motorRpm: number;
+  range: { minHz: number; maxHz: number };
 };
 
-function FFTChart({ data, height = 280, motorRpm }: FFTChartProps) {
+function FFTChart({ data, height = 280, motorRpm, range }: FFTChartProps) {
   const width = 800;
   
   // Estado para filtros de ejes
@@ -139,6 +140,27 @@ function FFTChart({ data, height = 280, motorRpm }: FFTChartProps) {
             {activeKeys.has('z') && chartData.lines.z && <polyline points={chartData.lines.z} fill="none" stroke="#3b82f6" strokeWidth="2" opacity="0.6" strokeLinejoin="round" />}
             {activeKeys.has('y') && chartData.lines.y && <polyline points={chartData.lines.y} fill="none" stroke="#10b981" strokeWidth="2" opacity="0.6" strokeLinejoin="round" />}
             {activeKeys.has('x') && chartData.lines.x && <polyline points={chartData.lines.x} fill="none" stroke="#ef4444" strokeWidth="2" opacity="0.7" strokeLinejoin="round" />}
+
+            {/* Zona de Interés (Rango Configurado) */}
+            {(() => {
+               const maxFreq = (data.sampleRateHz / 2) || 1; // Evitar división por cero
+               const rectX = (range.minHz / maxFreq) * width;
+               const rectW = ((range.maxHz - range.minHz) / maxFreq) * width;
+               
+               if (rectW <= 0 || isNaN(rectX) || isNaN(rectW)) return null;
+               
+               return (
+                 <g>
+                   <rect 
+                     x={rectX} y={0} width={rectW} height={height} 
+                     fill="var(--primary)" opacity="0.1" 
+                   />
+                   <line x1={rectX} y1={0} x2={rectX} y2={height} stroke="var(--primary)" strokeWidth="1" strokeDasharray="2 2" opacity="0.3" />
+                   <line x1={rectX+rectW} y1={0} x2={rectX+rectW} y2={height} stroke="var(--primary)" strokeWidth="1" strokeDasharray="2 2" opacity="0.3" />
+                   <text x={rectX + 5} y={height - 10} fill="var(--primary)" fontSize="9" fontWeight="800" opacity="0.6">ZONA ACTIVA</text>
+                 </g>
+               );
+            })()}
 
             {/* Referencias Mecánicas (1X, 2X) */}
             {motorRpm > 0 && (() => {

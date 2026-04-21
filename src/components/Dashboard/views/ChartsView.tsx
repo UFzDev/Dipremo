@@ -18,9 +18,17 @@ type ChartsViewProps = {
   kurtosisData: KurtosisData | null;
   skewnessData: SkewnessData | null;
   motorRpm: number;
+  vibeLimits: { minX: number; maxX: number; minY: number; maxY: number; minZ: number; maxZ: number };
+  rmsPeaks: { x: number; y: number; z: number; res: number };
+  fftRange: { minHz: number; maxHz: number };
 };
 
-function ChartsView({ data, history, fftData, isoData, kurtosisData, skewnessData, motorRpm }: ChartsViewProps) {
+function ChartsView({ 
+  data, history, fftData, isoData, kurtosisData, skewnessData, motorRpm,
+  vibeLimits = { minX: -16, maxX: 16, minY: -16, maxY: 16, minZ: -16, maxZ: 16 },
+  rmsPeaks = { x: 50, y: 50, z: 50, res: 80 },
+  fftRange = { minHz: 0, maxHz: 50 }
+}: ChartsViewProps) {
   return (
     <div className="charts-view" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', width: '100%', boxSizing: 'border-box' }}>
       <header style={{ gridColumn: '1 / span 3', marginBottom: '0.5rem' }}>
@@ -32,18 +40,18 @@ function ChartsView({ data, history, fftData, isoData, kurtosisData, skewnessDat
       </header>
 
       {/* Gráficas de Vibración en tiempo real */}
-      <VibrationChart latestSample={data} axis="x" label="Eje X" color="#ef4444" />
-      <VibrationChart latestSample={data} axis="y" label="Eje Y" color="#10b981" />
-      <VibrationChart latestSample={data} axis="z" label="Eje Z" color="#3b82f6" />
+      <VibrationChart latestSample={data} axis="x" label="Eje X" color="#ef4444" limits={{ min: vibeLimits.minX, max: vibeLimits.maxX }} />
+      <VibrationChart latestSample={data} axis="y" label="Eje Y" color="#10b981" limits={{ min: vibeLimits.minY, max: vibeLimits.maxY }} />
+      <VibrationChart latestSample={data} axis="z" label="Eje Z" color="#3b82f6" limits={{ min: vibeLimits.minZ, max: vibeLimits.maxZ }} />
 
       {/* Gráfica de Energía (Trend) - Ocupa todo el ancho */}
       <div style={{ gridColumn: '1 / span 3', marginTop: '1rem' }}>
-        <RMSChart history={history} />
+        <RMSChart history={history} thresholds={rmsPeaks} />
       </div>
 
       {/* Gráfica Espectral FFT */}
       <div style={{ gridColumn: '1 / span 3' }}>
-        <FFTChart data={fftData} motorRpm={motorRpm} />
+        <FFTChart data={fftData} motorRpm={motorRpm} range={fftRange} />
       </div>
 
       {/* Indicadores Predictivos Múltiples (Bottom Row) */}

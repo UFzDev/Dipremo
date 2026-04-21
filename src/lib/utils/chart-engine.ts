@@ -27,11 +27,12 @@ export class ChartEngine {
   ): string {
     if (data.length === 0) return '';
 
-    const range = bounds.max - bounds.min;
+    const rawRange = bounds.max - bounds.min;
+    const range = rawRange === 0 ? 1 : rawRange;
     
     return data.map((val, i) => {
       // Cálculo de X proporcional al índice
-      const x = (i / (data.length - 1)) * dim.width;
+      const x = (i / Math.max(1, data.length - 1)) * dim.width;
       
       // Normalización de Y (sujeto a los límites del ViewBox)
       // Clamping para evitar que la línea se salga del gráfico

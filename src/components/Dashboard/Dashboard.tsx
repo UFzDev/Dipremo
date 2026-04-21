@@ -217,6 +217,9 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
             kurtosisData={displayKurtosis} 
             skewnessData={displaySkewness} 
             motorRpm={motorRpm}
+            vibeLimits={vibeLimits}
+            rmsPeaks={rmsPeaks}
+            fftRange={fftRange}
           />
         );
       case 'history':

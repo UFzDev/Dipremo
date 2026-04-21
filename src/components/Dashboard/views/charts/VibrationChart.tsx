@@ -9,9 +9,10 @@ type VibrationChartProps = {
   axis: 'x' | 'y' | 'z';
   label: string;
   color: string;
+  limits: { min: number; max: number };
 };
 
-function VibrationChart({ latestSample, axis, label, color }: VibrationChartProps) {
+function VibrationChart({ latestSample, axis, label, color, limits }: VibrationChartProps) {
   // Parámetros de vista del gráfico
   const width = 800;
   const height = 120;
@@ -50,9 +51,16 @@ function VibrationChart({ latestSample, axis, label, color }: VibrationChartProp
     return ChartEngine.generatePolylinePoints(
       windowData, 
       { width, height }, 
-      { min: -512, max: 512 }
+      { min: limits.min, max: limits.max }
     );
-  }, [windowData]);
+  }, [windowData, limits]);
+
+  // Cálculo de Y para las líneas de umbral
+  const getY = (val: number) => {
+    const rawRange = limits.max - limits.min;
+    const range = rawRange === 0 ? 1 : rawRange; // Evitar división por cero
+    return height - ((val - limits.min) / range) * height;
+  };
 
   return (
     <BaseChart 
@@ -68,7 +76,17 @@ function VibrationChart({ latestSample, axis, label, color }: VibrationChartProp
           <span style={{ color: 'var(--error)' }}>Max: {peaks.max.toFixed(0)}</span>
         </div>
       }
-    />
+    >
+      {/* Líneas de Umbral Configuradas */}
+      <line 
+        x1="0" y1={getY(limits.max)} x2={width} y2={getY(limits.max)} 
+        stroke="var(--error)" strokeWidth="1.5" strokeDasharray="5 5" opacity="0.6" 
+      />
+      <line 
+        x1="0" y1={getY(limits.min)} x2={width} y2={getY(limits.min)} 
+        stroke="var(--error)" strokeWidth="1.5" strokeDasharray="5 5" opacity="0.6" 
+      />
+    </BaseChart>
   );
 }
 

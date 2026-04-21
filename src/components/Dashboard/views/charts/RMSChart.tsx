@@ -5,9 +5,10 @@ import ChartFilters, { TRIAXIAL_WITH_RES } from './ChartFilters';
 type RMSChartProps = {
   history: any[];
   height?: number;
+  thresholds: { x: number; y: number; z: number; res: number };
 };
 
-function RMSChart({ history, height = 200 }: RMSChartProps) {
+function RMSChart({ history, height = 200, thresholds }: RMSChartProps) {
   const width = 800;
   const WINDOW_SIZE = 100;
   
@@ -34,10 +35,10 @@ function RMSChart({ history, height = 200 }: RMSChartProps) {
     // Calculamos el máximo real de los datos visibles para auto-scaling inteligente
     const allVisibleValues = rmsData.flatMap(p => {
       const vals = [];
-      if (activeKeys.has('x')) vals.push(p.x);
-      if (activeKeys.has('y')) vals.push(p.y);
-      if (activeKeys.has('z')) vals.push(p.z);
-      if (activeKeys.has('res')) vals.push(p.res);
+      if (activeKeys.has('x')) { vals.push(p.x); vals.push(thresholds.x); }
+      if (activeKeys.has('y')) { vals.push(p.y); vals.push(thresholds.y); }
+      if (activeKeys.has('z')) { vals.push(p.z); vals.push(thresholds.z); }
+      if (activeKeys.has('res')) { vals.push(p.res); vals.push(thresholds.res); }
       return vals;
     });
 
@@ -51,7 +52,13 @@ function RMSChart({ history, height = 200 }: RMSChartProps) {
       res: activeKeys.has('res') ? ChartEngine.generatePolylinePoints(rmsData.map(p => p.res || 0), { width, height }, scale) : '',
       max: scale.max
     };
-  }, [rmsData, height, activeKeys]);
+  }, [rmsData, height, activeKeys, thresholds]);
+
+  // Cálculo de Y para líneas horizontales
+  const getY = (val: number) => {
+    const range = axisPoints.max || 1; // Evitar división por cero
+    return height - (val / range) * height;
+  };
 
   // Cálculo de picos máximos por eje en la ventana actual
   const peaks = useMemo(() => {
@@ -114,6 +121,12 @@ function RMSChart({ history, height = 200 }: RMSChartProps) {
           <line x1="0" y1="0" x2={width} y2="0" stroke="#f8fafc" strokeWidth="1" />
           <line x1="0" y1={height/2} x2={width} y2={height/2} stroke="#f8fafc" strokeWidth="1" />
           <line x1="0" y1={height} x2={width} y2={height} stroke="#f1f5f9" strokeWidth="1" />
+
+          {/* Líneas de Umbral / Picos Críticos */}
+          {activeKeys.has('res') && <line x1="0" y1={getY(thresholds.res)} x2={width} y2={getY(thresholds.res)} stroke="#8b5cf6" strokeWidth="1.5" strokeDasharray="3 3" opacity="0.4" />}
+          {activeKeys.has('z') && <line x1="0" y1={getY(thresholds.z)} x2={width} y2={getY(thresholds.z)} stroke="#3b82f6" strokeWidth="1.5" strokeDasharray="3 3" opacity="0.4" />}
+          {activeKeys.has('y') && <line x1="0" y1={getY(thresholds.y)} x2={width} y2={getY(thresholds.y)} stroke="#10b981" strokeWidth="1.5" strokeDasharray="3 3" opacity="0.4" />}
+          {activeKeys.has('x') && <line x1="0" y1={getY(thresholds.x)} x2={width} y2={getY(thresholds.x)} stroke="var(--error)" strokeWidth="1.5" strokeDasharray="3 3" opacity="0.4" />}
 
           {/* L&iacute;neas de Tendencia */}
           {activeKeys.has('res') && <polyline points={axisPoints.res} fill="none" stroke="#8b5cf6" strokeWidth="3" strokeDasharray="4 2" opacity="0.8" style={{ transition: 'all 0.3s' }} />}
