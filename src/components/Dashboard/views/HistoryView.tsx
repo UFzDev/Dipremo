@@ -32,9 +32,11 @@ function HistoryView({}: HistoryViewProps) {
     padding: '0.2rem 0.4rem',
     fontSize: '11px',
     borderRadius: '4px',
-    border: '1px solid #cbd5e1',
+    border: '1px solid var(--border-subtle)',
     outline: 'none',
-    boxSizing: 'border-box' as const
+    boxSizing: 'border-box' as const,
+    background: 'var(--bg-card)',
+    color: 'var(--text-main)'
   };
 
 
@@ -172,8 +174,8 @@ function HistoryView({}: HistoryViewProps) {
     <section style={{ animation: 'fadeIn 0.3s ease-out' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-           <h2 style={{ margin: 0 }}>Historial de Asentamiento Mecánico (.CSV)</h2>
-           <p style={{ margin: '0.25rem 0 0 0', fontSize: '13px', color: '#64748b' }}>Archivos grabados localmente en /history</p>
+           <h2 style={{ margin: 0, color: 'var(--text-main)' }}>Historial de Asentamiento Mecánico (.CSV)</h2>
+           <p style={{ margin: '0.25rem 0 0 0', fontSize: '13px', color: 'var(--text-muted)' }}>Archivos grabados localmente en /history</p>
         </div>
         
         {/* BOTONES DE GESTIÓN */}
@@ -185,20 +187,20 @@ function HistoryView({}: HistoryViewProps) {
             ref={fileInputRef} 
             onChange={handleImport}
            />
-           <button 
-             className="btn btn-outline"
-             onClick={triggerImport}
-             style={{ padding: '0.6rem 1rem', fontSize: '13px', borderRadius: '0.5rem', cursor: 'pointer', background: 'white', border: '1px solid #e2e8f0', color: '#334155' }}
-           >
-             📂 Importar
-           </button>
-           <button 
-             className="btn btn-outline"
-             onClick={handleExport}
-             style={{ padding: '0.6rem 1rem', fontSize: '13px', borderRadius: '0.5rem', cursor: 'pointer', background: 'white', border: '1px solid #e2e8f0', color: '#334155' }}
-           >
-             ⬇️ Exportar
-           </button>
+            <button 
+              className="btn btn-ghost"
+              onClick={triggerImport}
+              style={{ padding: '0.6rem 1rem', fontSize: '13px' }}
+            >
+              📂 Importar
+            </button>
+            <button 
+              className="btn btn-ghost"
+              onClick={handleExport}
+              style={{ padding: '0.6rem 1rem', fontSize: '13px' }}
+            >
+              ⬇️ Exportar
+            </button>
            <button 
              className="btn btn-primary"
              onClick={handleNewRecord}
@@ -209,23 +211,23 @@ function HistoryView({}: HistoryViewProps) {
         </div>
       </div>
 
-      <div className="card" style={{ padding: '0', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
+        <div className="card" style={{ padding: '0', overflow: 'hidden', border: '1px solid var(--border-subtle)' }}>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px', minWidth: '1100px' }}>
             <thead>
-              <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0', textAlign: 'left', whiteSpace: 'nowrap' }}>
-                <th style={{ padding: '0.8rem 1rem' }}>TIMESTAMP</th>
-                <th style={{ padding: '0.8rem 1rem' }}>RMS X</th>
-                <th style={{ padding: '0.8rem 1rem' }}>RMS Y</th>
-                <th style={{ padding: '0.8rem 1rem' }}>RMS Z</th>
-                <th style={{ padding: '0.8rem 1rem' }}>KURT. X</th>
-                <th style={{ padding: '0.8rem 1rem' }}>KURT. Y</th>
-                <th style={{ padding: '0.8rem 1rem' }}>KURT. Z</th>
-                <th style={{ padding: '0.8rem 1rem' }}>VEL. ISO (mm/s)</th>
-                <th style={{ padding: '0.8rem 1rem' }}>TEMP. PLACA</th>
-                <th style={{ padding: '0.8rem 1rem' }}>CONEXIÓN</th>
+              <tr style={{ background: '#f8fafc', borderBottom: '1px solid var(--border-subtle)', textAlign: 'left', whiteSpace: 'nowrap' }}>
+                <th style={{ padding: '0.8rem 1rem', color: 'var(--text-muted)' }}>TIMESTAMP</th>
+                <th style={{ padding: '0.8rem 1rem', color: 'var(--text-muted)' }}>RMS X</th>
+                <th style={{ padding: '0.8rem 1rem', color: 'var(--text-muted)' }}>RMS Y</th>
+                <th style={{ padding: '0.8rem 1rem', color: 'var(--text-muted)' }}>RMS Z</th>
+                <th style={{ padding: '0.8rem 1rem', color: 'var(--text-muted)' }}>KURT. X</th>
+                <th style={{ padding: '0.8rem 1rem', color: 'var(--text-muted)' }}>KURT. Y</th>
+                <th style={{ padding: '0.8rem 1rem', color: 'var(--text-muted)' }}>KURT. Z</th>
+                <th style={{ padding: '0.8rem 1rem', color: 'var(--text-muted)' }}>VEL. ISO (mm/s)</th>
+                <th style={{ padding: '0.8rem 1rem', color: 'var(--text-muted)' }}>TEMP. PLACA</th>
+                <th style={{ padding: '0.8rem 1rem', color: 'var(--text-muted)' }}>CONEXIÓN</th>
               </tr>
-              <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0', textAlign: 'left' }}>
+              <tr style={{ background: '#f8fafc', borderBottom: '2px solid var(--border-subtle)', textAlign: 'left' }}>
                 <th style={{ padding: '0.4rem 0.5rem' }}><input type="date" style={filterInputStyle} value={filters.timestamp} onChange={e => handleFilterChange('timestamp', e.target.value)} /></th>
                 <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Inicio..." style={filterInputStyle} value={filters.rmsX} onChange={e => handleFilterChange('rmsX', e.target.value)} /></th>
                 <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Inicio..." style={filterInputStyle} value={filters.rmsY} onChange={e => handleFilterChange('rmsY', e.target.value)} /></th>
@@ -242,17 +244,17 @@ function HistoryView({}: HistoryViewProps) {
               {currentRows.length > 0 ? (
                 currentRows.map((row, idx) => (
                   <tr key={`${row.timestamp}-${idx}`} style={{ borderBottom: '1px solid #f1f5f9', background: idx % 2 === 0 ? 'transparent' : '#fafafa' }}>
-                    <td style={{ padding: '0.75rem 1rem', fontWeight: 600, fontFamily: 'monospace', color: '#64748b' }}>
+                    <td style={{ padding: '0.75rem 1rem', fontWeight: 600, fontFamily: 'monospace', color: 'var(--text-muted)' }}>
                       {row.timestamp !== '--' ? new Date(row.timestamp).toLocaleString() : '--'}
                     </td>
-                    <td style={{ padding: '0.75rem 1rem', color: '#ef4444', fontWeight: 700 }}>{row.rmsX}</td>
-                    <td style={{ padding: '0.75rem 1rem', color: '#10b981', fontWeight: 700 }}>{row.rmsY}</td>
-                    <td style={{ padding: '0.75rem 1rem', color: '#3b82f6', fontWeight: 700 }}>{row.rmsZ}</td>
-                    <td style={{ padding: '0.75rem 1rem', color: '#475569' }}>{row.kurtX}</td>
-                    <td style={{ padding: '0.75rem 1rem', color: '#475569' }}>{row.kurtY}</td>
-                    <td style={{ padding: '0.75rem 1rem', color: '#475569' }}>{row.kurtZ}</td>
-                    <td style={{ padding: '0.75rem 1rem', fontWeight: 800, color: '#334155' }}>{row.velIso}</td>
-                    <td style={{ padding: '0.75rem 1rem', color: '#64748b' }}>{row.temp}°C</td>
+                    <td style={{ padding: '0.75rem 1rem', color: 'var(--error)', fontWeight: 700 }}>{row.rmsX}</td>
+                    <td style={{ padding: '0.75rem 1rem', color: 'var(--success)', fontWeight: 700 }}>{row.rmsY}</td>
+                    <td style={{ padding: '0.75rem 1rem', color: 'var(--primary)', fontWeight: 700 }}>{row.rmsZ}</td>
+                    <td style={{ padding: '0.75rem 1rem', color: 'var(--text-main)' }}>{row.kurtX}</td>
+                    <td style={{ padding: '0.75rem 1rem', color: 'var(--text-main)' }}>{row.kurtY}</td>
+                    <td style={{ padding: '0.75rem 1rem', color: 'var(--text-main)' }}>{row.kurtZ}</td>
+                    <td style={{ padding: '0.75rem 1rem', fontWeight: 800, color: 'var(--text-main)' }}>{row.velIso}</td>
+                    <td style={{ padding: '0.75rem 1rem', color: 'var(--text-muted)' }}>{row.temp}°C</td>
                     <td style={{ padding: '0.75rem 1rem', color: '#8b5cf6' }}>{row.health}%</td>
                   </tr>
                 ))

@@ -9,10 +9,9 @@ type VibrationChartProps = {
   axis: 'x' | 'y' | 'z';
   label: string;
   color: string;
-  unit?: string;
 };
 
-function VibrationChart({ latestSample, axis, label, color, unit = 'LSB' }: VibrationChartProps) {
+function VibrationChart({ latestSample, axis, label, color }: VibrationChartProps) {
   // Parámetros de vista del gráfico
   const width = 800;
   const height = 120;
@@ -37,6 +36,15 @@ function VibrationChart({ latestSample, axis, label, color, unit = 'LSB' }: Vibr
     });
   }, [latestSample, axis]);
 
+  // Cálculo de picos en la ventana actual
+  const peaks = useMemo(() => {
+    if (windowData.length === 0) return { min: 0, max: 0 };
+    return {
+      min: Math.min(...windowData),
+      max: Math.max(...windowData)
+    };
+  }, [windowData]);
+
   // Generación de puntos SVG ultra-ligera
   const points = useMemo(() => {
     return ChartEngine.generatePolylinePoints(
@@ -52,9 +60,13 @@ function VibrationChart({ latestSample, axis, label, color, unit = 'LSB' }: Vibr
       color={color}
       points={points}
       valueDisplay={
-        <span style={{ color, fontWeight: 900 }}>
-          {windowData[windowData.length - 1]?.toFixed(0) || '0'} <small style={{ fontSize: '8px', color: '#475569' }}>{unit}</small>
-        </span>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '10px' }}>
+          <span style={{ color: 'var(--text-muted)' }}>Min: {peaks.min.toFixed(0)}</span>
+          <span style={{ color, fontWeight: 900, fontSize: '13px', padding: '0 4px', background: '#f8fafc', borderRadius: '4px' }}>
+            {windowData[windowData.length - 1]?.toFixed(0) || '0'}
+          </span>
+          <span style={{ color: 'var(--error)' }}>Max: {peaks.max.toFixed(0)}</span>
+        </div>
       }
     />
   );

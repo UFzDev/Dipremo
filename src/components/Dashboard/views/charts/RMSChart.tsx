@@ -53,6 +53,16 @@ function RMSChart({ history, height = 200 }: RMSChartProps) {
     };
   }, [rmsData, height, activeKeys]);
 
+  // Cálculo de picos máximos por eje en la ventana actual
+  const peaks = useMemo(() => {
+    return {
+      x: Math.max(...rmsData.map(p => p.x), 0),
+      y: Math.max(...rmsData.map(p => p.y), 0),
+      z: Math.max(...rmsData.map(p => p.z), 0),
+      res: Math.max(...rmsData.map(p => p.res || 0), 0)
+    };
+  }, [rmsData]);
+
   if (rmsData.length === 0) {
     return (
       <div className="rms-chart-container" style={{ 
@@ -71,7 +81,7 @@ function RMSChart({ history, height = 200 }: RMSChartProps) {
         gap: '0.5rem'
       }}>
         <div className="spinner" style={{ width: '20px', height: '20px', border: '2px solid #e2e8f0', borderTopColor: '#3b82f6', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
-        Esperando estabilización de energía...
+        Esperando estabilizaci&oacute;n de energ&iacute;a...
       </div>
     );
   }
@@ -83,9 +93,9 @@ function RMSChart({ history, height = 200 }: RMSChartProps) {
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h4 style={{ margin: 0, fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-            Tendencia Energética (RMS)
+            Tendencia Energ&eacute;tica (RMS)
           </h4>
-          <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '2px' }}>Escala Automática: 0 - {axisPoints.max.toFixed(1)} LSB</div>
+          <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '2px' }}>Escala Autom&aacute;tica: 0 - {axisPoints.max.toFixed(1)} LSB</div>
         </div>
         
         <ChartFilters axes={TRIAXIAL_WITH_RES} activeKeys={activeKeys} onToggle={handleToggle} />
@@ -105,7 +115,7 @@ function RMSChart({ history, height = 200 }: RMSChartProps) {
           <line x1="0" y1={height/2} x2={width} y2={height/2} stroke="#f8fafc" strokeWidth="1" />
           <line x1="0" y1={height} x2={width} y2={height} stroke="#f1f5f9" strokeWidth="1" />
 
-          {/* Líneas de Tendencia */}
+          {/* L&iacute;neas de Tendencia */}
           {activeKeys.has('res') && <polyline points={axisPoints.res} fill="none" stroke="#8b5cf6" strokeWidth="3" strokeDasharray="4 2" opacity="0.8" style={{ transition: 'all 0.3s' }} />}
           {activeKeys.has('z') && <polyline points={axisPoints.z} fill="none" stroke="#3b82f6" strokeWidth="2" opacity="0.6" style={{ transition: 'all 0.3s' }} />}
           {activeKeys.has('y') && <polyline points={axisPoints.y} fill="none" stroke="#10b981" strokeWidth="2" opacity="0.6" style={{ transition: 'all 0.3s' }} />}
@@ -113,12 +123,12 @@ function RMSChart({ history, height = 200 }: RMSChartProps) {
         </svg>
       </div>
 
-      {/* Valores Actuales */}
-      <div style={{ display: 'flex', gap: '1.5rem', marginTop: '1rem', padding: '0.75rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #f1f5f9' }}>
-         {activeKeys.has('x') && <div><span style={{ fontSize: '10px', color: '#64748b' }}>RMS X:</span> <strong style={{ color: '#ef4444' }}>{latest.x?.toFixed(2)}</strong></div>}
-         {activeKeys.has('y') && <div><span style={{ fontSize: '10px', color: '#64748b' }}>RMS Y:</span> <strong style={{ color: '#10b981' }}>{latest.y?.toFixed(2)}</strong></div>}
-         {activeKeys.has('z') && <div><span style={{ fontSize: '10px', color: '#64748b' }}>RMS Z:</span> <strong style={{ color: '#3b82f6' }}>{latest.z?.toFixed(2)}</strong></div>}
-         {activeKeys.has('res') && <div><span style={{ fontSize: '10px', color: '#64748b' }}>RESULTANTE:</span> <strong style={{ color: '#8b5cf6' }}>{latest.res?.toFixed(2)}</strong></div>}
+      {/* Valores Actuales y Picos */}
+      <div style={{ display: 'flex', gap: '1.5rem', marginTop: '1rem', padding: '0.75rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #f1f5f9', flexWrap: 'wrap' }}>
+         {activeKeys.has('x') && <div><span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>RMS X:</span> <strong style={{ color: 'var(--error)' }}>{latest.x?.toFixed(2)}</strong> <span style={{ fontSize: '9px', color: 'var(--text-muted)' }}>(Pico: {peaks.x.toFixed(2)})</span></div>}
+         {activeKeys.has('y') && <div><span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>RMS Y:</span> <strong style={{ color: '#10b981' }}>{latest.y?.toFixed(2)}</strong> <span style={{ fontSize: '9px', color: 'var(--text-muted)' }}>(Pico: {peaks.y.toFixed(2)})</span></div>}
+         {activeKeys.has('z') && <div><span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>RMS Z:</span> <strong style={{ color: 'var(--primary)' }}>{latest.z?.toFixed(2)}</strong> <span style={{ fontSize: '9px', color: 'var(--text-muted)' }}>(Pico: {peaks.z.toFixed(2)})</span></div>}
+         {activeKeys.has('res') && <div><span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>RESULTANTE:</span> <strong style={{ color: '#8b5cf6' }}>{latest.res?.toFixed(2)}</strong> <span style={{ fontSize: '9px', color: 'var(--text-muted)' }}>(Pico: {peaks.res.toFixed(2)})</span></div>}
       </div>
     </div>
   );

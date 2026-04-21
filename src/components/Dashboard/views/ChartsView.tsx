@@ -26,7 +26,7 @@ function ChartsView({ data, history, fftData, isoData, kurtosisData, skewnessDat
       <header style={{ gridColumn: '1 / span 3', marginBottom: '0.5rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h2 style={{ fontSize: '1.2rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '-0.02em', color: '#1e293b', margin: 0 }}>
-            Monitor Triaxial (Normalizado)
+            Monitor Triaxial
           </h2>
         </div>
       </header>

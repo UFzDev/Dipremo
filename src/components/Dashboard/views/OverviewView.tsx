@@ -40,16 +40,16 @@ function DataRow({
     flex: 1,
     padding: '0.75rem',
     textAlign: 'center',
-    borderLeft: '1px solid #e2e8f0',
+    borderLeft: '1px solid var(--border-subtle)',
     fontSize: isStatus ? '12px' : '14px',
     fontWeight: isStatus ? 800 : 700,
     fontFamily: isStatus ? 'inherit' : 'monospace',
-    color: '#1e293b'
+    color: 'var(--text-main)'
   };
 
   return (
-    <div style={{ display: 'flex', borderBottom: '1px solid #e2e8f0', alignItems: 'center', background: 'white' }}>
-      <div style={{ width: '180px', padding: '0.75rem 1rem', fontSize: '12px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+    <div style={{ display: 'flex', borderBottom: '1px solid var(--border-subtle)', alignItems: 'center', background: 'var(--bg-card)' }}>
+      <div style={{ width: '180px', padding: '0.75rem 1rem', fontSize: '12px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
         {title}
       </div>
       <div style={{ ...cellStyle, ...getStyle(x) }}>{x}{!isStatus && unit}</div>
@@ -65,10 +65,10 @@ function OverviewView({ data, health, rmsData, fftData, isoData, kurtosisData, s
   // --- LÓGICA DE MAPEO DE ESTADOS ---
 
   const getKurtState = (val: number) => {
-    if (val < 3.0) return { text: 'BAJO RUIDO', color: '#64748b' };
-    if (val < 3.5) return { text: 'NORMAL', color: '#10b981' };
-    if (val < 10.0) return { text: 'AVISO', color: '#f59e0b' };
-    return { text: 'CRÍTICO', color: '#ef4444' };
+    if (val < 3.0) return { text: 'BAJO RUIDO', color: 'var(--text-muted)' };
+    if (val < 3.5) return { text: 'NORMAL', color: 'var(--success)' };
+    if (val < 10.0) return { text: 'AVISO', color: 'var(--warning)' };
+    return { text: 'CRÍTICO', color: 'var(--error)' };
   };
 
   const getSkewState = (val: number) => {
@@ -79,10 +79,10 @@ function OverviewView({ data, health, rmsData, fftData, isoData, kurtosisData, s
   };
 
   const getIsoColor = (v: number) => {
-    if (v <= 1.8) return { color: '#10b981' };
-    if (v <= 4.5) return { color: '#84cc16' };
-    if (v <= 7.1) return { color: '#f59e0b' };
-    return { color: '#ef4444' };
+    if (v <= 1.8) return { color: 'var(--success)' };
+    if (v <= 4.5) return { color: '#84cc16' }; // Color intermedio personalizado
+    if (v <= 7.1) return { color: 'var(--warning)' };
+    return { color: 'var(--error)' };
   };
 
   // --- EXTRACCIÓN DE PICOS FFT ---
@@ -103,13 +103,13 @@ function OverviewView({ data, health, rmsData, fftData, isoData, kurtosisData, s
       
       {/* 🟢 CABECERA DE SISTEMA (SISTEMA INFO) */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-        <div className="card-mini" style={{ padding: '1rem', background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-           <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 800, textTransform: 'uppercase' }}>Salud Conexión</div>
-           <div style={{ fontSize: '20px', fontWeight: 800, color: (health?.quality ?? 0) > 90 ? '#10b981' : '#f59e0b' }}>{health?.quality ?? 0}%</div>
+        <div className="card-mini" style={{ padding: '1rem', background: 'var(--bg-card)', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+           <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase' }}>Salud Conexión</div>
+           <div style={{ fontSize: '20px', fontWeight: 800, color: (health?.quality ?? 0) > 90 ? 'var(--success)' : 'var(--warning)' }}>{health?.quality ?? 0}%</div>
         </div>
-        <div className="card-mini" style={{ padding: '1rem', background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-           <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 800, textTransform: 'uppercase' }}>Temperatura MCU</div>
-           <div style={{ fontSize: '20px', fontWeight: 800, color: '#1e293b' }}>{data ? data.diag.temp_c.toFixed(1) : '--'}°C</div>
+        <div className="card-mini" style={{ padding: '1rem', background: 'var(--bg-card)', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+           <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase' }}>Temperatura MCU</div>
+           <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-main)' }}>{data ? data.diag.temp_c.toFixed(1) : '--'}°C</div>
         </div>
         <div className="card-mini" style={{ padding: '1rem', background: '#f5f3ff', borderRadius: '8px', border: '1px solid #ddd6fe' }}>
            <div style={{ fontSize: '11px', color: '#7c3aed', fontWeight: 800, textTransform: 'uppercase' }}>Velocidad Motor</div>
@@ -122,15 +122,15 @@ function OverviewView({ data, health, rmsData, fftData, isoData, kurtosisData, s
         Resumen Técnico de Instrumentación
       </h3>
       
-      <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
+      <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border-subtle)', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
         
         {/* Cabecera de Ejes */}
-        <div style={{ display: 'flex', background: '#f8fafc', borderBottom: '2px solid #e2e8f0', fontWeight: 800, fontSize: '11px', color: '#64748b', textAlign: 'center' }}>
+        <div style={{ display: 'flex', background: '#f8fafc', borderBottom: '2px solid var(--border-subtle)', fontWeight: 800, fontSize: '11px', color: 'var(--text-muted)', textAlign: 'center' }}>
           <div style={{ width: '180px', padding: '0.75rem' }}>CATEGORÍA / MÉTRICA</div>
           <div style={{ flex: 1, padding: '0.75rem' }}>EJE X</div>
           <div style={{ flex: 1, padding: '0.75rem' }}>EJE Y</div>
           <div style={{ flex: 1, padding: '0.75rem' }}>EJE Z</div>
-          <div style={{ flex: 1, padding: '0.75rem', background: '#f1f5f9' }}>RESULTANTE</div>
+          <div style={{ flex: 1, padding: '0.75rem', background: 'var(--bg-page)' }}>RESULTANTE</div>
         </div>
 
         {/* 1. Tendencia Energética (RMS) */}

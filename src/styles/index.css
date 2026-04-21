@@ -9,6 +9,10 @@
   --primary: #3b82f6;
   --primary-hover: #2563eb;
   --error: #ef4444;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --info: #06b6d4;
+  --border-subtle: #e2e8f0;
 
   /* Spacing & Misc */
   background-color: var(--bg-page);
