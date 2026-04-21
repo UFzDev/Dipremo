@@ -87,19 +87,32 @@ function ISO10816Chart({ data }: ISO10816ChartProps) {
   const selectedClass = ISO_CLASSES[motorClass];
 
   return (
-    <div className="iso-chart-card" style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '1.5rem', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)', display: 'flex', flexDirection: 'column' }}>
-      <header style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <div>
-          <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 800, color: '#1e293b', textTransform: 'uppercase' }}>Termómetro ISO 10816-3</h4>
-          <p style={{ margin: '0.25rem 0 0', fontSize: '11px', color: '#64748b' }}>
+    <div className="iso-chart-card" style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '1.5rem', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '1.25rem' }}>
+        <div style={{ minWidth: '200px' }}>
+          <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 800, color: '#1e293b', textTransform: 'uppercase', letterSpacing: '0.025em' }}>Severidad ISO 10816-3</h4>
+          <p style={{ margin: '0.25rem 0 0', fontSize: '11px', color: '#64748b', fontWeight: 500 }}>
             {selectedClass.title}: {selectedClass.desc}
           </p>
         </div>
-        <div>
+        <div style={{ flex: '1 1 200px', display: 'flex', justifyContent: 'flex-end' }}>
           <select 
             value={motorClass} 
             onChange={(e) => setMotorClass(Number(e.target.value))}
-            style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '12px', fontWeight: 600, color: '#334155', background: '#f8fafc', cursor: 'pointer', outline: 'none' }}
+            style={{ 
+              width: '100%',
+              maxWidth: '280px',
+              padding: '8px 12px', 
+              borderRadius: '8px', 
+              border: '1px solid #cbd5e1', 
+              fontSize: '11px', 
+              fontWeight: 700, 
+              color: '#334155', 
+              background: '#f8fafc', 
+              cursor: 'pointer', 
+              outline: 'none',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+            }}
           >
             {Object.entries(ISO_CLASSES).map(([key, iso]) => (
               <option key={key} value={key}>{iso.title} - {iso.desc}</option>
@@ -108,17 +121,25 @@ function ISO10816Chart({ data }: ISO10816ChartProps) {
         </div>
       </header>
 
-      <div style={{ flex: 1, display: 'flex', justifyContent: 'space-around', alignItems: 'center', gap: '1rem', padding: '1rem 0' }}>
+      {/* 1. SECCIÓN RESULTANTE (MAESTRO) */}
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '1rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #f1f5f9' }}>
+         <div style={{ width: '100%', maxWidth: '280px' }}>
+           <Thermometer vRms={data.vRmsRes} axisLabel="RESULTANTE" limits={selectedClass.limits} />
+         </div>
+      </div>
+
+      {/* 2. SECCIÓN POR EJES (DETALLE) */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', alignItems: 'center' }}>
          <Thermometer vRms={data.vRmsX} axisLabel="X" limits={selectedClass.limits} />
          <Thermometer vRms={data.vRmsY} axisLabel="Y" limits={selectedClass.limits} />
          <Thermometer vRms={data.vRmsZ} axisLabel="Z" limits={selectedClass.limits} />
       </div>
 
-      <footer style={{ marginTop: 'auto', paddingTop: '1.5rem', borderTop: '1px solid #f1f5f9', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', fontSize: '9px', fontWeight: 700, textAlign: 'center' }}>
-         <div style={{ color: '#10b981' }}>&lt; {selectedClass.limits.good.toFixed(2)}<br/>Bajo</div>
-         <div style={{ color: '#84cc16' }}>&lt; {selectedClass.limits.satisfactory.toFixed(2)}<br/>Aceptable</div>
-         <div style={{ color: '#f59e0b' }}>&lt; {selectedClass.limits.unsatisfactory.toFixed(2)}<br/>Insatisfactorio</div>
-         <div style={{ color: '#ef4444' }}>&gt; {selectedClass.limits.unsatisfactory.toFixed(2)}<br/>Inaceptable</div>
+      <footer style={{ marginTop: '0.5rem', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', fontSize: '9px', fontWeight: 800, textAlign: 'center', opacity: 0.8 }}>
+         <div style={{ color: '#10b981' }}>ZONA A<br/>&lt; {selectedClass.limits.good.toFixed(2)}</div>
+         <div style={{ color: '#84cc16' }}>ZONA B<br/>&lt; {selectedClass.limits.satisfactory.toFixed(2)}</div>
+         <div style={{ color: '#f59e0b' }}>ZONA C<br/>&lt; {selectedClass.limits.unsatisfactory.toFixed(2)}</div>
+         <div style={{ color: '#ef4444' }}>ZONA D<br/>&gt; {selectedClass.limits.unsatisfactory.toFixed(2)}</div>
       </footer>
     </div>
   );

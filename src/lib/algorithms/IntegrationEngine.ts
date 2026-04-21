@@ -5,6 +5,7 @@ export type VelocityRMSData = {
   vRmsX: number;
   vRmsY: number;
   vRmsZ: number;
+  vRmsRes: number;
   timestamp: number;
   sampleRateHz: number;
 };
@@ -76,10 +77,18 @@ export class IntegrationEngine {
     this.bufferVz.push(this.vZ);
 
     if (this.bufferVx.length >= this.WINDOW_SIZE) {
+      const vRmsX = this.calculateRMS(this.bufferVx);
+      const vRmsY = this.calculateRMS(this.bufferVy);
+      const vRmsZ = this.calculateRMS(this.bufferVz);
+      
+      // Velocidad Resultante (Vectorial sum)
+      const vRmsRes = Math.sqrt((vRmsX * vRmsX) + (vRmsY * vRmsY) + (vRmsZ * vRmsZ));
+
       const result: VelocityRMSData = {
-        vRmsX: this.calculateRMS(this.bufferVx),
-        vRmsY: this.calculateRMS(this.bufferVy),
-        vRmsZ: this.calculateRMS(this.bufferVz),
+        vRmsX: vRmsX,
+        vRmsY: vRmsY,
+        vRmsZ: vRmsZ,
+        vRmsRes: vRmsRes,
         timestamp: Date.now(),
         sampleRateHz: sample.sample_rate_hz || 1000
       };
