@@ -27,21 +27,12 @@ export type Tab = 'overview' | 'charts' | 'history' | 'math' | 'raw';
 function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
   const [activeTab, setActiveTab] = useState<Tab>('overview');
   
-  // 1. Carga inicial de persistencia (Historial RMS)
-  const savedHistory = (() => {
-    try {
-      const saved = localStorage.getItem('DIPREMO_HISTORY');
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  })();
-
-  const historyRef = useRef<RMSData[]>(savedHistory);
+  // 1. Historial en memoria (solo para renderizado UI)
+  const historyRef = useRef<RMSData[]>([]);
   const rawBufferRef = useRef<ESPData[]>([]);
 
   // 2. Estado de Interfaz (solo se actualiza periódicamente para fluidez)
-  const [displayHistory, setDisplayHistory] = useState<RMSData[]>(historyRef.current);
+  const [displayHistory, setDisplayHistory] = useState<RMSData[]>([]);
   const [displayRawHistory, setDisplayRawHistory] = useState<ESPData[]>([]);
 
   // 3. Estado FFT
@@ -130,13 +121,32 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
     return () => clearInterval(timer);
   }, []);
 
-  // Persistencia de seguridad (Cada 5 segundos en lugar de cada muestra)
+  // Motor de Logging Físico (CSV - Cada 10 segundos)
   useEffect(() => {
     const persistTimer = setInterval(() => {
-      if (historyRef.current.length > 0) {
-        localStorage.setItem('DIPREMO_HISTORY', JSON.stringify(historyRef.current));
-      }
-    }, 5000);
+      const current = rawBufferRef.current[0];
+      if (!current) return; // Esperar a tener datos reales
+
+      const now = new Date().toISOString();
+      const rms = historyRef.current[0];
+      const kurt = kurtosisRef.current;
+      const iso = isoRef.current;
+      const hlth = healthRef.current;
+      
+      // Lógica de Alarma Provisional
+      // Velocidad RMS > 4.5 = Peligro (2), > 2.8 = Alerta (1), Normal = 0
+      const maxIso = Math.max(iso?.vRmsX ?? 0, iso?.vRmsY ?? 0, iso?.vRmsZ ?? 0);
+      const alarmStatus = maxIso > 4.5 ? 2 : (maxIso > 2.8 ? 1 : 0);
+
+      const f = (val: number | undefined) => (val || 0).toFixed(4);
+
+      // Ensamblaje estricto de las 11 columnas
+      const csvLine = `${now},${f(rms?.x)},${f(rms?.y)},${f(rms?.z)},${f(kurt?.kurtosisX)},${f(kurt?.kurtosisY)},${f(kurt?.kurtosisZ)},${f(maxIso)},${current.diag.temp_c.toFixed(1)},${hlth?.quality ?? 100},${alarmStatus}`;
+      
+      fetch('/api/history/append', { method: 'POST', body: csvLine })
+        .catch(err => console.error("Error grabando en disco:", err));
+        
+    }, 10000); // 10 segundos
 
     return () => clearInterval(persistTimer);
   }, []);

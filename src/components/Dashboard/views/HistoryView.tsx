@@ -1,95 +1,275 @@
-import { useState, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { type RMSData } from '../../../lib/algorithms/RMSEngine'
 
 type HistoryViewProps = {
+  // Mantenemos history por si se quisiera usar la vista en crudo, pero la ignoramos para la vista CSV.
   history: RMSData[];
 };
 
-function HistoryView({ history }: HistoryViewProps) {
+type CSVRow = {
+  timestamp: string;
+  rmsX: string;
+  rmsY: string;
+  rmsZ: string;
+  kurtX: string;
+  kurtY: string;
+  kurtZ: string;
+  velIso: string;
+  temp: string;
+  health: string;
+  alarm: string;
+};
+
+function HistoryView({}: HistoryViewProps) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [filters, setFilters] = useState({
+    timestamp: '', rmsX: '', rmsY: '', rmsZ: '',
+    kurtX: '', kurtY: '', kurtZ: '', velIso: '',
+    temp: '', health: '', alarm: ''
+  });
+
+  const filterInputStyle = {
+    width: '100%',
+    padding: '0.2rem 0.4rem',
+    fontSize: '11px',
+    borderRadius: '4px',
+    border: '1px solid #cbd5e1',
+    outline: 'none',
+    boxSizing: 'border-box' as const
+  };
+
+
+  const handleFilterChange = (key: keyof typeof filters, value: string) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+    setCurrentPage(1);
+  };
+
+  const [csvData, setCsvData] = useState<CSVRow[]>([]);
   const rowsPerPage = 15;
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Lógica de Filtrado de Auditoría (RMS)
+  // Función para parsear una cadena CSV a nuestro objeto de estado
+  const parseCSV = (csvText: string) => {
+    const lines = csvText.trim().split('\n');
+    if (lines.length <= 1) return []; // Solo cabeceras o vacío
+    
+    // Ignoramos la cabecera (índice 0)
+    const parsedData: CSVRow[] = lines.slice(1).map(line => {
+      const cols = line.split(',');
+      return {
+        timestamp: cols[0] || '--',
+        rmsX: cols[1] || '0',
+        rmsY: cols[2] || '0',
+        rmsZ: cols[3] || '0',
+        kurtX: cols[4] || '0',
+        kurtY: cols[5] || '0',
+        kurtZ: cols[6] || '0',
+        velIso: cols[7] || '0',
+        temp: cols[8] || '0',
+        health: cols[9] || '0',
+        alarm: cols[10] || '0'
+      };
+    }).reverse(); // Mostramos los últimos registros primero
+
+    return parsedData;
+  };
+
+  // 1. Cargar el archivo "Activo" desde nuestro Micro-Servidor Local al montar
+  useEffect(() => {
+    fetch('/api/history/current')
+      .then(res => res.text())
+      .then(text => {
+        setCsvData(parseCSV(text));
+      })
+      .catch(err => console.error("Error cargando historial local:", err));
+  }, []);
+
+  // Recarga en vivo periódica visualmente (opcional, para sentir que ocurre algo)
+  useEffect(() => {
+    const liveTimer = setInterval(() => {
+      fetch('/api/history/current')
+        .then(res => res.text())
+        .then(text => setCsvData(parseCSV(text)))
+        .catch(() => {});
+    }, 10000); // Sincroniza visualmente acorde a la escritura del backend
+    return () => clearInterval(liveTimer);
+  }, []);
+
+
+  // --- MANEJADORES DE BOTONES ---
+
+  const handleNewRecord = async () => {
+    const confirm = window.confirm("¿Deseas iniciar un nuevo archivo de registro? El archivo actual quedará guardado.");
+    if (confirm) {
+      try {
+        await fetch('/api/history/new', { method: 'POST' });
+        setCsvData([]); // Limpiamos la tabla, ya que el nuevo está vacío
+        setCurrentPage(1);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  };
+
+  const handleExport = () => {
+    // El navegador descargará automáticamente el archivo
+    window.location.href = '/api/history/export';
+  };
+
+  const triggerImport = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const text = event.target?.result as string;
+      if (text) {
+        setCsvData(parseCSV(text));
+        setCurrentPage(1);
+      }
+    };
+    reader.readAsText(file);
+    // Limpiamos el input para que se pueda volver a importar el mismo archivo si se desea.
+    e.target.value = '';
+  };
+
+
+  // --- FILTRADO Y PAGINACIÓN ---
   const filteredHistory = useMemo(() => {
-    if (!searchQuery) return history;
-    const q = searchQuery.toLowerCase();
-    return history.filter(row => 
-      row.x?.toString().includes(q) || 
-      row.y?.toString().includes(q) || 
-      row.z?.toString().includes(q) ||
-      new Date(row.timestamp).toLocaleTimeString().toLowerCase().includes(q)
-    );
-  }, [history, searchQuery]);
+    return csvData.filter(row => {
+      return (
+        (!filters.timestamp || row.timestamp.toLowerCase().includes(filters.timestamp.toLowerCase())) &&
+        (!filters.rmsX || row.rmsX.toLowerCase().includes(filters.rmsX.toLowerCase())) &&
+        (!filters.rmsY || row.rmsY.toLowerCase().includes(filters.rmsY.toLowerCase())) &&
+        (!filters.rmsZ || row.rmsZ.toLowerCase().includes(filters.rmsZ.toLowerCase())) &&
+        (!filters.kurtX || row.kurtX.toLowerCase().includes(filters.kurtX.toLowerCase())) &&
+        (!filters.kurtY || row.kurtY.toLowerCase().includes(filters.kurtY.toLowerCase())) &&
+        (!filters.kurtZ || row.kurtZ.toLowerCase().includes(filters.kurtZ.toLowerCase())) &&
+        (!filters.velIso || row.velIso.toLowerCase().includes(filters.velIso.toLowerCase())) &&
+        (!filters.temp || row.temp.toLowerCase().includes(filters.temp.toLowerCase())) &&
+        (!filters.health || row.health.toLowerCase().includes(filters.health.toLowerCase())) &&
+        (!filters.alarm || row.alarm.toLowerCase().includes(filters.alarm.toLowerCase()))
+      );
+    });
+  }, [csvData, filters]);
 
-  // Paginación
   const totalPages = Math.ceil(filteredHistory.length / rowsPerPage);
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = filteredHistory.slice(indexOfFirstRow, indexOfLastRow);
 
+  // Renderizado Condicional del Badge de Alarma
+  const getAlarmBadge = (alarmValue: string) => {
+    const val = parseInt(alarmValue, 10);
+    if (val === 2) return <span style={{ background: '#fef2f2', color: '#ef4444', padding: '0.2rem 0.5rem', borderRadius: '4px', fontWeight: 700 }}>Peligro</span>;
+    if (val === 1) return <span style={{ background: '#fffbeb', color: '#f59e0b', padding: '0.2rem 0.5rem', borderRadius: '4px', fontWeight: 700 }}>Alerta</span>;
+    return <span style={{ background: '#f0fdf4', color: '#10b981', padding: '0.2rem 0.5rem', borderRadius: '4px', fontWeight: 700 }}>Normal</span>;
+  };
+
   return (
     <section style={{ animation: 'fadeIn 0.3s ease-out' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h2 style={{ margin: 0 }}>Historial basado en RMS</h2>
+           <h2 style={{ margin: 0 }}>Historial de Asentamiento Mecánico (.CSV)</h2>
+           <p style={{ margin: '0.25rem 0 0 0', fontSize: '13px', color: '#64748b' }}>Archivos grabados localmente en /history</p>
         </div>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+        
+        {/* BOTONES DE GESTIÓN */}
+        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
            <input 
-            type="text" 
-            placeholder="Buscar en el historial..." 
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setCurrentPage(1);
-            }}
-            style={{ padding: '0.6rem 1rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0', fontSize: '13px', width: '250px', outline: 'none' }}
-          />
+            type="file" 
+            accept=".csv" 
+            style={{ display: 'none' }} 
+            ref={fileInputRef} 
+            onChange={handleImport}
+           />
+           <button 
+             className="btn btn-outline"
+             onClick={triggerImport}
+             style={{ padding: '0.6rem 1rem', fontSize: '13px', borderRadius: '0.5rem', cursor: 'pointer', background: 'white', border: '1px solid #e2e8f0', color: '#334155' }}
+           >
+             📂 Importar
+           </button>
+           <button 
+             className="btn btn-outline"
+             onClick={handleExport}
+             style={{ padding: '0.6rem 1rem', fontSize: '13px', borderRadius: '0.5rem', cursor: 'pointer', background: 'white', border: '1px solid #e2e8f0', color: '#334155' }}
+           >
+             ⬇️ Exportar
+           </button>
+           <button 
+             className="btn btn-primary"
+             onClick={handleNewRecord}
+             style={{ padding: '0.6rem 1rem', fontSize: '13px', borderRadius: '0.5rem', cursor: 'pointer', background: '#3b82f6', color: 'white', border: 'none', fontWeight: 600 }}
+           >
+             ➕ Nuevo Registro
+           </button>
         </div>
       </div>
-      
+
       <div className="card" style={{ padding: '0', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', minWidth: '800px' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px', minWidth: '1100px' }}>
             <thead>
+              <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0', textAlign: 'left', whiteSpace: 'nowrap' }}>
+                <th style={{ padding: '0.8rem 1rem' }}>TIMESTAMP</th>
+                <th style={{ padding: '0.8rem 1rem' }}>RMS X</th>
+                <th style={{ padding: '0.8rem 1rem' }}>RMS Y</th>
+                <th style={{ padding: '0.8rem 1rem' }}>RMS Z</th>
+                <th style={{ padding: '0.8rem 1rem' }}>KURT. X</th>
+                <th style={{ padding: '0.8rem 1rem' }}>KURT. Y</th>
+                <th style={{ padding: '0.8rem 1rem' }}>KURT. Z</th>
+                <th style={{ padding: '0.8rem 1rem' }}>VEL. ISO (mm/s)</th>
+                <th style={{ padding: '0.8rem 1rem' }}>TEMP. PLACA</th>
+                <th style={{ padding: '0.8rem 1rem' }}>CONEXIÓN</th>
+                <th style={{ padding: '0.8rem 1rem' }}>ESTADO ALARMA</th>
+              </tr>
               <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0', textAlign: 'left' }}>
-                <th style={{ padding: '1rem' }}>HORA DEL CÁLCULO</th>
-                <th style={{ padding: '1rem' }}>ENERGÍA X (RMS)</th>
-                <th style={{ padding: '1rem' }}>ENERGÍA Y (RMS)</th>
-                <th style={{ padding: '1rem' }}>ENERGÍA Z (RMS)</th>
-                <th style={{ padding: '1rem' }}>TEMPERATURA</th>
-                <th style={{ padding: '1rem' }}>SEÑAL (RSSI)</th>
-                <th style={{ padding: '1rem' }}>MÉTRICA HZ</th>
+                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.timestamp} onChange={e => handleFilterChange('timestamp', e.target.value)} /></th>
+                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.rmsX} onChange={e => handleFilterChange('rmsX', e.target.value)} /></th>
+                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.rmsY} onChange={e => handleFilterChange('rmsY', e.target.value)} /></th>
+                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.rmsZ} onChange={e => handleFilterChange('rmsZ', e.target.value)} /></th>
+                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.kurtX} onChange={e => handleFilterChange('kurtX', e.target.value)} /></th>
+                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.kurtY} onChange={e => handleFilterChange('kurtY', e.target.value)} /></th>
+                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.kurtZ} onChange={e => handleFilterChange('kurtZ', e.target.value)} /></th>
+                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.velIso} onChange={e => handleFilterChange('velIso', e.target.value)} /></th>
+                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.temp} onChange={e => handleFilterChange('temp', e.target.value)} /></th>
+                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.health} onChange={e => handleFilterChange('health', e.target.value)} /></th>
+                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.alarm} onChange={e => handleFilterChange('alarm', e.target.value)} /></th>
               </tr>
             </thead>
             <tbody>
               {currentRows.length > 0 ? (
                 currentRows.map((row, idx) => (
                   <tr key={`${row.timestamp}-${idx}`} style={{ borderBottom: '1px solid #f1f5f9', background: idx % 2 === 0 ? 'transparent' : '#fafafa' }}>
-                    <td style={{ padding: '0.75rem 1rem', fontWeight: 700, fontFamily: 'monospace', color: '#64748b' }}>
-                      {new Date(row.timestamp).toLocaleTimeString()}
+                    <td style={{ padding: '0.75rem 1rem', fontWeight: 600, fontFamily: 'monospace', color: '#64748b' }}>
+                      {row.timestamp !== '--' ? new Date(row.timestamp).toLocaleString() : '--'}
                     </td>
-                    <td style={{ padding: '0.75rem 1rem', color: '#ef4444', fontWeight: 800 }}>{row.x?.toFixed(3)}</td>
-                    <td style={{ padding: '0.75rem 1rem', color: '#10b981', fontWeight: 800 }}>{row.y?.toFixed(3)}</td>
-                    <td style={{ padding: '0.75rem 1rem', color: '#3b82f6', fontWeight: 800 }}>{row.z?.toFixed(3)}</td>
-                    <td style={{ padding: '0.75rem 1rem', fontWeight: 600, color: '#475569' }}>
-                      {row.diag?.temp_c?.toFixed(1)}°C
-                    </td>
-                    <td style={{ padding: '0.75rem 1rem', color: '#8b5cf6' }}>
-                      {row.diag?.rssi_dbm} dBm
-                    </td>
-                    <td style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>
-                      {row.sample_rate_hz} Hz
-                    </td>
+                    <td style={{ padding: '0.75rem 1rem', color: '#ef4444', fontWeight: 700 }}>{row.rmsX}</td>
+                    <td style={{ padding: '0.75rem 1rem', color: '#10b981', fontWeight: 700 }}>{row.rmsY}</td>
+                    <td style={{ padding: '0.75rem 1rem', color: '#3b82f6', fontWeight: 700 }}>{row.rmsZ}</td>
+                    <td style={{ padding: '0.75rem 1rem', color: '#475569' }}>{row.kurtX}</td>
+                    <td style={{ padding: '0.75rem 1rem', color: '#475569' }}>{row.kurtY}</td>
+                    <td style={{ padding: '0.75rem 1rem', color: '#475569' }}>{row.kurtZ}</td>
+                    <td style={{ padding: '0.75rem 1rem', fontWeight: 800, color: '#334155' }}>{row.velIso}</td>
+                    <td style={{ padding: '0.75rem 1rem', color: '#64748b' }}>{row.temp}°C</td>
+                    <td style={{ padding: '0.75rem 1rem', color: '#8b5cf6' }}>{row.health}%</td>
+                    <td style={{ padding: '0.75rem 1rem' }}>{getAlarmBadge(row.alarm)}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={7} style={{ padding: '5rem', textAlign: 'center', color: '#94a3b8' }}>
+                  <td colSpan={11} style={{ padding: '5rem', textAlign: 'center', color: '#94a3b8' }}>
                     <div style={{ marginBottom: '1rem', fontSize: '32px' }}>📉</div>
-                    <div style={{ fontWeight: 700, color: '#475569', marginBottom: '0.5rem' }}>Historial en Proceso de Generación</div>
+                    <div style={{ fontWeight: 700, color: '#475569', marginBottom: '0.5rem' }}>Archivo CSV sin registros</div>
                     <p style={{ fontSize: '13px', maxWidth: '400px', margin: '0 auto' }}>
-                      El sistema está consolidando las ráfagas de 100 muestras del sensor. El primer hito aparecerá en unos segundos.
+                      El servidor local aún no ha capturado muestras en este bloque, o el archivo importado está vacío.
                     </p>
                   </td>
                 </tr>
