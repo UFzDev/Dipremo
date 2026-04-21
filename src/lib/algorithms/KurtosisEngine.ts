@@ -13,6 +13,11 @@ export class KurtosisEngine {
   private static readonly WINDOW_SIZE = 512; // Cantidad estadística de muestras por bloque
   private static readonly HPF_ALPHA = 0.75; // Filtro Pasa-Altas ultra agresivo (~50 Hz)
 
+  // Umbral de Actividad: Si la varianza es menor a este valor, consideramos que el sensor
+  // está en reposo y el "ruido" es insignificante para el diagnóstico.
+  // 0.5 LSB^2 es un valor prudente para ignorar el ruido térmico del ADXL345.
+  private static readonly MIN_VARIANCE_THRESHOLD = 0.5;
+
   // Buffers de recolección temporal
   private static bufferX: number[] = [];
   private static bufferY: number[] = [];
@@ -101,8 +106,12 @@ export class KurtosisEngine {
 
     const variance = varianceSum / n;
     
-    // Safety check para divisor por casi cero (ruido absoluto muerto)
-    if (variance < 0.0000001) return 3.0; 
+    // FILTRO DE REPOSO:
+    // Si la varianza es extremadamente baja (ruido eléctrico/térmico), 
+    // forzamos a 3.0 para evitar divisiones por valores ínfimos que disparan la Curtosis.
+    if (variance < this.MIN_VARIANCE_THRESHOLD) {
+      return 3.0; // Estado nominal (Silencio)
+    }
 
     const m4 = fourthMomentSum / n;
     const standardKurtosis = m4 / (variance * variance);
