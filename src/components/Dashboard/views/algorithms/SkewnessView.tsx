@@ -8,7 +8,7 @@ function SkewnessView() {
           TERCER MOMENTO ESTADÍSTICO (ASIMETRÍA)
         </h1>
         <p className="algo-subtitle">
-          El "Perito de Causa Raíz": Monitoreo direccional de holguras y aflojamientos
+          Monitoreo direccional de holguras y aflojamientos
         </p>
       </header>
 
@@ -60,31 +60,31 @@ function SkewnessView() {
       {/* 2.- TRANSCENDENCIA EN EL PROYECTO */}
       <div className="algo-section">
         <h2 className="algo-section-title">
-          2.- ¿Para qué sirve diagnosticar la Asimetría?
+          2.- ¿Por qu&eacute; es importante en el proyecto?
         </h2>
         <div className="algo-section-content">
           <p className="algo-text">
-            El Skewness detecta comportamientos erráticos mecánicos que pasan completamente debajo del radar (o invisibles) en los otros análisis gausianos de tu software.
+            El Skewness detecta comportamientos err&aacute;ticos mec&aacute;nicos que pasan completamente debajo del radar (o invisibles) en los otros an&aacute;lisis gausianos del software.
           </p>
           <div className="algo-info-grid">
             <div className="algo-box-info">
                <div className="algo-info-card-title">Pernos Sueltos o Bases Rotas</div>
                <p className="algo-info-card-desc">
-                 Cuando la bancada está aflojada de un solo lado, el motor en vez de vibrar choca como un rebote contra el suelo o su tope de un lado. Eso es altamente asimétrico e indica que se está jalando el equipo o hay un amortiguamiento asimétrico en la pata de soporte.
+                 Cuando la bancada est&aacute; aflojada de un solo lado, el motor en vez de vibrar choca como un rebote contra el suelo o su tope de un lado. Eso es altamente asim&eacute;trico e indica que se est&aacute; jalando el equipo o hay un amortiguamiento asim&eacute;trico en la pata de soporte.
                </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 3.- EJECUCIÓN PRÁCTICA */}
+      {/* 3.- EJECUCI&Oacute;N PR&Aacute;CTICA */}
       <div className="report-section mb-12">
         <h2 className="algo-section-title">
-          3.- Criterio Diagnóstico de Taller (Umbrales)
+          3.- C&Oacute;MO SE USA EN EL PROYECTO
         </h2>
         <div className="algo-section-content">
           <p className="algo-text">
-            Nuestra brújula bidireccional computa lo anterior en vivo usando límites absolutos $Abs(S) \ge 1.0$:
+            Nuestra br&uacute;jula bidireccional computa lo anterior en vivo usando l&iacute;mites absolutos |S| &ge; 1.0:
           </p>
           
           <div className="algo-card-dark">
@@ -92,10 +92,10 @@ function SkewnessView() {
                 <span className="text-emerald">|S| {'<'} 0.5 (Sano)</span> Dinámica Simétrica Balanceada.
              </h4>
              <h4 className="algo-threshold-row mb-1">
-                <span className="text-amber">|S| {'>'} 0.5 (Alerta)</span> Desviación Ligera (Perno/engrane desgastado).
+                <span className="text-amber">|S| {'>'} 0.5 (Alerta)</span> Desviación Ligera.
              </h4>
              <h4 className="algo-threshold-row mb-0.5">
-                <span className="text-rose">|S| {'>'} 1.0 (Daño Crítico)</span> Holgura o choque Unidireccional confirmado.
+                <span className="text-rose">|S| {'>'} 1.0 (Daño Crítico)</span> Holgura o choque Unidireccional.
              </h4>
           </div>
         </div>

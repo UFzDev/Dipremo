@@ -8,7 +8,7 @@ function KurtosisView() {
           CUARTO MOMENTO ESTADÍSTICO (CURTOSIS)
         </h1>
         <p className="algo-subtitle">
-          El "Espía Predictivo": Detección temprana de fallos en rodamientos e impactos mecánicos
+          Detección temprana de fallos en rodamientos e impactos mecánicos
         </p>
       </header>
 
@@ -59,7 +59,7 @@ function KurtosisView() {
       {/* 2.- LA MAGIA VS RMS */}
       <div className="algo-section">
         <h2 className="algo-section-title">
-          2.- ¿Por qué es el mejor espía industrial?
+          2.- ¿Por qu&eacute; es importante en el proyecto?
         </h2>
         <div className="algo-section-content">
           <p className="algo-text">
@@ -85,11 +85,11 @@ function KurtosisView() {
       {/* 3.- EJECUCI&Oacute;N PR&Aacute;CTICA */}
       <div className="report-section mb-12">
         <h2 className="algo-section-title">
-          3.- La Din&aacute;mica de la Salud Predictiva (El Tablero)
+          3.- C&Oacute;MO SE USA EN EL PROYECTO
         </h2>
         <div className="algo-section-content">
           <p className="algo-text">
-            Nuestro motor captura bloques ininterrumpidos y exprime los valores <em>K</em> bas&aacute;ndose en las leyes mundiales de predictibilidad de rodamientos de fricci&oacute;n:
+            Pr&aacute;cticamente el motor genera una distribuci&oacute;n gaussiana de los &uacute;ltimos datos recolectados. Cuando se detecta una anomal&iacute;a estad&iacute;stica fuera de lo normal, es cuando el &iacute;ndice salta:
           </p>
           
           <div className="algo-card-dark">
@@ -102,9 +102,6 @@ function KurtosisView() {
              <h4 className="algo-threshold-row mb-0.5">
                 <span className="text-rose">K=10.0</span> Fallo Catastr&oacute;fico del Balero / Impactos puros (Danger)
              </h4>
-             <p className="algo-quote">
-                "Todo este diagn&oacute;stico visual ahora subyace en la Pesta&ntilde;a Global de Gr&aacute;ficas de M&aacute;quina como un sem&aacute;foro progresivo para tus operadores de mantenimiento, indic&aacute;ndoles: <strong>'Tu m&aacute;quina no vibra a&uacute;n, pero su rodamiento ya se est&aacute; pudriendo por dentro.'</strong>"
-             </p>
           </div>
         </div>
       </div>
