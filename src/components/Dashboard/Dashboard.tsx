@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { type ESPData, type ConnectionStatus } from '../../lib/connection'
+import { type ESPData, type ConnectionStatus, STATUS } from '../../lib/connection'
 import { RMSEngine, type RMSData } from '../../lib/algorithms/RMSEngine'
 import { FFTEngine, type FFTData } from '../../lib/algorithms/FFTEngine'
 import { IntegrationEngine, type VelocityRMSData } from '../../lib/algorithms/IntegrationEngine'
@@ -124,32 +124,31 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
   // Motor de Logging Físico (CSV - Cada 10 segundos)
   useEffect(() => {
     const persistTimer = setInterval(() => {
+      // SOLO grabar si estamos conectados y hay datos reales
+      if (status !== STATUS.CONNECTED || !data) return;
+
       const current = rawBufferRef.current[0];
-      if (!current) return; // Esperar a tener datos reales
+      if (!current) return; 
 
       const now = new Date().toISOString();
       const rms = historyRef.current[0];
       const kurt = kurtosisRef.current;
       const iso = isoRef.current;
-      const hlth = healthRef.current;
+      const health = healthRef.current;
       
-      // Lógica de Alarma Provisional
-      // Velocidad RMS > 4.5 = Peligro (2), > 2.8 = Alerta (1), Normal = 0
       const maxIso = Math.max(iso?.vRmsX ?? 0, iso?.vRmsY ?? 0, iso?.vRmsZ ?? 0);
-      const alarmStatus = maxIso > 4.5 ? 2 : (maxIso > 2.8 ? 1 : 0);
-
       const f = (val: number | undefined) => (val || 0).toFixed(4);
 
-      // Ensamblaje estricto de las 11 columnas
-      const csvLine = `${now},${f(rms?.x)},${f(rms?.y)},${f(rms?.z)},${f(kurt?.kurtosisX)},${f(kurt?.kurtosisY)},${f(kurt?.kurtosisZ)},${f(maxIso)},${current.diag.temp_c.toFixed(1)},${hlth?.quality ?? 100},${alarmStatus}`;
+      // Ensamblaje estricto de las 10 columnas (sin estado de alarma)
+      const csvLine = `${now},${f(rms?.x)},${f(rms?.y)},${f(rms?.z)},${f(kurt?.kurtosisX)},${f(kurt?.kurtosisY)},${f(kurt?.kurtosisZ)},${f(maxIso)},${current.diag.temp_c.toFixed(1)},${health?.quality ?? 100}`;
       
       fetch('/api/history/append', { method: 'POST', body: csvLine })
         .catch(err => console.error("Error grabando en disco:", err));
         
-    }, 10000); // 10 segundos
+    }, 10000); 
 
     return () => clearInterval(persistTimer);
-  }, []);
+  }, [status, data]); // Añpdir dependencias para reaccionar al estado de conexión
 
   const renderContent = () => {
     switch (activeTab) {

@@ -17,7 +17,6 @@ type CSVRow = {
   velIso: string;
   temp: string;
   health: string;
-  alarm: string;
 };
 
 function HistoryView({}: HistoryViewProps) {
@@ -25,7 +24,7 @@ function HistoryView({}: HistoryViewProps) {
   const [filters, setFilters] = useState({
     timestamp: '', rmsX: '', rmsY: '', rmsZ: '',
     kurtX: '', kurtY: '', kurtZ: '', velIso: '',
-    temp: '', health: '', alarm: ''
+    temp: '', health: ''
   });
 
   const filterInputStyle = {
@@ -66,8 +65,7 @@ function HistoryView({}: HistoryViewProps) {
         kurtZ: cols[6] || '0',
         velIso: cols[7] || '0',
         temp: cols[8] || '0',
-        health: cols[9] || '0',
-        alarm: cols[10] || '0'
+        health: cols[9] || '0'
       };
     }).reverse(); // Mostramos los últimos registros primero
 
@@ -153,8 +151,7 @@ function HistoryView({}: HistoryViewProps) {
         (!filters.kurtZ || row.kurtZ.toLowerCase().includes(filters.kurtZ.toLowerCase())) &&
         (!filters.velIso || row.velIso.toLowerCase().includes(filters.velIso.toLowerCase())) &&
         (!filters.temp || row.temp.toLowerCase().includes(filters.temp.toLowerCase())) &&
-        (!filters.health || row.health.toLowerCase().includes(filters.health.toLowerCase())) &&
-        (!filters.alarm || row.alarm.toLowerCase().includes(filters.alarm.toLowerCase()))
+        (!filters.health || row.health.toLowerCase().includes(filters.health.toLowerCase()))
       );
     });
   }, [csvData, filters]);
@@ -164,13 +161,7 @@ function HistoryView({}: HistoryViewProps) {
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = filteredHistory.slice(indexOfFirstRow, indexOfLastRow);
 
-  // Renderizado Condicional del Badge de Alarma
-  const getAlarmBadge = (alarmValue: string) => {
-    const val = parseInt(alarmValue, 10);
-    if (val === 2) return <span style={{ background: '#fef2f2', color: '#ef4444', padding: '0.2rem 0.5rem', borderRadius: '4px', fontWeight: 700 }}>Peligro</span>;
-    if (val === 1) return <span style={{ background: '#fffbeb', color: '#f59e0b', padding: '0.2rem 0.5rem', borderRadius: '4px', fontWeight: 700 }}>Alerta</span>;
-    return <span style={{ background: '#f0fdf4', color: '#10b981', padding: '0.2rem 0.5rem', borderRadius: '4px', fontWeight: 700 }}>Normal</span>;
-  };
+
 
   return (
     <section style={{ animation: 'fadeIn 0.3s ease-out' }}>
@@ -228,7 +219,6 @@ function HistoryView({}: HistoryViewProps) {
                 <th style={{ padding: '0.8rem 1rem' }}>VEL. ISO (mm/s)</th>
                 <th style={{ padding: '0.8rem 1rem' }}>TEMP. PLACA</th>
                 <th style={{ padding: '0.8rem 1rem' }}>CONEXIÓN</th>
-                <th style={{ padding: '0.8rem 1rem' }}>ESTADO ALARMA</th>
               </tr>
               <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0', textAlign: 'left' }}>
                 <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.timestamp} onChange={e => handleFilterChange('timestamp', e.target.value)} /></th>
@@ -241,7 +231,6 @@ function HistoryView({}: HistoryViewProps) {
                 <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.velIso} onChange={e => handleFilterChange('velIso', e.target.value)} /></th>
                 <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.temp} onChange={e => handleFilterChange('temp', e.target.value)} /></th>
                 <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.health} onChange={e => handleFilterChange('health', e.target.value)} /></th>
-                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Filtrar..." style={filterInputStyle} value={filters.alarm} onChange={e => handleFilterChange('alarm', e.target.value)} /></th>
               </tr>
             </thead>
             <tbody>
@@ -260,12 +249,11 @@ function HistoryView({}: HistoryViewProps) {
                     <td style={{ padding: '0.75rem 1rem', fontWeight: 800, color: '#334155' }}>{row.velIso}</td>
                     <td style={{ padding: '0.75rem 1rem', color: '#64748b' }}>{row.temp}°C</td>
                     <td style={{ padding: '0.75rem 1rem', color: '#8b5cf6' }}>{row.health}%</td>
-                    <td style={{ padding: '0.75rem 1rem' }}>{getAlarmBadge(row.alarm)}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={11} style={{ padding: '5rem', textAlign: 'center', color: '#94a3b8' }}>
+                  <td colSpan={10} style={{ padding: '5rem', textAlign: 'center', color: '#94a3b8' }}>
                     <div style={{ marginBottom: '1rem', fontSize: '32px' }}>📉</div>
                     <div style={{ fontWeight: 700, color: '#475569', marginBottom: '0.5rem' }}>Archivo CSV sin registros</div>
                     <p style={{ fontSize: '13px', maxWidth: '400px', margin: '0 auto' }}>
