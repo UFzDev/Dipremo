@@ -5,6 +5,7 @@ export type FFTData = {
   magnitudeX: number[];
   magnitudeY: number[];
   magnitudeZ: number[];
+  magnitudeRes: number[];
   bins: number;
   sampleRateHz: number;
   timestamp: number;
@@ -31,11 +32,17 @@ export class FFTEngine {
       const magX = this.processChannel(this.bufferX);
       const magY = this.processChannel(this.bufferY);
       const magZ = this.processChannel(this.bufferZ);
+      
+      // Cálculo de la Magnitud Resultante (Bin por Bin)
+      const magnitudeRes = magX.map((val, i) => 
+        Math.sqrt((val * val) + (magY[i] * magY[i]) + (magZ[i] * magZ[i]))
+      );
 
       const result: FFTData = {
         magnitudeX: magX,
         magnitudeY: magY,
         magnitudeZ: magZ,
+        magnitudeRes: magnitudeRes,
         bins: this.WINDOW_SIZE / 2,
         sampleRateHz: sample.sample_rate_hz || 1000,
         timestamp: Date.now()
