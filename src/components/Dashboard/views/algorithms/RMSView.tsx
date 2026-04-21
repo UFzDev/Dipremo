@@ -24,39 +24,28 @@ function RMSView() {
           
           <h3 className="algo-info-card-title">Fundamento Matem&aacute;tico</h3>
           <div className="algo-math-box-lg">
-            {/* Ecuaci&oacute;n Vectorial Profesional (SVG Precision) */}
-            <svg width="360" height="110" viewBox="0 0 360 110" className="algo-math-svg">
-              <defs>
-                <style>{`
-                  .math-main { font-family: "Times New Roman", Times, serif; font-style: italic; font-size: 32px; fill: #1a202c; }
-                  .math-sub { font-size: 16px; font-style: normal; }
-                  .math-symbol { font-size: 40px; font-weight: 300; fill: #2d3748; }
-                `}</style>
-              </defs>
-              
-              {/* Parte Izquierda: X_RMS = */}
-              <text x="10" y="60" className="math-main">X<tspan dy="10" className="math-sub">RMS</tspan></text>
-              <text x="100" y="60" className="math-main algo-math-normal">=</text>
-              
-              {/* S&iacute;mbolo de la Ra&iacute;z Cuadrada */}
-              <path d="M140 55 L150 95 L175 15 L350 15" fill="none" stroke="#2d3748" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              
-              {/* T&eacute;rmino de Fracci&oacute;n (1/N) */}
-              <text x="185" y="42" className="math-main algo-math-text-20">1</text>
-              <line x1="182" y1="50" x2="205" y2="50" stroke="#2d3748" strokeWidth="2" />
-              <text x="185" y="75" className="math-main algo-math-text-20">N</text>
-              
-              {/* S&iacute;mbolo de Sumatoria con l&iacute;mites perfectos */}
-              <text x="220" y="63" className="math-symbol algo-math-text-50 algo-math-symbol">&Sigma;</text>
-              <text x="228" y="88" className="math-main algo-math-text-12 algo-math-normal">i=1</text>
-              <text x="232" y="24" className="math-main algo-math-text-12 algo-math-normal">N</text>
-              
-              {/* Variable y Exponente: x_i^2 */}
-              <text x="265" y="60" className="math-main">x<tspan dy="6" className="math-sub">i</tspan><tspan dy="-24" className="algo-math-text-20">2</tspan></text>
-            </svg>
+            <div className="math-container">
+              <span>X<span className="math-sub">RMS</span></span>
+              <span className="math-op">=</span>
+              <div className="math-sqrt">
+                <span className="math-sqrt-sym">&radic;</span>
+                <div className="math-sqrt-content">
+                  <div className="math-frac">
+                    <span className="math-frac-num">1</span>
+                    <span className="math-frac-den">N</span>
+                  </div>
+                  <div className="math-sum">
+                    <span className="math-sum-limit">N</span>
+                    <span className="math-sum-sym">&Sigma;</span>
+                    <span className="math-sum-limit">i=1</span>
+                  </div>
+                  <span>x<span className="math-sub">i</span><span className="math-sup">2</span></span>
+                </div>
+              </div>
+            </div>
           </div>
           
-          <p style={{ fontSize: '14px', marginBottom: '1rem' }}>El proceso matem&aacute;tico consta de tres etapas:</p>
+          <p style={{ fontSize: '14px', marginBottom: '1rem', marginTop: '2rem' }}>El proceso matem&aacute;tico consta de tres etapas:</p>
           <ul style={{ paddingLeft: '1.5rem', fontSize: '14px', lineHeight: '1.8' }}>
             <li><strong>Cuadrado (Square):</strong> Se eleva cada lectura al cuadrado, asegurando que todos los valores sean positivos.</li>
             <li><strong>Media (Mean):</strong> Se calcula el promedio de los cuadrados en un intervalo de tiempo definido por N.</li>

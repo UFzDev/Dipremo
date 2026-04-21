@@ -30,48 +30,39 @@ function FFTView() {
           </p>
 
           <div className="algo-math-box-lg">
-            <svg width="400" height="120" viewBox="0 0 400 120" className="algo-math-svg">
-              <defs>
-                <style>{`
-                  .math-main { font-family: "Times New Roman", Times, serif; font-style: italic; font-size: 32px; fill: #1a202c; }
-                  .math-op { font-family: "Times New Roman", Times, serif; font-size: 32px; fill: #1a202c; }
-                  .math-sub { font-size: 16px; font-style: normal; }
-                  .math-symbol { font-size: 55px; font-weight: 300; fill: #2d3748; font-family: "Times New Roman", Times, serif; }
-                  .math-exp { font-size: 20px; font-style: italic; }
-                  .math-frac-num { font-size: 16px; }
-                `}</style>
-              </defs>
-              
-              {/* X(k) = */}
-              <text x="20" y="70" className="math-main">X(k)</text>
-              <text x="95" y="70" className="math-op">=</text>
-              
-              {/* Sumatoria */}
-              <text x="140" y="75" className="math-symbol algo-math-text-50">∑</text>
-              <text x="145" y="105" className="math-main algo-math-text-14 algo-math-normal">n=0</text>
-              <text x="140" y="25" className="math-main algo-math-text-14 algo-math-normal">N-1</text>
-              
-              {/* Término x(n) * e^-j... */}
-              <text x="190" y="70" className="math-main">x(n) · e</text>
-              
-              {/* Exponente de e */}
-              {/* -j */}
-              <text x="290" y="35" className="math-exp">-j</text>
-              {/* 2pi / N */}
-              <text x="316" y="27" className="math-main math-frac-num algo-math-normal">2π</text>
-              <line x1="312" y1="32" x2="336" y2="32" stroke="#1a202c" strokeWidth="1.5" />
-              <text x="316" y="48" className="math-main algo-math-text-16">N</text>
-              {/* kn */}
-              <text x="340" y="35" className="math-exp">kn</text>
-            </svg>
+            <div className="math-container">
+              <span>X(k)</span>
+              <span className="math-op">=</span>
+              <div className="math-sum">
+                <span className="math-sum-limit">N-1</span>
+                <span className="math-sum-sym">&Sigma;</span>
+                <span className="math-sum-limit">n=0</span>
+              </div>
+              <span>x(n) &middot; e</span>
+              <div className="math-sup" style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', top: '-1em' }}>
+                <span>-j</span>
+                <div className="math-frac" style={{ fontSize: '0.7em' }}>
+                  <span className="math-frac-num" style={{ borderBottomWidth: '1px' }}>2&pi;</span>
+                  <span className="math-frac-den">N</span>
+                </div>
+                <span>kn</span>
+              </div>
+            </div>
           </div>
           
-          <div className="algo-info-grid algo-box-slate">
-            <div><strong className="text-blue-dark">N:</strong> Número total de muestras (debe ser potencia de 2, como 1024 o 2048).</div>
-            <div><strong className="text-blue-dark">x(n):</strong> Valor de la aceleración en el dominio del tiempo.</div>
-            <div><strong className="text-blue-dark">X(k):</strong> Componente de la señal en la frecuencia determinada por <em>k</em>.</div>
-            <div><strong className="text-blue-dark">e<sup>-j...</sup>:</strong> Representa la rotación en el plano complejo, necesaria para extraer la fase y la amplitud.</div>
+          <div className="algo-info-grid algo-box-slate" style={{ marginTop: '1.5rem', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+            <div><strong className="text-blue-dark">X(k):</strong> Magnitud de señal en frecuencia.</div>
+            <div><strong className="text-blue-dark">x(n):</strong> Valor de la muestra en tiempo n.</div>
+            <div><strong className="text-blue-dark">e:</strong> Base natural.</div>
+            <div><strong className="text-blue-dark">-j:</strong> Unidad imaginaria o rotación.</div>
+            <div><strong className="text-blue-dark">2&pi;/N:</strong> Resolución angular por muestra.</div>
+            <div><strong className="text-blue-dark">kn:</strong> Producto de índices de correlación.</div>
           </div>
+          
+          <h3 className="algo-info-card-title" style={{ marginTop: '2rem' }}>El Proceso de Transformación</h3>
+          <p className="algo-text">
+            Matemáticamente, la FFT correlaciona tu señal de tiempo con una serie de ondas complejas (senoidales). Si la señal "vibra" de forma similar a una de estas ondas, el resultado de la sumatoria explota en un <strong>Pico Espectral</strong>, indicando presencia de energía en esa frecuencia exacta.
+          </p>
           
           <h3 className="algo-info-card-title">El Proceso de Optimización</h3>
           <p className="algo-text">

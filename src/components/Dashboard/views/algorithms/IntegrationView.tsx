@@ -31,42 +31,35 @@ function IntegrationView() {
           </p>
 
           <div className="algo-math-box-lg">
-            <svg width="450" height="90" viewBox="0 0 450 90" className="algo-math-svg">
-              <defs>
-                <style>{`
-                  .math-main { font-family: "Times New Roman", Times, serif; font-style: italic; font-size: 32px; fill: #1a202c; }
-                  .math-op { font-family: "Times New Roman", Times, serif; font-size: 32px; fill: #1a202c; }
-                  .math-sub { font-size: 16px; font-style: normal; }
-                  .math-paren { font-size: 55px; font-weight: 300; fill: #2d3748; }
-                `}</style>
-              </defs>
-              {/* v_n = v_{n-1} + */}
-              <text x="10" y="55" className="math-main">v<tspan dy="10" className="math-sub">n</tspan></text>
-              <text x="45" y="55" className="math-op">=</text>
-              <text x="75" y="55" className="math-main">v<tspan dy="10" className="math-sub">n-1</tspan></text>
-              <text x="135" y="55" className="math-op">+</text>
-
-              {/* Paren Izquierdo */}
-              <text x="170" y="65" className="math-paren">(</text>
-              
-              {/* Fracción a_n + a_{n-1} / 2 */}
-              <text x="195" y="35" className="math-main algo-math-text-24">a<tspan dy="8" className="math-sub algo-math-text-13">n</tspan></text>
-              <text x="230" y="35" className="math-op algo-math-text-24">+</text>
-              <text x="255" y="35" className="math-main algo-math-text-24">a<tspan dy="8" className="math-sub algo-math-text-13">n-1</tspan></text>
-              
-              <line x1="190" y1="45" x2="300" y2="45" stroke="#1a202c" strokeWidth="1.5" />
-              
-              <text x="240" y="70" className="math-main algo-math-text-24 algo-math-normal">2</text>
-              
-              {/* Paren Derecho */}
-              <text x="310" y="65" className="math-paren">)</text>
-
-              {/* * dt */}
-              <text x="340" y="55" className="math-op">·</text>
-              <text x="365" y="55" className="math-main algo-math-normal">&Delta;</text>
-              <text x="385" y="55" className="math-main">t</text>
-            </svg>
+            <div className="math-container">
+              <span>v<span className="math-sub">n</span></span>
+              <span className="math-op">=</span>
+              <span>v<span className="math-sub">n-1</span></span>
+              <span className="math-op">+</span>
+              <span className="math-paren">(</span>
+              <div className="math-frac">
+                <span className="math-frac-num">a<span className="math-sub">n</span> + a<span className="math-sub">n-1</span></span>
+                <span className="math-frac-den">2</span>
+              </div>
+              <span className="math-paren">)</span>
+              <span className="math-op">&middot;</span>
+              <span>&Delta;t</span>
+            </div>
           </div>
+          
+          <div className="algo-info-grid algo-box-slate" style={{ marginTop: '1.5rem', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+            <div><strong className="text-blue-dark">v<span className="math-sub">n</span>:</strong> Velocidad actual calculada.</div>
+            <div><strong className="text-blue-dark">v<span className="math-sub">n-1</span>:</strong> Velocidad del punto anterior.</div>
+            <div><strong className="text-blue-dark">a<span className="math-sub">n</span>:</strong> Aceleración en el instante actual.</div>
+            <div><strong className="text-blue-dark">a<span className="math-sub">n-1</span>:</strong> Aceleración inmediata previa.</div>
+            <div><strong className="text-blue-dark">2:</strong> Promedio de base (Trapezoide).</div>
+            <div><strong className="text-blue-dark">&Delta;t:</strong> Tiempo entre muestras (1/Fs).</div>
+          </div>
+
+          <h3 className="algo-info-card-title" style={{ marginTop: '2rem' }}>El Proceso de Integración</h3>
+          <p className="algo-text">
+            Este método "suma áreas". Imaginamos que cada par de lecturas de aceleración forma un trapecio con el eje del tiempo. Al calcular el área de ese trapecio y sumarla a la velocidad anterior (<em>v<sub>n-1</sub></em>), obtenemos el nuevo valor de velocidad, permitiendo ver el movimiento real de la máquina más allá de su fuerza de impacto.
+          </p>
         </div>
       </div>
 

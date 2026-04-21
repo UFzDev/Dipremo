@@ -129,6 +129,101 @@
 .algo-math-text-32 { font-size: 32px; }
 .algo-math-text-50 { font-size: 50px; }
 
+/* Nuevo Motor Matemático HTML/CSS (Elimina solapamientos) */
+.math-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Times New Roman", Times, serif;
+  font-style: italic;
+  font-size: 28px;
+  color: #1a202c;
+  gap: 0.5rem;
+  padding: 1rem;
+}
+
+.math-frac {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  vertical-align: middle;
+  font-size: 0.8em;
+  padding: 0 4px;
+}
+
+.math-frac-num { border-bottom: 2px solid #1a202c; padding-bottom: 2px; }
+.math-frac-den { padding-top: 2px; }
+
+.math-sum {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  vertical-align: middle;
+  position: relative;
+  margin: 0 8px;
+}
+
+.math-sum-sym {
+  font-size: 2em;
+  font-family: serif;
+  font-style: normal;
+  line-height: 1;
+}
+
+.math-sum-limit {
+  font-size: 0.4em;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.math-sqrt {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  padding-top: 4px;
+}
+
+.math-sqrt-sym {
+  font-size: 1.4em;
+  font-style: normal;
+  margin-right: -4px;
+}
+
+.math-sqrt-content {
+  border-top: 2.5px solid #1a202c;
+  padding: 8px 8px 4px 4px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.math-sup {
+  font-size: 0.6em;
+  vertical-align: top;
+  position: relative;
+  top: -0.5em;
+  left: 2px;
+  font-style: normal;
+}
+
+.math-sub {
+  font-size: 0.5em;
+  vertical-align: bottom;
+  position: relative;
+  bottom: -0.2em;
+  font-style: normal;
+}
+
+.math-paren {
+  font-size: 1.5em;
+  font-weight: 200;
+  font-style: normal;
+}
+
+.math-op {
+  font-style: normal;
+  margin: 0 0.5rem;
+}
+
 
 /* Tables */
 .algo-table {

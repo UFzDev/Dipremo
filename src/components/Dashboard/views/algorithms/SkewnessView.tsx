@@ -23,39 +23,36 @@ function SkewnessView() {
           </p>
           
           <div className="algo-math-box-lg">
-            <svg width="350" height="120" viewBox="0 0 350 120" className="algo-math-svg">
-              <defs>
-                <style>{`
-                  .math-main { font-family: "Times New Roman", Times, serif; font-style: italic; font-size: 32px; fill: #1a202c; }
-                  .math-op { font-family: "Times New Roman", Times, serif; font-size: 32px; fill: #1a202c; }
-                  .math-sub { font-size: 14px; font-style: normal; }
-                  .math-sup { font-size: 16px; font-style: normal; }
-                  .math-paren { font-size: 65px; font-weight: 300; fill: #2d3748; }
-                `}</style>
-              </defs>
-              <text x="20" y="70" className="math-main algo-math-normal">S</text>
-              <text x="55" y="70" className="math-op">=</text>
-              
-              {/* Numerador Σ (x_i - μ)^3 */}
-              <text x="120" y="45" className="math-op algo-math-text-26">&Sigma;</text>
-              <text x="145" y="45" className="math-op algo-math-text-22">( x</text>
-              <text x="172" y="52" className="math-main algo-math-text-14">i</text>
-              <text x="185" y="45" className="math-op algo-math-text-22">-</text>
-              <text x="205" y="45" className="math-main algo-math-text-22">&mu;</text>
-              <text x="225" y="45" className="math-op algo-math-text-22">)</text>
-              <text x="235" y="30" className="math-main algo-math-text-16 algo-math-normal algo-math-color">3</text>
-
-              <line x1="90" y1="65" x2="260" y2="65" stroke="#1a202c" strokeWidth="1.5" />
-              
-              {/* Denominador N * σ^3 */}
-              <text x="120" y="95" className="math-main algo-math-text-24 algo-math-normal">N</text>
-              <text x="145" y="95" className="math-op algo-math-text-24">·</text>
-              <text x="165" y="95" className="math-main algo-math-text-24">&sigma;</text>
-              <text x="180" y="80" className="math-main algo-math-text-16 algo-math-normal algo-math-color">3</text>
-            </svg>
+            <div className="math-container">
+              <span>S</span>
+              <span className="math-op">=</span>
+              <div className="math-frac">
+                <div className="math-frac-num" style={{ display: 'flex', alignItems: 'center' }}>
+                  <div className="math-sum" style={{ fontSize: '0.8em' }}>
+                    <span className="math-sum-sym">&Sigma;</span>
+                  </div>
+                  <span className="math-paren">(</span>
+                  <span>x<span className="math-sub">i</span> - &mu;</span>
+                  <span className="math-paren">)</span>
+                  <span className="math-sup" style={{ top: '-0.25em' }}>3</span>
+                </div>
+                <div className="math-frac-den">
+                  <span>N &middot; &sigma;<span className="math-sup" style={{ top: '-0.25em' }}>3</span></span>
+                </div>
+              </div>
+            </div>
           </div>
-          <p className="algo-text-sm">
-            La clave de esta fórmula es estar <strong>elevada al cubo (<sup>3</sup>)</strong> y no al cuadrado (<sup>2</sup>). Los cubos no destruyen el signo. Por tanto, evalúan en qué lado magnético (positivo/hacia arriba o negativo/hacia abajo) se está cargando la oscilación destructiva.
+          
+          <div className="algo-info-grid algo-box-slate" style={{ marginTop: '1.5rem', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+            <div><strong className="text-blue-dark">S:</strong> Valor de Asimetría (Skewness).</div>
+            <div><strong className="text-blue-dark">x<span className="math-sub">i</span>:</strong> Valor de la muestra.</div>
+            <div><strong className="text-blue-dark">&mu;:</strong> Media de la señal.</div>
+            <div><strong className="text-blue-dark">&sigma;:</strong> Desviación estándar.</div>
+          </div>
+          
+          <h3 className="algo-info-card-title" style={{ marginTop: '2rem' }}>El Análisis de Direccionalidad</h3>
+          <p className="algo-text">
+            A diferencia del RMS, el Skewness usa el <strong>cubo de la señal</strong>. Al elevar al cubo, los valores negativos permanecen negativos. Si el resultado final no es cero, significa que la máquina está "golpeando" más hacia un lado que hacia otro (asimetría), lo que es un síntoma clásico de holgura mecánica o bases sueltas.
           </p>
         </div>
       </div>
