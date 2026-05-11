@@ -18,6 +18,7 @@ type OverviewViewProps = {
   vibeLimits: { minX: number; maxX: number; minY: number; maxY: number; minZ: number; maxZ: number };
   rmsPeaks: { x: number; y: number; z: number; res: number };
   vibeData: { x: number; y: number; z: number };
+  classification: string;
 };
 
 /**
@@ -89,7 +90,7 @@ function DataRow({
 
 function OverviewView({ 
   data, health, rmsData, fftData, isoData, kurtosisData, skewnessData, motorRpm,
-  vibeLimits, rmsPeaks, vibeData
+  vibeLimits, rmsPeaks, vibeData, classification
 }: OverviewViewProps) {
 
   // --- LÓGICA DE MAPEO DE ESTADOS ---
@@ -144,6 +145,33 @@ function OverviewView({
         <div className="card-mini" style={{ padding: '1rem', background: '#f5f3ff', borderRadius: '8px', border: '1px solid #ddd6fe' }}>
            <div style={{ fontSize: '11px', color: '#7c3aed', fontWeight: 800, textTransform: 'uppercase' }}>Velocidad Motor</div>
            <div style={{ fontSize: '20px', fontWeight: 800, color: '#5b21b6' }}>{motorRpm} <span style={{ fontSize: '12px' }}>RPM</span></div>
+        </div>
+      </div>
+
+      <div style={{ 
+        marginBottom: '2rem', 
+        padding: '1.2rem', 
+        borderRadius: '12px', 
+        background: classification === "Encendido" ? 'rgba(16, 185, 129, 0.1)' : (classification === "Apagado" ? 'rgba(100, 116, 139, 0.1)' : (classification === "Papel" ? 'rgba(239, 68, 68, 0.1)' : 'rgba(148, 163, 184, 0.1)')),
+        border: `2px solid ${classification === "Encendido" ? '#10b981' : (classification === "Apagado" ? '#64748b' : (classification === "Papel" ? '#ef4444' : '#94a3b8'))}`,
+        display: 'flex',
+        alignItems: 'center',
+        gap: '1.2rem'
+      }}>
+        <div style={{ fontSize: '32px' }}>
+          {classification === "Encendido" ? '✅' : (classification === "Apagado" ? '⚪' : (classification === "Papel" ? '⚠️' : '❓'))}
+        </div>
+        <div>
+          <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+            Estado SVM IA
+          </div>
+          <div style={{ 
+            fontSize: '20px', 
+            fontWeight: 900, 
+            color: classification === "Encendido" ? '#059669' : (classification === "Apagado" ? '#475569' : (classification === "Papel" ? '#b91c1c' : '#64748b'))
+          }}>
+            {classification.toUpperCase()}
+          </div>
         </div>
       </div>
 

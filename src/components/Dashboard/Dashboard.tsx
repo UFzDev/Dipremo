@@ -7,6 +7,7 @@ import { KurtosisEngine, type KurtosisData } from '../../lib/algorithms/Kurtosis
 import { SkewnessEngine, type SkewnessData } from '../../lib/algorithms/SkewnessEngine'
 import { ConnectionEngine, type ConnectionHealth } from '../../lib/algorithms/ConnectionEngine'
 import { NormalizationEngine } from '../../lib/algorithms/Normalization'
+import { SVMClassifier } from '../../lib/algorithms/SVMClassifier'
 
 // ... (Sub-componentes)
 import Sidebar from './Sidebar'
@@ -107,6 +108,10 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
   const normalizedRef = useRef({ x: 0, y: 0, z: 0 });
   const [displayNormalized, setDisplayNormalized] = useState(normalizedRef.current);
 
+  // 10. Clasificación SVM
+  const svmClassificationRef = useRef<string>("Indeterminado");
+  const [displaySvmClassification, setDisplaySvmClassification] = useState(svmClassificationRef.current);
+
   const resetSessionPeaks = () => {
     sessionPeaksRef.current = {
       minX: 0, maxX: 0, minY: 0, maxY: 0, minZ: 0, maxZ: 0,
@@ -184,6 +189,16 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
       if (skewnessResult) skewnessRef.current = skewnessResult;
 
       healthRef.current = ConnectionEngine.processSample(data);
+
+      // SVM Classification
+      const rms = historyRef.current[0];
+      const kurt = kurtosisRef.current;
+      const iso = isoRef.current;
+      if (rms && kurt && iso) {
+        const maxIso = Math.max(iso.vRmsX, iso.vRmsY, iso.vRmsZ);
+        const featureVector = [rms.x, rms.y, rms.z, kurt.kurtosisX, kurt.kurtosisY, kurt.kurtosisZ, maxIso];
+        svmClassificationRef.current = SVMClassifier.clasificarVibracion(featureVector);
+      }
     }
   }, [data, status]);
 
@@ -207,6 +222,7 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
       if (healthRef.current) {
         setDisplayHealth(healthRef.current);
       }
+      setDisplaySvmClassification(svmClassificationRef.current);
       setDisplaySessionPeaks({ ...sessionPeaksRef.current });
       setDisplayNormalized({ ...normalizedRef.current });
     }, 100); 
@@ -234,8 +250,11 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
       const maxIso = Math.max(iso?.vRmsX ?? 0, iso?.vRmsY ?? 0, iso?.vRmsZ ?? 0);
       const f = (val: number | undefined) => (val || 0).toFixed(4);
 
-      // Ensamblaje estricto de las 10 columnas
-      const csvLine = `${now},${f(rms?.x)},${f(rms?.y)},${f(rms?.z)},${f(kurt?.kurtosisX)},${f(kurt?.kurtosisY)},${f(kurt?.kurtosisZ)},${f(maxIso)},${current.diag.temp_c.toFixed(1)},${health.quality}`;
+      // Clasificación para el registro
+      const classification = svmClassificationRef.current;
+
+      // Ensamblaje estricto de las 11 columnas (timestamp, rmsX, rmsY, rmsZ, kurtX, kurtY, kurtZ, velIso, temp, health, tipo)
+      const csvLine = `${now},${f(rms?.x)},${f(rms?.y)},${f(rms?.z)},${f(kurt?.kurtosisX)},${f(kurt?.kurtosisY)},${f(kurt?.kurtosisZ)},${f(maxIso)},${current.diag.temp_c.toFixed(1)},${health.quality},${classification}`;
       
       fetch('/api/history/append', { method: 'POST', body: csvLine })
         .catch(err => console.error("Error grabando en disco:", err));
@@ -261,6 +280,7 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
             vibeLimits={vibeLimits}
             rmsPeaks={rmsPeaks}
             vibeData={displayNormalized}
+            classification={displaySvmClassification}
           />
         );
       case 'charts':
@@ -276,6 +296,7 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
             vibeLimits={vibeLimits}
             rmsPeaks={rmsPeaks}
             fftRange={fftRange}
+            classification={displaySvmClassification}
           />
         );
       case 'history':
@@ -309,6 +330,7 @@ function Dashboard({ data, status, onConnect, onDisconnect }: DashboardProps) {
             vibeLimits={vibeLimits}
             rmsPeaks={rmsPeaks}
             vibeData={displayNormalized}
+            classification={displaySvmClassification}
           />
         );
     }

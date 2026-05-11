@@ -10,6 +10,7 @@ import IntegrationView from './algorithms/IntegrationView'
 import KurtosisView from './algorithms/KurtosisView'
 import SkewnessView from './algorithms/SkewnessView'
 import ConnectionView from './algorithms/ConnectionView'
+import SVMView from './algorithms/SVMView'
 import { type ESPData } from '../../../lib/connection'
 import { type RMSData } from '../../../lib/algorithms/RMSEngine'
 
@@ -19,7 +20,7 @@ type MathViewProps = {
   motorRpm: number;
 };
 
-type SubTab = 'reading' | 'connection' | 'normalization' | 'rms' | 'fft' | 'integration' | 'kurtosis' | 'skewness';
+type SubTab = 'reading' | 'connection' | 'normalization' | 'rms' | 'fft' | 'integration' | 'kurtosis' | 'skewness' | 'svm';
 
 function MathView({ rawHistory, motorRpm }: MathViewProps) {
   const [activeSubTab, setActiveSubTab] = useState<SubTab>('reading');
@@ -42,6 +43,8 @@ function MathView({ rawHistory, motorRpm }: MathViewProps) {
         return <SkewnessView />;
       case 'connection':
         return <ConnectionView />;
+      case 'svm':
+        return <SVMView />;
       default:
         return <SensorReadingView />;
     }
@@ -97,6 +100,13 @@ function MathView({ rawHistory, motorRpm }: MathViewProps) {
           onClick={() => setActiveSubTab('skewness')}
         >
           Asimetría
+        </div>
+        <div 
+          className={`tab-inner-item ${activeSubTab === 'svm' ? 'active' : ''}`}
+          onClick={() => setActiveSubTab('svm')}
+          style={{ background: activeSubTab === 'svm' ? '#f5f3ff' : 'transparent', color: activeSubTab === 'svm' ? '#7c3aed' : 'inherit' }}
+        >
+          Clasificación IA
         </div>
       </div>
 

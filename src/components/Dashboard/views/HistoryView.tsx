@@ -17,6 +17,7 @@ type CSVRow = {
   velIso: string;
   temp: string;
   health: string;
+  tipo: string;
 };
 
 function HistoryView({}: HistoryViewProps) {
@@ -24,7 +25,7 @@ function HistoryView({}: HistoryViewProps) {
   const [filters, setFilters] = useState({
     timestamp: '', rmsX: '', rmsY: '', rmsZ: '',
     kurtX: '', kurtY: '', kurtZ: '', velIso: '',
-    temp: '', health: ''
+    temp: '', health: '', tipo: ''
   });
 
   const filterInputStyle = {
@@ -67,7 +68,8 @@ function HistoryView({}: HistoryViewProps) {
         kurtZ: cols[6] || '0',
         velIso: cols[7] || '0',
         temp: cols[8] || '0',
-        health: cols[9] || '0'
+        health: cols[9] || '0',
+        tipo: cols[10] || '--'
       };
     }).reverse(); // Mostramos los últimos registros primero
 
@@ -158,7 +160,8 @@ function HistoryView({}: HistoryViewProps) {
         (!filters.kurtZ || row.kurtZ.toLowerCase().startsWith(filters.kurtZ.toLowerCase())) &&
         (!filters.velIso || row.velIso.toLowerCase().startsWith(filters.velIso.toLowerCase())) &&
         (!filters.temp || row.temp.toLowerCase().startsWith(filters.temp.toLowerCase())) &&
-        (!filters.health || row.health.toLowerCase().startsWith(filters.health.toLowerCase()))
+        (!filters.health || row.health.toLowerCase().startsWith(filters.health.toLowerCase())) &&
+        (!filters.tipo || row.tipo.toLowerCase().includes(filters.tipo.toLowerCase()))
       );
     });
   }, [csvData, filters]);
@@ -174,8 +177,8 @@ function HistoryView({}: HistoryViewProps) {
     <section style={{ animation: 'fadeIn 0.3s ease-out' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-           <h2 style={{ margin: 0, color: 'var(--text-main)' }}>Historial de Asentamiento Mecánico (.CSV)</h2>
-           <p style={{ margin: '0.25rem 0 0 0', fontSize: '13px', color: 'var(--text-muted)' }}>Archivos grabados localmente en /history</p>
+           <h2 style={{ margin: 0, color: 'var(--text-main)' }}>Entrene una ia SVM con los datos del dataset final.</h2>
+           <p style={{ margin: '0.25rem 0 0 0', fontSize: '13px', color: 'var(--text-muted)' }}>Historial de clasificación de vibraciones (.CSV)</p>
         </div>
         
         {/* BOTONES DE GESTIÓN */}
@@ -226,6 +229,7 @@ function HistoryView({}: HistoryViewProps) {
                 <th style={{ padding: '0.8rem 1rem', color: 'var(--text-muted)' }}>VEL. ISO (mm/s)</th>
                 <th style={{ padding: '0.8rem 1rem', color: 'var(--text-muted)' }}>TEMP. PLACA</th>
                 <th style={{ padding: '0.8rem 1rem', color: 'var(--text-muted)' }}>CONEXIÓN</th>
+                <th style={{ padding: '0.8rem 1rem', color: 'var(--text-muted)' }}>TIPO</th>
               </tr>
               <tr style={{ background: '#f8fafc', borderBottom: '2px solid var(--border-subtle)', textAlign: 'left' }}>
                 <th style={{ padding: '0.4rem 0.5rem' }}><input type="date" style={filterInputStyle} value={filters.timestamp} onChange={e => handleFilterChange('timestamp', e.target.value)} /></th>
@@ -238,6 +242,7 @@ function HistoryView({}: HistoryViewProps) {
                 <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Inicio..." style={filterInputStyle} value={filters.velIso} onChange={e => handleFilterChange('velIso', e.target.value)} /></th>
                 <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Inicio..." style={filterInputStyle} value={filters.temp} onChange={e => handleFilterChange('temp', e.target.value)} /></th>
                 <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Inicio..." style={filterInputStyle} value={filters.health} onChange={e => handleFilterChange('health', e.target.value)} /></th>
+                <th style={{ padding: '0.4rem 0.5rem' }}><input type="text" placeholder="Buscar..." style={filterInputStyle} value={filters.tipo} onChange={e => handleFilterChange('tipo', e.target.value)} /></th>
               </tr>
             </thead>
             <tbody>
@@ -256,11 +261,12 @@ function HistoryView({}: HistoryViewProps) {
                     <td style={{ padding: '0.75rem 1rem', fontWeight: 800, color: 'var(--text-main)' }}>{row.velIso}</td>
                     <td style={{ padding: '0.75rem 1rem', color: 'var(--text-muted)' }}>{row.temp}°C</td>
                     <td style={{ padding: '0.75rem 1rem', color: '#8b5cf6' }}>{row.health}%</td>
+                    <td style={{ padding: '0.75rem 1rem', color: '#6366f1', fontWeight: 600 }}>{row.tipo}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={10} style={{ padding: '5rem', textAlign: 'center', color: '#94a3b8' }}>
+                  <td colSpan={11} style={{ padding: '5rem', textAlign: 'center', color: '#94a3b8' }}>
                     <div style={{ marginBottom: '1rem', fontSize: '32px' }}>📉</div>
                     <div style={{ fontWeight: 700, color: '#475569', marginBottom: '0.5rem' }}>Archivo CSV sin registros</div>
                     <p style={{ fontSize: '13px', maxWidth: '400px', margin: '0 auto' }}>

@@ -21,13 +21,15 @@ type ChartsViewProps = {
   vibeLimits: { minX: number; maxX: number; minY: number; maxY: number; minZ: number; maxZ: number };
   rmsPeaks: { x: number; y: number; z: number; res: number };
   fftRange: { minHz: number; maxHz: number };
+  classification: string;
 };
 
 function ChartsView({ 
   data, history, fftData, isoData, kurtosisData, skewnessData, motorRpm,
   vibeLimits = { minX: -16, maxX: 16, minY: -16, maxY: 16, minZ: -16, maxZ: 16 },
   rmsPeaks = { x: 50, y: 50, z: 50, res: 80 },
-  fftRange = { minHz: 0, maxHz: 50 }
+  fftRange = { minHz: 0, maxHz: 50 },
+  classification = "Indeterminado"
 }: ChartsViewProps) {
   return (
     <div className="charts-view" style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', width: '100%', boxSizing: 'border-box' }}>
@@ -36,6 +38,21 @@ function ChartsView({
           <h2 style={{ fontSize: '1.2rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '-0.02em', color: '#1e293b', margin: 0 }}>
             Monitor Triaxial
           </h2>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '0.5rem', 
+            background: classification === "Encendido" ? '#10b981' : (classification === "Apagado" ? '#64748b' : (classification === "Papel" ? '#ef4444' : '#94a3b8')),
+            padding: '0.4rem 1rem',
+            borderRadius: '2rem',
+            color: 'white',
+            fontSize: '11px',
+            fontWeight: 900,
+            boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)'
+          }}>
+            {classification === "Encendido" ? '✅' : (classification === "Apagado" ? '⚪' : (classification === "Papel" ? '⚠️' : '❓'))}
+            {classification.toUpperCase()}
+          </div>
         </div>
       </header>
 

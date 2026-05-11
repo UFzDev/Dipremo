@@ -111,22 +111,6 @@ function SensorReadingView() {
         </div>
       </div>
 
-      {/* 6.- WEBSOCKET EXPLANATION */}
-      <div className="report-section mb-12">
-        <h2 className="algo-section-title">
-          6.- Tecnolog&iacute;a WebSocket y Persistencia de Datos
-        </h2>
-        <div className="algo-section-content">
-          <p className="algo-text">
-            El protocolo WebSocket proporciona un canal de comunicaci&oacute;n bidireccional y 'full-duplex' sobre una &uacute;nica conexi&oacute;n TCP. A diferencia del protocolo HTTP convencional, que es unidireccional y basado en peticiones, el WebSocket permite una transmisi&oacute;n de datos constante y de baja latencia.
-          </p>
-          <div className="algo-box-indigo">
-            <p className="algo-info-card-desc" style={{ color: 'inherit', margin: 0 }}>
-              <strong>Mecanismo de Conexi&oacute;n:</strong> La comunicaci&oacute;n inicia con un 'handshake' HTTP donde el cliente solicita una actualizaci&oacute;n de protocolo. Una vez establecida, la conexi&oacute;n permanece abierta, permitiendo que la ESP32 env&iacute;e los paquetes de vibraci&oacute;n de forma proactiva (Push) sin que el servidor o el cliente tengan que solicitarlos repetidamente. Esta persistencia garantiza la monitorizaci&oacute;n industrial en tiempo real.
-            </p>
-          </div>
-        </div>
-      </div>
     </section>
   );
 }
